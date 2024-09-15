@@ -1,5 +1,5 @@
 .c {
-    height: 100vh;
+    height: 95vh;
     display: grid;
     grid-column-gap: 25px;
     grid-template-columns: 1fr 1fr;
@@ -47,7 +47,9 @@
 .table {
     width: 100%;
     table-layout: fixed;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 3px;
+    /* border-collapse: collapse; */
 }
 
 .td {
@@ -73,7 +75,7 @@
 .inp {
     border: 1px solid lightgray;
     background-color: white;
-    /* width: 100%; */
+    width: 100%;
     outline: none;
     text-align: center;
     padding: 4.1px;
@@ -81,7 +83,10 @@
     letter-spacing: 0px;
     color: #666666;
     /* width: 170px; */
-    width: 98%;
+    width: 94%;
+}
+.width_97{
+    width: 97%;
 }
 
 .btn:active {
