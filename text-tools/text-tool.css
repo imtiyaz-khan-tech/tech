@@ -8,7 +8,7 @@
 .left {
     padding: 3px;
     display: grid;
-    grid-row-gap: 5px;
+    grid-row-gap: 25px;
     grid-template-rows: auto auto;
 }
 
@@ -107,8 +107,8 @@
 }
 .b_lines{
     position: absolute;
-    bottom: 0px;
-    right: 7px;
+    bottom: -19px;
+    right: -8px;
     cursor: default;
     padding: 4px 8px;
     /* border: 1px solid whitesmoke; */
@@ -118,6 +118,9 @@
     font-size: 10px;
 }
 
+.fa-lg {
+    font-size: 18px !important;
+}
 .noselect{
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -241,8 +244,8 @@
     border-bottom: 1px solid lightgray;
 }
 .td_1_1{
-    min-width: 4px;
-    max-width: 10px;
+    /* min-width: 2px; */
+    max-width: 8px;
     border-bottom: 1px solid lightgray;
 }
 .small_popup_1{
