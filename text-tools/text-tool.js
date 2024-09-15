@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    changeFavicon('Text Tools');
+    // changeFavicon('Text Tools');
     Draggable.create('.small_popup_1', {
         handle: '.small_popup_1_box_heading_div'
     });
