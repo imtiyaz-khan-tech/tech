@@ -4,19 +4,200 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="text-tools/text-tool.css">
+    <link rel="stylesheet" type="text/css" href="text-tool.css">
     <title>Text Tools</title>
 </head>
 
 <body>
-    <script type="text/javascript" src="text-tools/jquery_min.js"></script>
-    <script type="text/javascript" src="text-tools/font_awesome_js.js"></script>
-    <script type="text/javascript" src="text-tools/text-tool.js"></script>
-    <script type="text/javascript" src="text-tools/Draggable.js"></script>
-	<script type="text/javascript" src="text-tools/TweenMax.js"></script>
+    <script type="text/javascript" src="jquery_min.js"></script>
+    <script type="text/javascript" src="font_awesome_js.js"></script>
+    <script type="text/javascript" src="text-tool.js"></script>
+    <script type="text/javascript" src="jsforce.js"></script>
+    <script type="text/javascript" src="Draggable.js"></script>
+	<script type="text/javascript" src="TweenMax.js"></script>
     
-    <div class="body">
-        This Is Text Tool File
+    <div class="c">
+        <div class="left">
+            <div class="left_top">
+                <textarea class="txt txt_1"></textarea>
+                <div class="b_lines b_lines_top noselect">
+                    0
+                </div>
+            </div>
+            <div class="left_bottom">
+                <textarea class="txt txt_2"></textarea>
+                <div class="b_lines b_lines_bottom noselect">
+                    0
+                </div>
+            </div>
+        </div>
+        <div class="right">
+            <table class="table">
+                <tr class="tr">
+                    <td class="td">
+                        <button class="btn" data-btn="Trim">Trim</button>
+                    </td>
+                    <td class="td">
+                        <button class="btn" data-btn="Update">Update</button>
+                    </td>
+                    <td class="td">
+                        <button class="btn" data-btn="Clear">Clear</button>
+                    </td>
+                    <td class="td">
+                        <button class="btn" data-btn="Blank">Blank</button>
+                    </td>
+                </tr>
+                <tr class="tr">
+                    <td class="td">
+                        <input class="inp replace_value" placeholder="Replace Value" />
+                    </td>
+                    <td class="td">
+                        <input class="inp replace_with" placeholder="Replace With" />
+                    </td>
+                    <td class="td" colspan="2">
+                        <button class="btn" data-btn="Replace">Replace</button>
+                    </td>
+                </tr>
+                <tr class="tr">
+                    <td class="td">
+                        <input class="inp left_right_value" placeholder="Add Value" />
+                    </td>
+                    <td class="td">
+                        <button class="btn" data-btn="Add Left">Add Left</button>
+                    </td>
+                    <td class="td">
+                        <button class="btn" data-btn="Add Right">Add Right</button>
+                    </td>
+                    <td class="td">
+                        <button class="btn" data-btn="Add Left-Right">Add Left-Right</button>
+                    </td>
+                </tr>
+                <tr class="tr">
+                    <td class="td" colspan="4">
+                        <button class="btn" data-btn="Remove Duplicates">Remove Duplicates</button>
+                    </td>
+                </tr>
+                <tr class="tr">
+                    <td class="td" colspan="2">
+                        <input class="inp split_excel_value" placeholder="Split Excel With" />
+                    </td>
+                    <td class="td" colspan="2">
+                        <button class="btn" data-btn="Split Excel">Split Excel</button>
+                    </td>
+                </tr>
+                <tr class="tr">
+                    <td class="td">
+                        <input class="inp skip_row_count" placeholder="Skip Row Count" value="1" />
+                    </td>
+                    <td class="td">
+                        <button class="btn" data-btn="In Query Skip Rows">In Query Skip Rows</button>
+                    </td>
+                    <td class="td" colspan="2">
+                        <button class="btn" data-btn="In Query">In Query</button>
+                    </td>
+                </tr>
+                <tr class="tr">
+                    <td class="td" colspan="4">
+                        <button class="btn" data-btn="Copy">Copy</button>
+                    </td>
+                </tr>
+                <tr class="tr">
+                    <td class="td" colspan="2">
+                        <button class="btn" data-btn="Generate Array">Generate Array</button>
+                    </td>
+                    <td class="td" colspan="2">
+                        <button class="btn" data-btn="Generate Dropdown">Generate Dropdown</button>
+                    </td>
+                </tr>
+                <tr class="tr">
+                    <td class="td">
+                        <input class="inp extract_left_value" placeholder="Extract Left Value" />
+                    </td>
+                    <td class="td" colspan="2">
+                        <button class="btn" data-btn="Extract Text Between">Extract Text Between</button>
+                    </td>
+                    <td class="td">
+                        <input class="inp extract_right_value" placeholder="Extract Right Value" />
+                    </td>
+                </tr>
+                <tr class="tr">
+                    <td class="td" colspan="2">
+                        <button class="btn" data-btn="Configure User Snippet">Configure User Snippet</button>
+                    </td>
+                    <td class="td" colspan="2">
+                        <button class="btn" data-btn="Extract Text From Html">Extract Text From Html</button>
+                    </td>
+                </tr>
+                <tr class="tr">
+                    <td class="td" colspan="4">
+                        <button class="btn" data-btn="In Query Distinct">In Query Distinct</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
+    <!-- Table Popup Starts -->
+    <div class="small_popup_1 hide">
+        <div class="small_popup_1_box">
+            <div class="small_popup_1_box_heading_div">
+                
+            </div>
+            <div class="small_popup_1_box_middle_div">
+                <table class="table_1">
+                    <!-- <thead class="thead_1">
+                        <tr class="thead_1_tr">
+                            <th class="th_1 th_1_1">
+                                Id
+                            </th>
+                            <th class="th_1 th_1_2">
+                                Name
+                            </th>
+                            <th class="th_1 th_1_3">
+                                Username
+                            </th>
+                            <th class="th_1 th_1_4">
+                                Profile
+                            </th>
+                            <th class="th_1 th_1_5">
+                                Email
+                            </th>
+                            <th class="th_1 th_1_6">
+                                Active
+                            </th>
+                        </tr>
+                    </thead> -->
+                    <tbody class="tbody_1">
+                        <!-- <tr class="tbody_1_tr tbody_1_tr_1 tr_${val.Id}">
+                            <td class="td_1 td_1_1 ${val.Id} th_1_Id" data-id="${val.Id}">
+                                0065h00000Ny8o8AAB
+                            </td>
+                            <td class="td_1 td_1_2 th_1_data">
+                                John Wick
+                            </td>
+                            <td class="td_1 td_1_3 th_1_data">
+                                john.wick@lionsgate.com
+                            </td>
+                            <td class="td_1 td_1_4 th_1_data">
+                                System Administrator
+                            </td>
+                            <td class="td_1 td_1_5 th_1_data">
+                                john.wick@gmail.com
+                            </td>
+                            <td class="td_1 td_1_6 th_1_data">
+                                Yes
+                            </td>
+                        </tr> -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="small_popup_1_box_bottom_div">
+                
+            </div>
+            <div class="small_popup_1_close_div">
+                <i class="close-icon_1 fa fa-times fa-lg" aria-hidden="true"></i>
+            </div>
+        </div>
+    </div>
+    <!-- Table Popup Ends -->
 </body>
 </html>
