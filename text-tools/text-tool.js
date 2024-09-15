@@ -3,13 +3,6 @@ $(document).ready(function() {
     Draggable.create('.small_popup_1', {
         handle: '.small_popup_1_box_heading_div'
     });
-    $('.txt_1').val(`Some Data 1
-Some Data 2
-Some Data 3
-Some Data 4
-Some Data 5
-Some Data 6
-      `);
 });
 
 $(document).on('click', '.close-icon_1', function (e){
