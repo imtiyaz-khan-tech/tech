@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    changeFavicon('Text Utility');
+    changeFavicon('Text Tools');
     Draggable.create('.small_popup_1', {
         handle: '.small_popup_1_box_heading_div'
     });
@@ -61,7 +61,7 @@ function changeFavicon(title) {
     var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
     link.type = 'image/x-icon';
     link.rel = 'shortcut icon';
-    link.href = '/resource/1681886111000/txtutil';
+    link.href = 'text-tools/icon.svg';
     document.getElementsByTagName('head')[0].appendChild(link);
 }
 $(document).on('click', '.btn', function(e) {
