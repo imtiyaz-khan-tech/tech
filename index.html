@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            display: grid;
+            grid-template-rows: 50% 50%;
+            height: 100vh;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            height: 100%;
+        }
+
+        .child {
+            width: 100%;
+            height: 100%;
+            background-color: #3498db;
+            border: 1px solid #ffffff;
+            box-sizing: border-box;
+            text-align: center;
+            color: #ffffff;
+            font-size: 1.5em;
+            line-height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .child {
+            overflow: hidden; /* Ensure images don't overflow the div */
+        }
+
+        .child img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Maintain aspect ratio and cover the entire div */
+        }
+
+        .text-area-row {
+            grid-column: span 5; /* Span all 5 columns */
+            display: grid;
+            grid-template-rows: 50% 50%;
+        }
+
+        .text-area {
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+
+        .button-row {
+            grid-column: span 5; /* Span all 5 columns */
+            display: grid;
+            grid-template-columns: 50% 50%;
+        }
+
+        .button {
+            width: 100%;
+            height: 100%;
+            background-color: #e74c3c;
+            border: none;
+            color: #ffffff;
+            font-size: 1em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!--  ----------------------------------------------------------------------  -->
+        <!--  NOTE: Please add the following <META> element to your page <HEAD>.      -->
+        <!--  If necessary, please modify the charset parameter to specify the        -->
+        <!--  character set of your HTML page.                                        -->
+        <!--  ----------------------------------------------------------------------  -->
+
+        <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+        <!--  ----------------------------------------------------------------------  -->
+        <!--  NOTE: Please add the following <FORM> element to your page.             -->
+        <!--  ----------------------------------------------------------------------  -->
+
+        <form action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00D5h00000947Ag" method="POST">
+
+        <input type=hidden name="oid" value="00D5h00000947Ag">
+        <input type=hidden name="retURL" value="https://learningtrail-dev-ed.develop.lightning.force.com/lightning/o/Lead/list?filterName=00B5h00000cI9LWEA0">
+
+        <!--  ----------------------------------------------------------------------  -->
+        <!--  NOTE: These fields are optional debugging elements. Please uncomment    -->
+        <!--  these lines if you wish to test in debug mode.                          -->
+        <!--  <input type="hidden" name="debug" value=1>                              -->
+        <!--  <input type="hidden" name="debugEmail" value="imtiyazacc1@gmail.com">   -->
+        <!--  ----------------------------------------------------------------------  -->
+
+        <label for="first_name">First Name</label><input  id="first_name" maxlength="40" name="first_name" size="20" type="text" /><br>
+
+        <label for="last_name">Last Name</label><input  id="last_name" maxlength="80" name="last_name" size="20" type="text" /><br>
+
+        <label for="email">Email</label><input  id="email" maxlength="80" name="email" size="20" type="text" /><br>
+
+        <label for="company">Company</label><input  id="company" maxlength="40" name="company" size="20" type="text" /><br>
+
+        <label for="city">City</label><input  id="city" maxlength="40" name="city" size="20" type="text" /><br>
+
+        <label for="state">State/Province</label><input  id="state" maxlength="20" name="state" size="20" type="text" /><br>
+
+        <input type="submit" name="submit">
+
+        </form>
+
+</div>
+
+</body>
+</html>
