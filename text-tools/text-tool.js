@@ -242,6 +242,34 @@ $(document).on('click', '.btn', function(e) {
         }).catch(err => {
            console.error(err);
         });
+    }else if (btn == 'Test Data 1') {
+        let testDataArray = [];
+        let i = 1;
+        while(i <= 5000){
+            let recId = `0010e00001Qu08jAAB${i}`;
+            if(recId.length > 18){
+                let lngth = recId.length - 18;
+                recId = recId.split('');
+                recId.splice(7, lngth);
+                recId = recId.join('');
+            }
+            testDataArray.push(recId);
+            i++;
+        }
+        txt_1(testDataArray.join('\n'));
+    }else if (btn == 'Test Data 2') {
+        let testDataArray = [];
+        let i = 1;
+        while(i <= 9){
+            let data = `Some Data ${i}`;
+            testDataArray.push(data);
+            i++;
+        }
+        txt_1(testDataArray.join('\n'));
+    }else if (btn == 'Test Data 3') {
+        txt_1('Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam necessitatibus tempore cum quos molestias repellat ducimus maiores quam nobis, quia perferendis illum numquam sint veritatis alias eveniet non quaerat vel!');
+    }else if (btn == 'Test Data 4') {
+        txt_1('Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam necessitatibus tempore cum quos molestias repellat ducimus maiores quam nobis, quia perferendis illum numquam sint veritatis alias eveniet non quaerat vel!');
     }
 });
 
