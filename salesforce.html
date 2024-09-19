@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="salesforce/salesforce.css">
+    <title>Salesforce Tasks</title>
+</head>
+
+<body>
+    <script type="text/javascript" src="js/jquery_min.js"></script>
+    <script type="text/javascript" src="js/font_awesome_js.js"></script>
+    <script type="text/javascript" src="salesforce/salesforce.js"></script>
+    <script type="text/javascript" src="js/jsforce.js"></script>
+    <script type="text/javascript" src="js/Draggable.js"></script>
+	<script type="text/javascript" src="js/TweenMax.js"></script>
+    
+    <div class="body">
+        <div class="c">
+            <div class="c_r">
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Delete Payout Periods And Member Payouts">Delete Payout Periods And Member Payouts&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Recreate PayoutPeriods And MemberPayouts">Recreate PayoutPeriods And MemberPayouts&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Generate Order">Generate Order&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+                
+            </div>
+            <div class="c_r">
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Generate Contract">Generate Contract&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Get Contract">Get Contract&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Update Rebate Rate CPG">Update Rebate Rate CPG&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+            </div>
+            <div class="c_r">
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Update - GAS MPV And Rebate Rate CPG">Update - GAS MPV And Rebate Rate CPG&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Update - Diesel MPV And Rebate Rate CPG">Update - Diesel MPV And Rebate Rate CPG&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Update - Combined MPV And Rebate Rate CPG">Update - Combined MPV And Rebate Rate CPG&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+            </div>
+            <div class="c_r">
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Copy Actual Volume Gal - Qtr : 1">Copy Actual Volume Gal - Qtr : 1&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Copy Actual Volume Gal - Qtr : 2">Copy Actual Volume Gal - Qtr : 2&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Copy Actual Volume Gal - Qtr : 3">Copy Actual Volume Gal - Qtr : 3&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+            </div>
+            <div class="c_r">
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Copy Actual Volume Gal - Qtr : 4">Copy Actual Volume Gal - Qtr : 4&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Rebate Program Detail">Rebate Program Detail&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Copy Actual Volume Gal - From JSON">Copy Actual Volume Gal - From JSON&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+            </div>
+            <div class="c_r">
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Get Member Payouts">Get Member Payouts&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Get Flow Api Name By Label">Get Flow Api Name By Label&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Get Flow Api Name By Id">Get Flow Api Name By Id&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+            </div>
+            <div class="c_r">
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Create Branded Quote">Create Branded Quote&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Get Branded Quote">Get Branded Quote&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Delete Financial Schedules And Update Cbs">Delete Financial Schedules And Update Cbs&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+            </div>
+            <div class="c_r">
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Copy Link">Copy Link&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+                <div class="c_c">
+                    <button class="btn unlocked" data-button="Extract Texts">Extract Texts&nbsp;&nbsp;<i class="btn_icon fa fa-refresh fa-small" aria-hidden="true"></i></button>
+                </div>
+                <div class="c_c">
+                    <button class="btn locked">LOCKED</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Table Popup Starts -->
+    <div class="small_popup_1 hide">
+        <div class="small_popup_1_box">
+            <div class="small_popup_1_box_heading_div error_class">
+                ERROR
+            </div>
+            <div class="small_popup_1_box_middle_div">
+                <table class="table_1">
+                    <thead class="thead_1">
+                        <tr class="thead_1_tr">
+                            <!-- <th class="th_1 th_1_1">
+                                Line
+                            </th>
+                            <th class="th_1 th_1_2">
+                                Column
+                            </th>
+                            <th class="th_1 th_1_3">
+                                Compiled
+                            </th>
+                            <th class="th_1 th_1_4">
+                                Success
+                            </th>
+                            <th class="th_1 th_1_5">
+                                CompileProblem
+                            </th> -->
+                        </tr>
+                    </thead>
+                    <tbody class="tbody_1">
+                        <tr class="tbody_1_tr tbody_1_tr_1">
+                            <!-- <td class="td_1 td_1_1 ${val.Id} th_1_Id" data-id="${val.Id}">
+                                4
+                            </td>
+                            <td class="td_1 td_1_2 th_1_data">
+                                110
+                            </td>
+                            <td class="td_1 td_1_3 th_1_data">
+                                false
+                            </td>
+                            <td class="td_1 td_1_4 th_1_data">
+                                false
+                            </td>
+                            <td class="td_1 td_1_5 th_1_data">
+                                Unexpected token 'REBATE_PROGRAMM_ID'.
+                            </td> -->
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="small_popup_1_box_bottom_div">
+                
+            </div>
+            <div class="small_popup_1_close_div">
+                <i class="close-icon_1 fa fa-times fa-lg" aria-hidden="true"></i>
+            </div>
+        </div>
+    </div>
+    <!-- Table Popup Ends -->
+
+</body>
+</html>
