@@ -102,6 +102,7 @@ body{
     width: 80%;
     /* min-width: 532px; */
     text-align: center;
+    font-family: monospace;
     padding: 5px;
     border: 1px ridge rgba(202,202,202,0.57);
     -webkit-box-shadow: -1px -1px 8px 3px rgba(202,202,202,0.57);
