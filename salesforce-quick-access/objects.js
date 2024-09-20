@@ -69,8 +69,7 @@ $(document).on('click', '.td-prop', function (e) {
         copyToCLipboard(apiName);
     }else{
         console.log('$apiName: ',apiName);
-        console.log('$objectNameAndIdMap: ',objectNameAndIdMap);
-        window.location.href = `https://imtiyaz-khan-tech.github.io/tech/salesforce-quick-access/fields?apiName=${apiName}&sessionId=${sessionId}&baseUrl=${baseUrl}&objectId=${objectNameAndIdMap.get(apiName)}`;
+        window.location.href = `https://imtiyaz-khan-tech.github.io/tech/salesforce-quick-access/fields?apiName=${apiName}&sessionId=${sessionId}&baseUrl=${baseUrl}`;
     }
 });
 
@@ -114,7 +113,7 @@ function fetchMetadatRecords() {
         sobjects = [...objects.sobjects];
         sobjectsAll = [...objects.sobjects];
         generateTable();
-        fetchObjectIds();
+        // fetchObjectIds();
     }).catch(error => {
         console.log('$getObjects: error', error)
     });
