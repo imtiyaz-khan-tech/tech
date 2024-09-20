@@ -1,3 +1,6 @@
+body{
+    font-family: monospace !important;
+}
 body::-webkit-scrollbar {
     height: 2px !important;
     width: 5px !important;

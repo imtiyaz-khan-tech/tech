@@ -1,5 +1,6 @@
 body{
     overflow: hidden;
+    font-family: monospace !important;
 }
 .body {
     height: 98vh !important;

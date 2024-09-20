@@ -3,6 +3,7 @@
     max-height: 92vh;
     border: 1px solid whitesmoke;
     padding: 0px 20px;
+    font-family: monospace !important;
  }
  
  .btn{
