@@ -68,7 +68,7 @@ $(document).on('click', '.td-prop', function (e) {
     if(isCtrlPressed){
         copyToCLipboard(apiName);
     }else{
-        openMaximized(`fields.html?apiName=${apiName}&sessionId=${sessionId}&baseUrl=${baseUrl}&objectId=${objectNameAndIdMap.get(apiName)}`);
+        openMaximized(`https://imtiyaz-khan-tech.github.io/tech/salesforce-quick-access/fields?apiName=${apiName}&sessionId=${sessionId}&baseUrl=${baseUrl}&objectId=${objectNameAndIdMap.get(apiName)}`);
     }
 });
 
