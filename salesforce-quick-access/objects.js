@@ -68,7 +68,9 @@ $(document).on('click', '.td-prop', function (e) {
     if(isCtrlPressed){
         copyToCLipboard(apiName);
     }else{
-        openMaximized(`https://imtiyaz-khan-tech.github.io/tech/salesforce-quick-access/fields?apiName=${apiName}&sessionId=${sessionId}&baseUrl=${baseUrl}&objectId=${objectNameAndIdMap.get(apiName)}`);
+        console.log('$apiName: ',apiName);
+        console.log('$objectNameAndIdMap: ',objectNameAndIdMap);
+        window.location.href = `https://imtiyaz-khan-tech.github.io/tech/salesforce-quick-access/fields?apiName=${apiName}&sessionId=${sessionId}&baseUrl=${baseUrl}&objectId=${objectNameAndIdMap.get(apiName)}`;
     }
 });
 
