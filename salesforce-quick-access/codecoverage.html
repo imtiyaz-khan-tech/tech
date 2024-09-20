@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="codecoverage.css">
+    <title>Console</title>
+</head>
+<body>
+    <script type="text/javascript" src="jquery_min.js"></script>
+    <script type="text/javascript" defer src="codecoverage.js"></script>
+    <script type="text/javascript" src="Draggable.js"></script>
+    <script type="text/javascript" src="TweenMax.js"></script>
+    <script type="text/javascript" src="font_awesome_js.js"></script>
+    <div class="c">
+        <div class="code_container">
+            <div class="textarea_code" contenteditable="false"><pre class="pre_code"></pre></div>
+        </div>
+        <div class="fixed_top">
+            <div class="ft_left">
+                <!-- <button class="btn_top btn_code_coverage">Run Test -  Check Coverage Here</button> -->
+                <button class="btn_top btn_code_coverage">Code Coverage: 0%</button>
+                <button class="btn_top btn_failed hide">Failed</button>
+                <button class="btn_top btn_success hide">Success</button>
+                <button class="btn_top open_log_btn hide">Open Log</button>
+            </div>
+            <div class="ft_right">
+                <button class="btn_top btn_run_test">Run Test</button>
+            </div>
+        </div>
+        <div class="loader_fixed_dv hide">
+            <div class="loader_dv">
+                <div class="ld_1">
+                    <div class="ld_1_l">
+                        Running tests synchronously...
+                    </div>
+                    <div class="ld_1_r">
+                        <button class="btn_close">×</button>
+                    </div>
+                </div>
+                <div class="ld_2">
+                    <div class="ld2_sub serverWaiting">
+                        Waiting for response from server...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Popup Starts -->
+        <div class="small_popup_1 hide" >
+            <div class="small_popup_1_box">
+                <div class="small_popup_1_box_heading_div">
+                    
+                </div>
+                <div class="small_popup_1_box_middle_div">
+                    <table class="table_1">
+                        <thead class="thead_1">
+                            <tr class="thead_1_tr">
+                                <th class="th_1 th_1_2">
+                                    Method
+                                </th>
+                                <th class="th_1 th_1_3">
+                                    Error
+                                </th>
+                                <th class="th_1 th_1_4">
+                                    Stack Trace
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="tbody_1" contenteditable="true">
+                            <!-- <tr class="tbody_1_tr tbody_1_tr_1">
+                                <td class="td_1 td_1_2 th_1_data">
+                                    test_firstMethod
+                                </td>
+                                <td class="td_1 td_1_3 th_1_data">
+                                    System.QueryException: List has no rows for assignment to SObject
+                                </td>
+                                <td class="td_1 td_1_4 th_1_data">
+                                    Class.SampleApex.firstMethod: line 15, column 1 Class.SampleApex_Test.test_firstMethod: line 5, column 1
+                                </td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="small_popup_1_box_bottom_div">
+                    
+                </div>
+                <div class="small_popup_1_close_div">
+                    <i class="close-icon_1 fa fa-times fa-lg" aria-hidden="true"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Table Popup Ends -->
+    </div>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="temp.css">
+	<title>Temp</title>
+</head>
+<body>
+    <script type="text/javascript" src="angular.js"></script>
+	<script type="text/javascript" src="jquery_min.js"></script>
+	<script type="text/javascript" src="jsforce.js"></script>
+	<script type="text/javascript" src="temp.js"></script>
+	<script type="text/javascript" src="font_awesome_js.js"></script>
+	<script type="text/javascript" src="FileSavermin.js"></script>
+
+	<div class="container">
+		<div class="sections section_1">
+			<div class="sections_heading section_1_heading_container">
+				<div class="section_1_heading">Quote Process</div>
+			</div>
+			<div class="sections_container section_1_buttons_container">
+				<div class="section__btn_dv section_1_btn1_dv">
+					<input class="section_inp quoteIdInput" placeholder="Enter Quote Id" />
+					<!-- value="a1jO800000E7ZXFIA3"  -->
+				</div>
+				<div class="section__btn_dv section_1_btn2_dv">
+					<button class="section_btn TypeUpdate">Type Update&nbsp;&nbsp;<i class="TypeUpdate_icon btn_icon fa fa-refresh" aria-hidden="true"></i></button>
+				</div>
+				<div class="section__btn_dv section_1_btn2_dv">
+					<button class="section_btn StatusUpdate">Status Update&nbsp;&nbsp;<i class="StatusUpdate_icon btn_icon fa fa-refresh" aria-hidden="true"></i></button>
+				</div>
+				<div class="section__btn_dv section_1_btn2_dv">
+					<button class="section_btn OrderedUpdate">Ordered&nbsp;&nbsp;<i class="OrderedUpdate_icon btn_icon fa fa-refresh" aria-hidden="true"></i></button>
+				</div>
+			</div>
+		</div>
+		<div class="sections section_2">
+			<div class="sections_heading section_2_heading_container">
+				<div class="section_2_heading">Order Process</div>
+			</div>
+			<div class="sections_container section_2_buttons_container">
+				<div class="section__btn_dv section_2_btn1_dv">
+					<input class="section_inp orderIdInput" placeholder="Order Id"/>
+				</div>
+				<div class="section__btn_dv section_2_btn2_dv">
+					<button class="section_btn OrderStatusUpdate">Status Update&nbsp;&nbsp;<i class="OrderStatusUpdate_icon btn_icon fa fa-refresh" aria-hidden="true"></i></button>
+				</div>
+				<div class="section__btn_dv section_2_btn2_dv">
+					<button class="section_btn ContractedUpdate">Contracted Update&nbsp;&nbsp;<i class="ContractedUpdate_icon btn_icon fa fa-refresh" aria-hidden="true"></i></button>
+				</div>
+				<div class="section__btn_dv section_2_btn2_dv">
+					<a class="contract_link">Order Link Will Appear Here</a>
+				</div>
+				<div class="section__btn_dv section_2_btn2_dv _link_dv">
+					<button class="copyBtns copyId">Copy Contract Id</button>
+					<button class="copyBtns copyLink">Copy Contract Link</button>
+				</div>
+				<div class="section__btn_dv section_2_btn2_dv">
+					<button class="copyBtns QuoteRecordOpen">Open Quote Record</button>
+					<button class="copyBtns OrderRecordOpen">Open Order Record</button>
+					<button class="copyBtns ContractRecordOpen">Open Contract Record</button>
+				</div>
+			</div>
+		</div>
+		<div class="sections section_3">
+			<div class="sections_heading section_3_heading_container">
+				<div class="section_2_heading">Rebate Process</div>
+			</div>
+			<div class="sections_container section_2_buttons_container">
+				<div class="section__btn_dv section_2_btn1_dv">
+					<button class="rebateProcessBtn">Update RP - Delete MP And PP</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,70 @@
+{
+    "author": "imtiyazimi999@gmail.com",
+    "name": "Salesforce Quick Access - BETA",
+    "version": "1.6",
+    "manifest_version": 3,
+    "description": "This is Salesforce Quick Access and Helper Extension By @Imtiyaz_Ansari",
+    "action":
+    {
+        "default_icon":
+        {
+            "32": "images/icon32.png",
+            "48": "images/icon48.png",
+            "64": "images/icon64.png",
+            "128": "images/icon128.png",
+            "256": "images/icon256.png"
+        },
+        "default_popup": "popup.html"
+    },
+    "icons":
+    {
+        "32": "images/icon32.png",
+        "48": "images/icon48.png",
+        "64": "images/icon64.png",
+        "128": "images/icon128.png",
+        "256": "images/icon256.png"
+    },
+    "permissions": ["tabs", "cookies"],
+    "host_permissions": [
+        "https://*.salesforce.com/*"
+    ],
+    "commands":
+    {
+        "openRecordDetail":
+        {
+            "suggested_key":
+            {
+                "default": "Alt+R"
+            },
+            "description": "Open Record Detail"
+        },
+        "openDebugLogs":
+        {
+            "suggested_key":
+            {
+                "default": "Alt+L"
+            },
+            "description": "Open Debug Logs"
+        },
+        "openMetadata":
+        {
+            "suggested_key":
+            {
+                "default": "Alt+M"
+            },
+            "description": "Open Metadata"
+        },
+        "openObjects":
+        {
+            "suggested_key":
+            {
+                "default": "Alt+O"
+            },
+            "description": "Open Objects"
+        }
+    },
+    "background":
+    {
+        "service_worker": "background.js"
+    }
+}
