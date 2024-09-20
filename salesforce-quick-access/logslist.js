@@ -218,7 +218,7 @@ function openRecordDetail(recordID){
     const valid = userKeyRegExp.test(recordID);
     if (valid) {
         recordID = 'logRecodId=' + recordID + '&';
-        openMaximized('recentlogs.html?' + recordID + 'baseUrl=' + baseUrl + '&sessionId=' + sessionId);
+        window.location.href = 'https://imtiyaz-khan-tech.github.io/tech/salesforce-quick-access/recentlogs?' + recordID + 'baseUrl=' + baseUrl + '&sessionId=' + sessionId;
     }
 }
 
