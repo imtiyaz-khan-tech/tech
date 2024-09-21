@@ -691,5 +691,7 @@ $(document).on('click', '.plus-icon', function (e){
 $(document).on('click', '.page_name', function (e){
    let page = $(this).data('page');
    console.log('$page: ',page);
+   let uri = `baseUrl=${baseUrl}&sessionId=${sessionId}`;
+   window.location.href = `https://imtiyaz-khan-tech.github.io/tech/salesforce-quick-access/${page}?${uri}`
 });
 // Bottom button Finish
