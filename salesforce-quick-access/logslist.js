@@ -427,3 +427,22 @@ $(document).on('click', '.debug_only', function (e){
 $(document).on('click', '.refresh_btn', function (e){
    window.location.reload();
 });
+
+// Bottom button Starts
+$(document).on('click', '.plus-icon', function (e){
+    var icon = $(this);
+    if (icon.hasClass('rotate_45')) {
+        icon.removeClass('rotate_45').addClass('rotate_0');
+        $('.ul_dv').hide(100);
+    } else {
+        icon.removeClass('rotate_0').addClass('rotate_45');
+        $('.ul_dv').show(100);
+    }
+});
+$(document).on('click', '.page_name', function (e){
+   let page = $(this).data('page');
+   console.log('$page: ',page);
+   let uri = `baseUrl=${baseUrl}&sessionId=${sessionId}`;
+   window.location.href = `https://imtiyaz-khan-tech.github.io/tech/salesforce-quick-access/${page}?${uri}`
+});
+// Bottom button Finish

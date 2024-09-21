@@ -345,3 +345,63 @@ body {
     background-color: #b1aeae !important;
 }
 /* ace override ends */
+
+/* Bottom button Starts */
+.bottom_menu_div{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}
+.noselect_items{
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    -khtml-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+}
+.bottom_menu_btn{
+    background: white;
+    border: 1px solid white;
+    font-size: 10px;
+    color: cadetblue;
+    padding: 2px 7px;
+    cursor: pointer;
+    font-family: monospace;
+}
+.ul_dv{
+    background-color: cadetblue;
+    margin-left: 21px;
+    transition: left 0.5s ease;
+    padding: 1px 10px;
+    border-radius: 10px 10px 0px 0px;
+}
+.li{
+    border-bottom: 1px solid #c3c3c3;
+    font-family: monospace;
+    font-size: 10px;
+    cursor: pointer;
+    padding: 2px;
+    color: white;
+    margin-left: -21px;
+    font-weight: 400;
+}
+.li:hover{
+    color: rgb(232, 232, 232);
+}
+
+.plus-icon {
+    font-size: 24px;
+    transition: transform 0.2s ease;
+}
+
+.rotate_0 {
+    transform: rotate(0deg);
+}
+.rotate_45 {
+    transform: rotate(45deg);
+}
+.hide_menu{
+    display: none;
+}
+/* </div>Bottom button Finish */
