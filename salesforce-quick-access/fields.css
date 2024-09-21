@@ -59,7 +59,7 @@ body{
     color: black !important;
 }
 
-table {
+table:not(.bottom_menu_table) {
     border-collapse: collapse !important;
     table-layout: fixed !important;
     width: 100% !important;
@@ -67,7 +67,7 @@ table {
 }
 
 th,
-td {
+td:not(.bottom_menu_td) {
     border: 1px solid lightgray !important;
     padding: 8px !important;
     text-align: center !important;
@@ -83,7 +83,7 @@ th {
     font-weight: normal !important;
 }
 
-table tr:first-child td {
+table:not(.bottom_menu_table) tr:not(.bottom_menu_tr):first-child td {
     border-top: none !important;
 }
 
