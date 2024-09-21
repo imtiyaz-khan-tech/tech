@@ -341,8 +341,8 @@ table:not(.bottom_menu_table) tr:not(.bottom_menu_tr):first-child td {
     user-select: none !important;
   }
   .bottom_menu_btn{
-    background: white;
-    border: 1px solid white;
+    background: transparent;
+    border: 1px solid transparent;
     font-size: 10px;
     color: cadetblue;
     padding: 2px 7px;

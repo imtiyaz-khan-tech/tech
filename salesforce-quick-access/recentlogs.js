@@ -49,7 +49,7 @@ async function getConnection(baseUrl, sessionId){
     let conn = new jsforce.Connection({
        instanceUrl : baseUrl,
        serverUrl : baseUrl,
-       sessionId : sessionId
+       sessionId : sessionId.
    });
    return conn;
  }
