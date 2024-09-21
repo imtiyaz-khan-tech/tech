@@ -583,7 +583,11 @@ body {
 }
 
 .plus-icon {
-    font-size: 24px;
+    color: #cacaca;
+    padding: 5px 6px;
+    cursor: pointer;
+    background-color: transparent;
+    font-size: 14px !important;
     transition: transform 0.2s ease;
 }
 

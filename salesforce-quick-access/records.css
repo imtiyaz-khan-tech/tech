@@ -1184,6 +1184,7 @@ tbody {
     cursor: pointer;
     background-color: transparent;
     font-size: 14px !important;
+    transition: transform 0.2s ease;
 }
 
 .rotate_0 {

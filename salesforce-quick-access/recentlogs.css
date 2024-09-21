@@ -164,8 +164,12 @@ td:last-child{
 }
 
 .plus-icon {
-  font-size: 24px;
-  transition: transform 0.2s ease;
+  color: #cacaca;
+    padding: 5px 6px;
+    cursor: pointer;
+    background-color: transparent;
+    font-size: 14px !important;
+    transition: transform 0.2s ease;
 }
 
 .rotate_0 {

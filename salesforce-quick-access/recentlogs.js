@@ -432,9 +432,11 @@ $(document).on('click', '.plus-icon', function (e){
     if (icon.hasClass('rotate_45')) {
         icon.removeClass('rotate_45').addClass('rotate_0');
         $('.ul_dv').hide(100);
+        icon.css('color','#cacaca');
     } else {
         icon.removeClass('rotate_0').addClass('rotate_45');
         $('.ul_dv').show(100);
+        icon.css('color','cadetblue');
     }
 });
 $(document).on('click', '.page_name', function (e){
