@@ -271,20 +271,12 @@ $(document).on('keydown', '.top_userinfo_inp', async function (e) {
             });
         } else if (selected == 'NAME') {
             showSpinner();
-            let query = `SELECT Id, Name, Email, Username, IsActive, Profile.Name FROM User WHERE Name LIKE '%${recordID}%' LIMIT 100`;
-            if(recordID == 's.a'){
-                query = `SELECT Id, Name, Email, Username, IsActive, Profile.Name FROM User WHERE Profile.Name = 'System Administrator'`;
-            }else if(recordID == 's.a.a'){
-                query = `SELECT Id, Name, Email, Username, IsActive, Profile.Name FROM User WHERE Profile.Name = 'System Administrator' And IsActive = True`;
-            }else if(recordID == 's.a.i'){
-                query = `SELECT Id, Name, Email, Username, IsActive, Profile.Name FROM User WHERE Profile.Name = 'System Administrator' And IsActive = False`;
-            }else if(recordID == 'i.u'){
-                query = `SELECT Id, Name, Email, Username, IsActive, Profile.Name FROM User WHERE Email LIKE '%.invalid%'`;
-            }else if(recordID == 'i.u.a'){
-                query = `SELECT Id, Name, Email, Username, IsActive, Profile.Name FROM User WHERE Profile.Name = 'System Administrator' And Email LIKE '%.invalid%'`;
-            }
+            let query = `SELECT+Id,Name,Email,Username,IsActive,Profile.Name+FROM+User+Where+Name+Like%27%25${recordID}%25%27+limit+100`;
+            console.log('$query: ',query);
             console.log('Checkpoint CALLED1');
-            await fetchRecordsXMLSOAP(query);
+            // await fetchRecordsXMLSOAP(query);
+            let res = await getUserRecordsFromServer(query);
+            userRecords = res?.data?.records;
             console.log('Checkpoint userRecords: ', userRecords);
             if(!userRecords?.length){
                 $('.snackbar').text('No Users including provided name.');
@@ -303,7 +295,7 @@ $(document).on('keydown', '.top_userinfo_inp', async function (e) {
                             ${val.Username}
                         </td>
                         <td class="td_1 td_1_4 th_1_data">
-                            ${val.ProfileName}
+                            ${val.Profile?.Name}
                         </td>
                         <td class="td_1 td_1_5 th_1_data">
                             ${val.Email}
@@ -362,6 +354,31 @@ $(document).on('click', '.close-icon_1', function (e){
    $('.d_outer').removeClass('blur');
    $('.small_popup_1').addClass('hide');
 });
+
+async function getUserRecordsFromServer(qry) {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer " + sessionId);
+
+    var requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow'
+    };
+    
+    try{
+        const response = await fetch(baseUrl + '/services/data/v59.0/query/?q=' + qry, requestOptions);
+        console.log('$response: ',response);
+        if(!response.ok) {
+            return { isError: true, name: response.status, message: response.statusText, stack: response.type };
+        }
+        const result = await response.json();
+        hideSpinner();
+        return { isError: false, data: result};
+    }catch(error){
+       return { isError: true, name: error.name, message: error.message, stack: error.stack };
+    }
+}
+
 
 async function fetchRecordsXMLSOAP(query) {
     const endpoint = baseUrl + "/services/Soap/c/59.0";
@@ -531,7 +548,6 @@ function showToast() {
         }, 2000);
     }
 }
-
 // Bottom button Starts
 $(document).on('click', '.plus-icon', function (e){
     var icon = $(this);
