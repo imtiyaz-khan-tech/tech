@@ -385,6 +385,7 @@ async function fetchRecordsXMLSOAP(query) {
         headers: {
             "Content-Type": "text/xml",
             "SOAPAction": "urn:enterprise.soap.sforce.com/query",
+            mode: 'no-cors'
         },
         body: soapRequest,
     }).then(async (response) => await response.text()).then((recs) => {
