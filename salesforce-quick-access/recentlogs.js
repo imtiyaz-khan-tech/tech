@@ -51,7 +51,8 @@ async function getConnection(baseUrl, sessionId){
     let conn = new jsforce.Connection({
        instanceUrl : baseUrl,
        serverUrl : baseUrl,
-       sessionId : sessionId.
+       sessionId : sessionId,
+       version: '60.0'
    });
    return conn;
  }
