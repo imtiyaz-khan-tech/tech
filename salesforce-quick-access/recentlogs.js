@@ -30,7 +30,7 @@ async function initialize(){
     }else{
         if(baseUrl == 'https://phillips66enterprise--wipro.sandbox.my.salesforce.com'){
             userId = '005O8000007aiuXIAQ';
-        }else if(baseUrl == 'https://techsimplifier-dev-ed.my.salesforce.com'){
+        }else if(baseUrl == '1https://techsimplifier-dev-ed.my.salesforce.com'){
             userId = '0055h0000052HMAAA2';
         }else{
             await openUserRecord();
