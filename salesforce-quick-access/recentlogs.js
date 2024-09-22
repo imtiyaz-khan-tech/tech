@@ -30,14 +30,37 @@ async function initialize(){
     }else{
         if(baseUrl == 'https://phillips66enterprise--wipro.sandbox.my.salesforce.com'){
             userId = '005O8000007aiuXIAQ';
-        }else if(baseUrl == '1https://techsimplifier-dev-ed.my.salesforce.com'){
+        }else if(baseUrl == 'https://techsimplifier-dev-ed.my.salesforce.com'){
             userId = '0055h0000052HMAAA2';
         }else{
             await openUserRecord();
         }
         fetchRecords();
+        openCurrentUser();
         // fetchLogBody('07LO80000082sXkMAI');
     }
+}
+
+function openCurrentUser(){
+    console.log('openCurrentUser');
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer " + sessionId);
+
+    var requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow'
+    };
+
+    fetch(baseUrl + "/services/data/v59.0/", requestOptions).then(response => response.json()).then(result => {
+        console.log('$API: ', result)
+        let identity = result.identity;
+        console.log('$identity: ', identity);
+        identity = identity.substring(identity.lastIndexOf('/') + 1);
+        console.log('$identity: ', identity);
+    }).catch(error => {
+        console.log('$openCurrentUser: error', error);
+    });
 }
 
 async function openUserRecord(){
