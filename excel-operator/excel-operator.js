@@ -65,8 +65,13 @@ function generateExcelTableTop() {
 
     let i = 0;
     let ths = '';
+    let f_inx = 0;
+
     while (i < firstRowCells.length) {
         ths += `<th class="t_x_th">${firstRowCells[i].trim()}</th>`;
+        if(firstRowCells[i].trim() == 'ALI_Soldto__c'){
+            f_inx = i;
+        }
         i++;
     }
 
@@ -77,7 +82,11 @@ function generateExcelTableTop() {
         let tds = '';
         let j = 0;
         while (j < cells.length) {
-            tds += `<td class="t_x_td">${cells[j].trim()}</td>`;
+            if(f_inx == j){
+                tds += `<td class="t_x_td" style="background-color:yellow;">${cells[j].trim()}</td>`;
+            }else{
+                tds += `<td class="t_x_td">${cells[j].trim()}</td>`;
+            }
             j++;
         }
         trs += `<tr  class="t_x_tr t_x_tb_tr">${tds}</tr>`;
