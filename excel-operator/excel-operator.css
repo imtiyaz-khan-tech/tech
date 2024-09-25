@@ -34,15 +34,17 @@
 .cleftdvs::-webkit-scrollbar-thumb:hover {
     background-color: #b1aeae !important;
 } */
-.t_x_table{
+.t_x_table, .b_x_table{
     border-collapse: collapse;
     min-width: 100%;
+    text-indent: initial;
+    unicode-bidi: isolate;
 }
-.t_x_th{
+.t_x_th, .b_x_th{
     border: 1px solid #767676;
     color: #191717 !important;
 }
-.t_x_td{
+.t_x_td, .b_x_td{
     border: 1px solid #767676;
 }
 .t_x_th, .t_x_td{
@@ -56,16 +58,26 @@
     font-size: 11px;
     font-family: monospace;
     color: #313131;
-    height: 96vh;
-    padding: 5px;
+    padding: 3px;
+    height: fit-content;
+}
+.btn_table{
+    table-layout: fixed;
+    border-collapse: separate;
+    /* border-spacing: 3px; */
+}
+.btn_td{
+    width: 50%;
 }
 .btn{
     width: 100%;
 }
 .inp{
-    width: 100%;
+    width: 97%;
+    text-align: center;
+    outline: none;
 }
-.btns_dv_top_1{
+.btns_dv_top{
     display: grid;
     grid-column-gap: 5px !important;
     grid-template-columns: 1fr 1fr !important;
