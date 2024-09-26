@@ -1,7 +1,7 @@
 let excelData1;
 let excelData2;
 $(document).ready(function() {
-    $('.txt_area').val('ALI_ID\nALI_Soldto__c');
+    //$('.txt_area').val('ALI_ID\nALI_Soldto__c');
 });
 $(document).on('click', '.btn', function(e) {
     let btn = $(this).data('btn');
