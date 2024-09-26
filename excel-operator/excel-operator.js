@@ -11,6 +11,7 @@ $(document).on('click', '.btn', function(e) {
         pasteExcel2();
     } else if (btn == 'Clear Top') {
         $('.cleftdvs_top').html(`<button class="btn pst_btn" data-btn="Paste Excel - 1">Paste Excel</button>`);
+        $('.txt_area').val('');
     } else if (btn == 'Clear Bottom') {
         $('.cleftdvs_bottom').html(`<button class="btn pst_btn" data-btn="Paste Excel - 2">Paste Excel</button>`);
     } else if (btn == 'Include Columns') {
