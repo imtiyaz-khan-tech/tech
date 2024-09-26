@@ -99,6 +99,7 @@
 }
 .t_x_th,.b_x_th,.t_x_td,.b_x_td{
     cursor: default;
+    white-space: nowrap;
 }
 .t_x_th,.b_x_th,.t_x_td,.b_x_td{
     -webkit-touch-callout: none !important;
