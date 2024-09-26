@@ -184,6 +184,47 @@ $(document).on('click', '.btn', function(e) {
             const outputArray = matches.map(match => match.replace(startTag, '').replace(endTag, ''));
             txt_2(outputArray.join('\n'));
         }
+    }else if (btn == 'Replace Text Between - Include') {
+        let txt1 = txt_1();
+        let replace_left_value = inp('replace_left_value');
+        console.log('$replace_left_value: ',replace_left_value);
+        let replace_right_value = inp('replace_right_value');
+        console.log('$replace_right_value: ',replace_right_value);
+        let replace_value_btwn = inp('replace_value_btwn');
+        console.log('$replace_value_btwn: ',replace_value_btwn);
+        if(replace_left_value && replace_right_value){
+            const startChar = replace_left_value;
+            const endChar = replace_right_value;
+            /* const regex = new RegExp(`${startTag}(.*?)${endTag}`, 'g');
+            const matches = txt1.match(regex);
+            const outputArray = matches.map(match => match.replace(startTag, '').replace(endTag, ''));
+            txt_2(outputArray.join('\n')); */
+            txt1 = txt1.trim().split('\n').map(l => l.trim());
+            console.log('$txt1: ',txt1);
+            let i = 0;
+            let newArray = [];
+            while(i < txt1.length){
+                // Create a dynamic regular expression
+                let regex = new RegExp(`\\${startChar}[^\\${endChar}]+\\${endChar}`, 'g');
+                // Replace the matched text
+                let result = txt1[i].replace(regex, replace_value_btwn ? replace_value_btwn : '');
+                console.log('$result: ',result);
+                newArray.push(result);
+                i++;
+            }
+            console.log('$newArray: ',newArray);
+            txt_2(newArray.filter(Boolean).join(`\n`));
+            /* 
+            txt1 = txt1.trim().split('\n').map(l => l.trim());
+            let i = 0;
+            while(i < txt1.length){
+                if(!noDuplicatesArray.includes(txt1[i]))
+                    noDuplicatesArray.push(txt1[i]);
+                i++;
+            }
+            txt_2(noDuplicatesArray.filter(Boolean).join(`\n`));
+            */
+        }
     }else if (btn == 'Configure User Snippet') {
         let txt1 = txt_1();
         let txt2 = txt_2();
