@@ -263,10 +263,10 @@ $(document).on('click', '.t_x_th,.b_x_th,.t_x_td,.b_x_td', function (e){
    let text = $(this).text().trim();
    console.log('$text: ',text);
    copyToCLipboard(text);
-   //$('.t_x_th,.b_x_th,.t_x_td,.b_x_td').css('color','default');
-   //$(this).css('color','#9f26c7;');
+   $('.t_x_th,.b_x_th,.t_x_td,.b_x_td').css('color','#313131');
+   $(this).css('color','#9f26c7');
 });
-$(document).on('click', '.t_x_th', function (e){
+$(document).on('click', '.t_x_th, .b_x_th', function (e){
    let text = $(this).text().trim();
    console.log('$text: ',text);
    copyToCLipboard(text);
