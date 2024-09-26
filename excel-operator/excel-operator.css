@@ -71,6 +71,7 @@
 }
 .btn{
     width: 100%;
+    cursor: pointer;
 }
 .inp{
     width: 97%;
@@ -95,4 +96,15 @@
     width: 98.6%;
     outline: none;
     size: 10;
+}
+.t_x_th,.b_x_th,.t_x_td,.b_x_td{
+    cursor: default;
+}
+.t_x_th,.b_x_th,.t_x_td,.b_x_td{
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    -khtml-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
 }

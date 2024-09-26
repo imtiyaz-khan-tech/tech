@@ -265,3 +265,17 @@ $(document).on('click', '.t_x_th,.b_x_th,.t_x_td,.b_x_td', function (e){
    //$('.t_x_th,.b_x_th,.t_x_td,.b_x_td').css('color','default');
    //$(this).css('color','#9f26c7;');
 });
+$(document).on('click', '.t_x_th', function (e){
+   let text = $(this).text().trim();
+   console.log('$text: ',text);
+   copyToCLipboard(text);
+   let txtAreaColumns = $('.txt_area').val().split('\n');
+   console.log('$txtAreaColumns: ',txtAreaColumns);
+   if(!txtAreaColumns.includes(text))
+    txtAreaColumns.push(text);
+   console.log('$txtAreaColumns: ',txtAreaColumns);
+   $('.txt_area').val(txtAreaColumns.filter(Boolean).join('\n'));
+});
+$(document).on('dblclick', '.t_x_th', function (e){
+    $('.txt_area').val('');
+ });
