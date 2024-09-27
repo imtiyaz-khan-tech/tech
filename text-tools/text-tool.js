@@ -3,7 +3,24 @@ $(document).ready(function() {
     Draggable.create('.small_popup_1', {
         handle: '.small_popup_1_box_heading_div'
     });
-});
+
+    /* $('.txt_1').val(`10-AZ_2020
+01-AZ_2021
+04-AZ_2021
+07-AZ_2021
+10-AZ_2021
+01-AZ_2022
+04-AZ_2022
+07-AZ_2022
+10-AZ_2022
+01-AZ_2023
+04-AZ_2023
+07-AZ_2023
+10-AZ_2023
+01-AZ_2024
+04-AZ_2024
+07-AZ_2024`);
+}); */
 
 $(document).on('click', '.close-icon_1', function (e){
     // $('.d_outer').removeClass('blur');
@@ -311,6 +328,20 @@ $(document).on('click', '.btn', function(e) {
         txt_1('Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam necessitatibus tempore cum quos molestias repellat ducimus maiores quam nobis, quia perferendis illum numquam sint veritatis alias eveniet non quaerat vel!');
     }else if (btn == 'Test Data 4') {
         txt_1('Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam necessitatibus tempore cum quos molestias repellat ducimus maiores quam nobis, quia perferendis illum numquam sint veritatis alias eveniet non quaerat vel!');
+    }else if (btn == 'Replace Before') {
+        let txt1 = txt_1();
+        let replace_before_value = inp('replace_before_value');
+        let replace_before_with_value = inp('replace_before_with_value');
+        if(replace_before_value){
+            txt_2(txt1.trim().split('\n').map(l => replaceBeforeChar(l.trim(), replace_before_value, replace_before_with_value)).join('\n'));
+        }
+    }else if (btn == 'Replace After') {
+        let txt1 = txt_1();
+        let replace_after_value = inp('replace_after_value');
+        let replace_after_with_value = inp('replace_after_with_value');
+        if(replace_after_value){
+            txt_2(txt1.trim().split('\n').map(l => replaceAfterChar(l.trim(), replace_after_value, replace_after_with_value)).join('\n'));
+        }
     }
 });
 
@@ -408,3 +439,18 @@ $(document).on('input', '.txt_2', function (e){
         $('.b_lines_bottom').text(num);
     }
 });
+function replaceTextBetween(val, startChar, endChar, replaceValue){
+    let regex = new RegExp(`\\${startChar}[^\\${endChar}]+\\${endChar}`, 'g');
+    let result = val.replace(regex, replaceValue);
+    return result;
+}
+function replaceBeforeChar(val, startChar, replaceValue) {
+    let regex = new RegExp(`^[^${startChar}]*${startChar}`, 'g');
+    let result = val.replace(regex, replaceValue);
+    return result;
+}
+function replaceAfterChar(val, startChar, replaceValue) {
+    let regex = new RegExp(`${startChar}.*`, 'g');
+    let result = val.replace(regex, replaceValue);
+    return result;
+}

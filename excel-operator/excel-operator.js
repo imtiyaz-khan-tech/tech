@@ -10,10 +10,9 @@ $(document).on('click', '.btn', function(e) {
     } else if (btn == 'Paste Excel - 2') {
         pasteExcel2();
     } else if (btn == 'Clear Top') {
-        $('.cleftdvs_top').html(`<button class="btn pst_btn" data-btn="Paste Excel - 1">Paste Excel</button>`);
-        $('.txt_area').val('');
+        clearTop();
     } else if (btn == 'Clear Bottom') {
-        $('.cleftdvs_bottom').html(`<button class="btn pst_btn" data-btn="Paste Excel - 2">Paste Excel</button>`);
+        clearBottom();
     } else if (btn == 'Include Columns') {
         let columsArray = $('.txt_area').val().split('\n');
         console.log('$columsArray: ',columsArray);
@@ -22,6 +21,8 @@ $(document).on('click', '.btn', function(e) {
         let columsArray = $('.txt_area').val().split('\n');
         console.log('$columsArray: ',columsArray);
         excludeColumns(columsArray);
+    } else if (btn == 'Format Date') {
+        formateDateColumn($('.inp_formatted_date').val());
     } else if (btn == 'Copy Excel - 1') {
         let tableText = '';
         $('.t_x_table tr').each(function() {
@@ -46,6 +47,15 @@ $(document).on('click', '.btn', function(e) {
         copyToCLipboard(tableText.trim().split('\n').filter(Boolean).join('\n'));
     }
 });
+
+function clearTop(){
+    $('.cleftdvs_top').html(`<button class="btn pst_btn" data-btn="Paste Excel - 1">Paste Excel</button>`);
+    $('.txt_area').val('');
+}
+
+function clearBottom(){
+    $('.cleftdvs_bottom').html(`<button class="btn pst_btn" data-btn="Paste Excel - 2">Paste Excel</button>`);
+}
 
 function copyToCLipboard(value) {
     let text = value;
@@ -280,3 +290,95 @@ $(document).on('click', '.t_x_th, .b_x_th', function (e){
 $(document).on('dblclick', '.t_x_th', function (e){
     $('.txt_area').val('');
  });
+
+ function formateDateColumn(colum){
+    let rows = excelData1.trim().split('\n');
+    let firstRowCells = rows[0].split('\t').map(v => v.trim());
+    let newColumn = 'Formatted-Date';
+    let index = firstRowCells.indexOf(colum);
+    if (index != -1) {
+        firstRowCells.splice(index, 0, newColumn);
+    }
+
+    let i = 0;
+    let ths = '';
+    let newColumIndex = 0;
+    while (i < firstRowCells.length) {
+        let cell = firstRowCells[i].trim();
+        if(cell == newColumn){
+            newColumIndex = i;
+        }
+        ths += `<th class="b_x_th">${cell}</th>`;
+        i++;
+    }
+
+    i = 1;
+    let trs = '';
+    while (i < rows.length) {
+        let cells = rows[i].split('\t');
+        let tds = '';
+        let j = 0;
+        while (j < cells.length) {
+            if(j == newColumIndex){
+                let cell = cells[j].trim();
+                if(colum == 'StartDate'){
+                    tds += `<td class="b_x_td">${replaceBeforeChar(cell, '-')}</td>`;
+                }else{
+                    tds += `<td class="b_x_td">${replaceTextBetween(cell, '-', '-', '-')}</td>`;
+                }
+            }
+            tds += `<td class="b_x_td">${cells[j].trim()}</td>`;
+            j++;
+        }
+        trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+        i++;
+    }
+    let table = `
+        <table class="b_x_table">
+            <thead class="b_x_thead">
+                <tr  class="b_x_tr b_x_th_tr">
+                    ${ths}
+                </tr>
+            </thead>
+            <tbody class="b_x_body">
+                ${trs}
+            </tbody>
+        </table>
+    `;
+    $('.cleftdvs_bottom').html(table);
+}
+function replaceTextBetween(val, startChar, endChar, replaceValue){
+    let regex = new RegExp(`\\${startChar}[^\\${endChar}]+\\${endChar}`, 'g');
+    let result = val.replace(regex, replaceValue);
+    return result;
+}
+function replaceBeforeChar(val, startChar) {
+    let regex = new RegExp(`^[^${startChar}]*${startChar}`, 'g');
+    let result = val.replace(regex, '');
+    return result;
+}
+function replaceAfterChar(val, startChar) {
+    let regex = new RegExp(`${startChar}.*`, 'g');
+    let result = val.replace(regex, '');
+    return result;
+}
+let isCtrlPressed = false;
+$(document).on('keydown', 'body', function (e){
+   let charCode = (e.which) ? e.which : e.keyCode;
+   if(charCode == 18){
+      isCtrlPressed = true;
+   }
+   if(isCtrlPressed && charCode == 67) {
+        clearBottom();
+        $('body').focus();
+   }
+   if(isCtrlPressed && charCode == 88) {
+       clearTop();
+       clearBottom();
+       $('body').focus();
+   }
+});
+$(document).on('keyup', 'body', function (e){
+   let charCode = (e.which) ? e.which : e.keyCode;
+   isCtrlPressed = charCode == 18 ? false : isCtrlPressed;
+});
