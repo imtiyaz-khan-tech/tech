@@ -50,6 +50,9 @@
 .t_x_th, .t_x_td{
     padding: 2px;
 }
+.t_x_th, .b_x_th{
+    font-weight: bold;
+}
 
 .cdv_right{
     border: 1px solid lightgray;
