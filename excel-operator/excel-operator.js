@@ -21,6 +21,12 @@ $(document).on('click', '.btn', function(e) {
         excludeColumns(columsArray);
     } else if (btn == 'Format Date') {
         formateDateColumn($('.inp_formatted_date').val());
+    } else if (btn == 'download-top') {
+        var wb = XLSX.utils.table_to_book(document.getElementById("table_top_id"));
+        XLSX.writeFile(wb, "SheetJSTable.xlsx");
+    } else if (btn == 'download-bottom') {
+        var wb = XLSX.utils.table_to_book(document.getElementById("table_bottom_id"));
+        XLSX.writeFile(wb, "SheetJSTable.xlsx");
     }else if (btn == 'Copy Top') {
         let html = $('.cleftdvs_top').html();
         html = html.replace(/(<td\b[^>]*?)\s*style="[^"]*"/g, '$1');
@@ -107,7 +113,7 @@ function generateJsonToTable_Top(){
         i++;
     }
     let table = `
-        <table class="t_x_table">
+        <table class="t_x_table" id="table_top_id">
             <thead class="t_x_thead">
                 <tr  class="t_x_tr t_x_th_tr">
                     ${ths}
@@ -168,7 +174,7 @@ function generateJsonToTable_Bottom(){
         i++;
     }
     let table = `
-        <table class="b_x_table">
+        <table class="b_x_table" id="table_bottom_id">
             <thead class="b_x_thead">
                 <tr  class="b_x_tr b_x_th_tr">
                     ${ths}
@@ -234,7 +240,7 @@ function includeColumns(columsArray){
         i++;
     }
     let table = `
-        <table class="b_x_table">
+        <table class="b_x_table" id="table_bottom_id">
             <thead class="b_x_thead">
                 <tr  class="b_x_tr b_x_th_tr">
                     ${ths}
@@ -278,7 +284,7 @@ function excludeColumns(columsArray){
         i++;
     }
     let table = `
-        <table class="b_x_table">
+        <table class="b_x_table" id="table_bottom_id">
             <thead class="b_x_thead">
                 <tr  class="b_x_tr b_x_th_tr">
                     ${ths}
@@ -352,7 +358,7 @@ function formateDateColumn(colum){
             i++;
         }
         let table = `
-            <table class="b_x_table">
+            <table class="b_x_table" id="table_bottom_id">
                 <thead class="b_x_thead">
                     <tr  class="b_x_tr b_x_th_tr">
                         ${ths}
