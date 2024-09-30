@@ -19,6 +19,9 @@ $(document).on('click', '.btn', function(e) {
     } else if (btn == 'Exclude Columns') {
         let columsArray = $('.txt_area').val().split('\n');
         excludeColumns(columsArray);
+    } else if (btn == 'Copy Columns') {
+        let columsArray = $('.txt_area').val().split('\n');
+        copyColumns(columsArray);
     } else if (btn == 'Format Date') {
         formateDateColumn($('.inp_formatted_date').val());
     } else if (btn == 'download-top') {
@@ -296,6 +299,32 @@ function excludeColumns(columsArray){
         </table>
     `;
     $('.cleftdvs_bottom').html(table);
+}
+function copyColumns(columsArray){
+    console.log('$columsArray: ',columsArray);
+    let column = columsArray[0];
+    console.log('$column: ',column);
+    if(column){
+        // Assuming your table has an ID 'tableId'
+        const table = document.getElementById('table_bottom_id');
+        console.log('$table: ',table);
+        const workbook = XLSX.utils.table_to_book(table, {sheet: "Sheet1"});
+        console.log('$workbook: ',workbook);
+        const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets["Sheet1"]);
+        console.log('$jsonData: ',jsonData);
+        // Output the JSON data
+        console.log(jsonData);
+        let copyData = '';
+        let i = 0;
+        while(i < jsonData.length){
+            let item = jsonData[i];
+            copyData += `${item[column]}\n`;
+            i++;
+        }
+        copyData = copyData.trim();
+        console.log(copyData);
+        copyToCLipboard(copyData);
+    }
 }
 $(document).on('click', '.t_x_th,.b_x_th,.t_x_td,.b_x_td', function (e){
    let text = $(this).text().trim();
