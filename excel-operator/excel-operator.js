@@ -21,7 +21,7 @@ $(document).on('click', '.btn', function(e) {
         excludeColumns(columsArray);
     } else if (btn == 'Copy Columns') {
         let columsArray = $('.txt_area').val().split('\n');
-        copyColumns(columsArray);
+        copyColumns(columsArray, $(this));
     } else if (btn == 'Format Date') {
         formateDateColumn($('.inp_formatted_date').val());
     } else if (btn == 'download-top') {
@@ -35,11 +35,21 @@ $(document).on('click', '.btn', function(e) {
         html = html.replace(/(<td\b[^>]*?)\s*style="[^"]*"/g, '$1');
         const blob = new Blob([html], { type: "text/html" });
         navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
+        let label = $(this).text();
+        $(this).text('Copied.');
+        setTimeout( () => {
+            $(this).text(label);
+        }, 1000);
     } else if (btn == 'Copy Bottom') {
         let html = $('.cleftdvs_bottom').html();
         html = html.replace(/(<td\b[^>]*?)\s*style="[^"]*"/g, '$1');
         const blob = new Blob([html], { type: "text/html" });
         navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
+        let label = $(this).text();
+        $(this).text('Copied.');
+        setTimeout( () => {
+            $(this).text(label);
+        }, 1000);
     }
 });
 
@@ -300,31 +310,89 @@ function excludeColumns(columsArray){
     `;
     $('.cleftdvs_bottom').html(table);
 }
-function copyColumns(columsArray){
+function copyColumns(columsArray, _this){
+    columsArray = columsArray.filter(Boolean);
     console.log('$columsArray: ',columsArray);
-    let column = columsArray[0];
-    console.log('$column: ',column);
-    if(column){
-        // Assuming your table has an ID 'tableId'
+    if(columsArray.length){
         const table = document.getElementById('table_bottom_id');
-        console.log('$table: ',table);
         const workbook = XLSX.utils.table_to_book(table, {sheet: "Sheet1"});
-        console.log('$workbook: ',workbook);
         const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets["Sheet1"]);
         console.log('$jsonData: ',jsonData);
+
         // Output the JSON data
         console.log(jsonData);
-        let copyData = '';
+        let copyData = columsArray.join('\t') + '\n';
+        console.log(copyData);
         let i = 0;
         while(i < jsonData.length){
             let item = jsonData[i];
-            copyData += `${item[column]}\n`;
+            let j = 0;
+            while(j < columsArray.length){
+                let itemJ = columsArray[j];
+                if(j == (columsArray.length - 1)){
+                    copyData += getIdelValue(item[itemJ]) + '\n';
+                }else{
+                    copyData += getIdelValue(item[itemJ]) + '\t';
+                }
+                j++;
+            }
             i++;
         }
         copyData = copyData.trim();
         console.log(copyData);
-        copyToCLipboard(copyData);
+        copyToCLipboard_TimeOut(copyData, _this, _this.text().trim(), 1000, 'Copied.');
+    }else{
+
+        $('#table_bottom_id .b_x_th').each(function() {
+            console.log($(this).text());
+            columsArray.push(getIdelValue($(this).text().trim()));
+        });
+
+        console.log('$columsArray: ',columsArray);
+
+        const table = document.getElementById('table_bottom_id');
+        const workbook = XLSX.utils.table_to_book(table, {sheet: "Sheet1"});
+        const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets["Sheet1"]);
+        console.log('$jsonData: ',jsonData);
+
+        // Output the JSON data
+        console.log(jsonData);
+        let copyData = columsArray.join('\t') + '\n';
+        console.log(copyData);
+        let i = 0;
+        while(i < jsonData.length){
+            let item = jsonData[i];
+            let j = 0;
+            while(j < columsArray.length){
+                let itemJ = columsArray[j];
+                if(j == (columsArray.length - 1)){
+                    copyData += getIdelValue(item[itemJ]) + '\n';
+                }else{
+                    copyData += getIdelValue(item[itemJ]) + '\t';
+                }
+                j++;
+            }
+            i++;
+        }
+        copyData = copyData.trim();
+        console.log(copyData);
+        copyToCLipboard_TimeOut(copyData, _this, _this.text().trim(), 1000, 'Copied.');
     }
+}
+function copyToCLipboard_TimeOut(value, _this, label, time, copied) {
+    navigator.clipboard.writeText(value).then(function() {
+        if(_this){
+            _this.text(copied);
+            setTimeout( () => {
+                _this.text(label);
+            }, time);
+        }
+    }, function(err) {
+        _this.text('Failed...');
+        setTimeout( () => {
+            _this.text(label);
+        }, 5000);
+    });
 }
 $(document).on('click', '.t_x_th,.b_x_th,.t_x_td,.b_x_td', function (e){
    let text = $(this).text().trim();
@@ -344,7 +412,7 @@ $(document).on('click', '.t_x_th, .b_x_th', function (e){
    console.log('$txtAreaColumns: ',txtAreaColumns);
    $('.txt_area').val(txtAreaColumns.filter(Boolean).join('\n'));
 });
-$(document).on('dblclick', '.t_x_th', function (e){
+$(document).on('dblclick', '.t_x_th,.b_x_th', function (e){
     $('.txt_area').val('');
  });
 function formateDateColumn(colum){
