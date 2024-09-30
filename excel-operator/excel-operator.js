@@ -345,9 +345,9 @@ function formateDateColumn(colum){
                 let col = columns[j];
                 if(col == newColumn){
                     if(colum == 'StartDate'){
-                        tds += `<td class="b_x_td">${replaceBeforeChar(item[colum], '-')}</td>`;
+                        tds += `<td class="b_x_td">${replaceBeforeChar(item[colum], '-').replaceAll('-','___')}</td>`;
                     }else{
-                        tds += `<td class="b_x_td">${replaceTextBetween(item[colum], '-', '-', '-')}</td>`;
+                        tds += `<td class="b_x_td">${replaceTextBetween(item[colum], '-', '-', '___')}</td>`;
                     }
                 }else{
                     tds += `<td class="b_x_td">${getIdelValue(item[col])}</td>`;
