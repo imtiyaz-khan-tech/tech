@@ -21,7 +21,7 @@ $(document).ready(function() {
 04-AZ_2024
 07-AZ_2024`);
 }); */
-
+});
 $(document).on('click', '.close-icon_1', function (e){
     // $('.d_outer').removeClass('blur');
     $('.small_popup_1').addClass('hide');
