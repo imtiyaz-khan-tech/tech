@@ -22,6 +22,9 @@ $(document).on('click', '.btn', function(e) {
     } else if (btn == 'Copy Columns') {
         let columsArray = $('.txt_area').val().split('\n');
         copyColumns(columsArray, $(this));
+    } else if (btn == 'Concat Columns') {
+        let columsArray = $('.txt_area').val().split('\n');
+        concatColumns(columsArray, $(this));
     } else if (btn == 'Format Date') {
         formateDateColumn($('.inp_formatted_date').val());
     } else if (btn == 'download-top') {
@@ -309,6 +312,36 @@ function excludeColumns(columsArray){
         </table>
     `;
     $('.cleftdvs_bottom').html(table);
+}
+function concatColumns(columsArray, _this){
+    columsArray = columsArray.filter(Boolean);
+    if(columsArray.length == 2){
+        let column1 = columsArray.at(0);
+        let column2 = columsArray.at(1);
+        let newColumn = column1 + '+' + column2;
+        let ths = `<td class="b_x_th">${newColumn}</td>`;
+        $('.txt_area').val(newColumn);
+        let i = 0;
+        let trs = '';
+        while(i < excelJson_top.length){
+            let item = excelJson_top[i];
+            trs += `<tr  class="b_x_tr b_x_tb_tr"><td class="b_x_td">${getIdelValue(item[column1]) + getIdelValue(item[column2])}</td></tr>`;
+            i++;
+        }
+        let table = `
+            <table class="b_x_table" id="table_bottom_id">
+                <thead class="b_x_thead">
+                    <tr  class="b_x_tr b_x_th_tr">
+                        ${ths}
+                    </tr>
+                </thead>
+                <tbody class="b_x_body">
+                    ${trs}
+                </tbody>
+            </table>
+        `;
+        $('.cleftdvs_bottom').html(table);
+    }
 }
 function copyColumns(columsArray, _this){
     columsArray = columsArray.filter(Boolean);
