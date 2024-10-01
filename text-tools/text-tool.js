@@ -389,7 +389,7 @@ function clear(){
 function blank(){
     txt_1('');
     txt_2('');
-    $('.inp').val('');
+    $('.inp:not(.skip_row_count)').val('');
 }
 
 function txt_1(value) {
