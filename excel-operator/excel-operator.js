@@ -53,6 +53,9 @@ $(document).on('click', '.btn', function(e) {
         setTimeout( () => {
             $(this).text(label);
         }, 1000);
+    } else if (btn == 'Copy Formatted') {
+        let html = $('.cleftdvs_bottom').html();
+        copyToCLipboard_TimeOut(html, $(this), $(this).text().trim(), 1000, 'Copied.');
     } else if (btn == 'Create Map') {
         let columsArray = $('.txt_area').val().split('\n');
         let inp_formatted_date = $('.inp_formatted_date').val().trim();
