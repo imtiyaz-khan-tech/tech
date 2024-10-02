@@ -439,27 +439,6 @@ function copyToCLipboard_TimeOut(value, _this, label, time, copied) {
         }, 5000);
     });
 }
-$(document).on('click', '.t_x_th,.b_x_th,.t_x_td,.b_x_td', function (e){
-   let text = $(this).text().trim();
-   console.log('$text: ',text);
-   copyToCLipboard(text);
-   $('.t_x_th,.b_x_th,.t_x_td,.b_x_td').css('color','#313131');
-   $(this).css('color','#9f26c7');
-});
-$(document).on('click', '.t_x_th, .b_x_th', function (e){
-   let text = $(this).text().trim();
-   console.log('$text: ',text);
-   copyToCLipboard(text);
-   let txtAreaColumns = $('.txt_area').val().split('\n');
-   console.log('$txtAreaColumns: ',txtAreaColumns);
-   if(!txtAreaColumns.includes(text))
-    txtAreaColumns.push(text);
-   console.log('$txtAreaColumns: ',txtAreaColumns);
-   $('.txt_area').val(txtAreaColumns.filter(Boolean).join('\n'));
-});
-$(document).on('dblclick', '.t_x_th,.b_x_th', function (e){
-    $('.txt_area').val('');
- });
 
  function createMap(keyColums, valueColumn){
     keyColums = keyColums.filter(Boolean);
@@ -665,20 +644,41 @@ function replaceAfterChar(val, startChar) {
 let isCtrlPressed = false;
 $(document).on('keydown', 'body', function (e){
    let charCode = (e.which) ? e.which : e.keyCode;
-   if(charCode == 18){
+   if(charCode == 17){
       isCtrlPressed = true;
-   }
-   if(isCtrlPressed && charCode == 67) {
-        clearBottom();
-        $('body').focus();
-   }
-   if(isCtrlPressed && charCode == 88) {
-       clearTop();
-       clearBottom();
-       $('body').focus();
    }
 });
 $(document).on('keyup', 'body', function (e){
    let charCode = (e.which) ? e.which : e.keyCode;
-   isCtrlPressed = charCode == 18 ? false : isCtrlPressed;
+   isCtrlPressed = charCode == 17 ? false : isCtrlPressed;
+});
+
+$(document).on('click', '.t_x_th,.b_x_th,.t_x_td,.b_x_td', function (e){
+    let text = $(this).text().trim();
+    console.log('$text: ',text);
+    copyToCLipboard(text);
+    $('.t_x_th,.b_x_th,.t_x_td,.b_x_td').css('color','#313131');
+    $(this).css('color','#9f26c7');
+ });
+ $(document).on('click', '.t_x_th, .b_x_th', function (e){
+    let text = $(this).text().trim();
+    console.log('$text: ',text);
+    copyToCLipboard(text);
+    if(isCtrlPressed){
+        $('.inp_formatted_date').val(text);
+    }else{
+        let txtAreaColumns = $('.txt_area').val().split('\n');
+        console.log('$txtAreaColumns: ',txtAreaColumns);
+        if(!txtAreaColumns.includes(text))
+         txtAreaColumns.push(text);
+        console.log('$txtAreaColumns: ',txtAreaColumns);
+        $('.txt_area').val(txtAreaColumns.filter(Boolean).join('\n'));
+    }
+ });
+ $(document).on('dblclick', '.t_x_th,.b_x_th', function (e){
+     if(isCtrlPressed){
+        $('.inp_formatted_date').val('');
+    }else{
+        $('.txt_area').val('');
+    }
 });
