@@ -1,7 +1,7 @@
 let excelData1;
 let excelData2;
 $(document).ready(function() {
-    $('.txt_area').val('RING4_P66_LEGACY_AGREEMENT_SITE_ID__C\nRING4_P66_LEGACY_AGREEMENT_ID__C');
+    // $('.txt_area').val('RING4_P66_LEGACY_AGREEMENT_SITE_ID__C\nRING4_P66_LEGACY_AGREEMENT_ID__C');
 });
 $(document).on('click', '.btn', function(e) {
     let btn = $(this).data('btn');
