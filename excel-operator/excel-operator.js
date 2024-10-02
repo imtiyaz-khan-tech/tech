@@ -453,17 +453,22 @@ function copyToCLipboard_TimeOut(value, _this, label, time, copied) {
         console.log('$excelJson_top: ',excelJson_top);
 
         let i = 0;
-        let excelMapString = `let excelMap = new Map();\n`;
         let excelMap = new Map();
         while(i < excelJson_top.length){
             let item = excelJson_top[i];
-            excelMapString += `excelMap.set('${getIdelValue(item[keyColum1])}${getIdelValue(item[keyColum2])}','${getIdelValue(item[valueColumn])}');\n`;
             excelMap.set(getIdelValue(item[keyColum1])+getIdelValue(item[keyColum2]), getIdelValue(item[valueColumn]));
             i++;
         }
         console.log('$excelMap: ', excelMap);
         console.log('$excelMap-Size: ', excelMap.size);
-        $('.txt_area').val(excelMapString.trim());
+        
+        let mapDataArray = [];
+        for (const [key, value] of excelMap) {
+            mapDataArray.push(`["${key}", "${value}"]`);
+        }
+        let mapString = `let excelMap = new Map([\n\t${mapDataArray.join(',\n\t')}\t\n]);`;
+        console.log('$mapString: ',mapString);
+        $('.txt_area').val(mapString);
     }
 }
  
