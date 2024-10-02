@@ -321,31 +321,6 @@ function excludeColumns(columsArray){
     `;
     $('.cleftdvs_bottom').html(table);
 }
-function createMap(keyColums, valueColumn){
-    keyColums = keyColums.filter(Boolean);
-    console.log('$keyColums: ',keyColums);
-    console.log('$valueColumn: ',valueColumn);
-    if(keyColums.length == 2){
-        let keyColum1 = keyColums.at(0);
-        let keyColum2 = keyColums.at(1);
-        console.log('$keyColum1: ',keyColum1);
-        console.log('$keyColum2: ',keyColum2);
-        console.log('$excelJson_top: ',excelJson_top);
-
-        let i = 0;
-        let excelMapString = `let excelMap = new Map();\n`;
-        let excelMap = new Map();
-        while(i < excelJson_top.length){
-            let item = excelJson_top[i];
-            excelMapString += `excelMap.set('${getIdelValue(item[keyColum1])}${getIdelValue(item[keyColum2])}','${getIdelValue(item[valueColumn])}');\n`;
-            excelMap.set(getIdelValue(item[keyColum1])+getIdelValue(item[keyColum2]), getIdelValue(item[valueColumn]));
-            i++;
-        }
-        console.log('$excelMap: ', excelMap);
-        console.log('$excelMap-Size: ', excelMap.size);
-        $('.txt_area').val(excelMapString.trim());
-    }
-}
 
 function concatColumns(columsArray, _this){
     columsArray = columsArray.filter(Boolean);
@@ -482,9 +457,38 @@ $(document).on('click', '.t_x_th, .b_x_th', function (e){
 $(document).on('dblclick', '.t_x_th,.b_x_th', function (e){
     $('.txt_area').val('');
  });
+
+ function createMap(keyColums, valueColumn){
+    keyColums = keyColums.filter(Boolean);
+    console.log('$keyColums: ',keyColums);
+    console.log('$valueColumn: ',valueColumn);
+    if(keyColums.length == 2){
+        let keyColum1 = keyColums.at(0);
+        let keyColum2 = keyColums.at(1);
+        console.log('$keyColum1: ',keyColum1);
+        console.log('$keyColum2: ',keyColum2);
+        console.log('$excelJson_top: ',excelJson_top);
+
+        let i = 0;
+        let excelMapString = `let excelMap = new Map();\n`;
+        let excelMap = new Map();
+        while(i < excelJson_top.length){
+            let item = excelJson_top[i];
+            excelMapString += `excelMap.set('${getIdelValue(item[keyColum1])}${getIdelValue(item[keyColum2])}','${getIdelValue(item[valueColumn])}');\n`;
+            excelMap.set(getIdelValue(item[keyColum1])+getIdelValue(item[keyColum2]), getIdelValue(item[valueColumn]));
+            i++;
+        }
+        console.log('$excelMap: ', excelMap);
+        console.log('$excelMap-Size: ', excelMap.size);
+        $('.txt_area').val(excelMapString.trim());
+    }
+}
+ 
  function fillContractIds(){
     console.log('$excelMap:' , excelMap);
     let columns = Object.keys(excelJson_top[0]);
+    console.log('$columns: ',columns);
+    columns.splice(1, 0, 'p66_Child_Contract__c');
     console.log('$columns: ',columns);
     let i = 0;
     let ths = '';
@@ -534,6 +538,8 @@ $(document).on('dblclick', '.t_x_th,.b_x_th', function (e){
  function fillContractIdsProd(){
     console.log('$excelMapProd:' , excelMapProd);
     let columns = Object.keys(excelJson_top[0]);
+    console.log('$columns: ',columns);
+    columns.splice(1, 0, 'p66_Child_Contract__c');
     console.log('$columns: ',columns);
     let i = 0;
     let ths = '';
