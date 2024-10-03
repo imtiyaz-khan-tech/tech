@@ -467,7 +467,7 @@ function copyToCLipboard_TimeOut(value, _this, label, time, copied) {
             mapDataArray.push(`["${key}", "${value}"]`);
         }
         let mapString = `let excelMap = new Map([\n\t${mapDataArray.join(',\n\t')}\t\n]);`;
-        console.log('$mapString: ',mapString);
+        console.log(mapString);
         $('.txt_area').val(mapString);
     }
 }
