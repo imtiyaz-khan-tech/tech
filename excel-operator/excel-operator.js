@@ -473,9 +473,80 @@ function copyToCLipboard_TimeOut(value, _this, label, time, copied) {
 }
  
  function fillContractIds(){
-    console.log('$excelMap:' , excelMap);
     console.log('$ring4ContractIdsMap:' , ring4ContractIdsMap);
     console.log('$rin4ContractNumbersMap:' , rin4ContractNumbersMap);
+    console.log('$prodContractIdsMap:' , prodContractIdsMap);
+    console.log('$prodContractNumbersMap:' , prodContractNumbersMap);
+    let columns = Object.keys(excelJson_top[0]);
+    columns.splice(1, 0, 'p66_Child_Contract__c');
+    columns.splice(2, 0, 'Contract Number');
+    console.log('$columns: ',columns);
+    let i = 0;
+    let ths = '';
+    while (i < columns.length) {
+        let col = columns[i];
+        ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
+        i++;
+    }
+    console.log('$ths: ',ths);
+
+    i = 0;
+    let trs = '';
+    while(i < excelJson_top.length){
+        let item = excelJson_top[i];
+        let j = 0;
+        let tds = '';
+        while(j < columns.length){
+            let col = columns[j];
+            if(col == 'p66_Child_Contract__c'){
+                let mapKey = `${item['p66_Legacy_Agreement_Site_ID__c']}${item['p66_Legacy_Agreement_ID__c']}`;
+                let contractId = ring4ContractIdsMap.has(mapKey) ? ring4ContractIdsMap.get(mapKey) : '#N/A';
+                let style = ``;
+                if(contractId == '#N/A' && prodContractIdsMap.has(mapKey)){
+                    style = `style="background-color:yellow"`;
+                }
+                if(contractId != '#N/A'){
+                    style = `style="background-color:#a8f5c3"`;
+                }
+                tds += `<td class="b_x_td" ${style}>${contractId}</td>`;
+            }else if(col == 'Contract Number'){
+                let mapKey = `${item['p66_Legacy_Agreement_Site_ID__c']}${item['p66_Legacy_Agreement_ID__c']}`;
+                let contractNumber = rin4ContractNumbersMap.has(mapKey) ? rin4ContractNumbersMap.get(mapKey) : '#N/A';
+                let style = ``;
+                if(contractNumber == '#N/A' && prodContractNumbersMap.has(mapKey)){
+                    style = `style="background-color:yellow"`;
+                }
+                if(contractNumber != '#N/A'){
+                    style = `style="background-color:#a8f5c3"`;
+                }
+                tds += `<td class="b_x_td" ${style}>${contractNumber}</td>`;
+            }else{
+                tds += `<td class="b_x_td">${getIdelValue(item[col])}</td>`;
+            }
+            j++;
+        }
+        trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+        i++;
+    }
+    let table = `
+        <table class="b_x_table" id="table_bottom_id">
+            <thead class="b_x_thead">
+                <tr  class="b_x_tr b_x_th_tr">
+                    ${ths}
+                </tr>
+            </thead>
+            <tbody class="b_x_body">
+                ${trs}
+            </tbody>
+        </table>
+    `;
+    $('.cleftdvs_bottom').html(table);
+}
+ function fillContractIdsProd(){
+    console.log('$ring4ContractIdsMap:' , ring4ContractIdsMap);
+    console.log('$rin4ContractNumbersMap:' , rin4ContractNumbersMap);
+    console.log('$prodContractIdsMap:' , prodContractIdsMap);
+    console.log('$prodContractNumbersMap:' , prodContractNumbersMap);
     let columns = Object.keys(excelJson_top[0]);
     console.log('$columns: ',columns);
     columns.splice(1, 0, 'p66_Child_Contract__c');
@@ -500,79 +571,20 @@ function copyToCLipboard_TimeOut(value, _this, label, time, copied) {
             let col = columns[j];
             if(col == 'p66_Child_Contract__c'){
                 let mapKey = `${item['p66_Legacy_Agreement_Site_ID__c']}${item['p66_Legacy_Agreement_ID__c']}`;
-                console.log('$mapKey: ',mapKey);
-                let contractId = ring4ContractIdsMap.has(mapKey) ? ring4ContractIdsMap.get(mapKey) : '#N/A';
-                console.log('$contractId: ',contractId);
+                let contractId = prodContractIdsMap.has(mapKey) ? prodContractIdsMap.get(mapKey) : '#N/A';
                 let style = ``;
-                if(contractId == '#N/A' && excelMapProd.has(mapKey)){
+                if(prodContractIdsMap.has(mapKey) && !ring4ContractIdsMap.has(mapKey)){
                     style = `style="background-color:yellow"`;
                 }
                 tds += `<td class="b_x_td" ${style}>${contractId}</td>`;
             }else if(col == 'Contract Number'){
                 let mapKey = `${item['p66_Legacy_Agreement_Site_ID__c']}${item['p66_Legacy_Agreement_ID__c']}`;
-                console.log('$mapKey: ',mapKey);
-                let contractId = rin4ContractNumbersMap.has(mapKey) ? rin4ContractNumbersMap.get(mapKey) : '#N/A';
-                console.log('$contractId: ',contractId);
+                let contractNumber = prodContractNumbersMap.has(mapKey) ? prodContractNumbersMap.get(mapKey) : '#N/A';
                 let style = ``;
-                if(contractId == '#N/A' && excelMapProd.has(mapKey)){
+                if(prodContractNumbersMap.has(mapKey) && !rin4ContractNumbersMap.has(mapKey)){
                     style = `style="background-color:yellow"`;
                 }
-                tds += `<td class="b_x_td" ${style}>${contractId}</td>`;
-            }else{
-                tds += `<td class="b_x_td">${getIdelValue(item[col])}</td>`;
-            }
-            j++;
-        }
-        trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
-        i++;
-    }
-    let table = `
-        <table class="b_x_table" id="table_bottom_id">
-            <thead class="b_x_thead">
-                <tr  class="b_x_tr b_x_th_tr">
-                    ${ths}
-                </tr>
-            </thead>
-            <tbody class="b_x_body">
-                ${trs}
-            </tbody>
-        </table>
-    `;
-    $('.cleftdvs_bottom').html(table);
-}
- function fillContractIdsProd(){
-    console.log('$excelMapProd:' , excelMapProd);
-    let columns = Object.keys(excelJson_top[0]);
-    console.log('$columns: ',columns);
-    columns.splice(1, 0, 'p66_Child_Contract__c');
-    console.log('$columns: ',columns);
-    let i = 0;
-    let ths = '';
-    while (i < columns.length) {
-        let col = columns[i];
-        ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
-        i++;
-    }
-    console.log('$ths: ',ths);
-
-    i = 0;
-    let trs = '';
-    while(i < excelJson_top.length){
-        let item = excelJson_top[i];
-        let j = 0;
-        let tds = '';
-        while(j < columns.length){
-            let col = columns[j];
-            if(col == 'p66_Child_Contract__c'){
-                let mapKey = `${item['p66_Legacy_Agreement_Site_ID__c']}${item['p66_Legacy_Agreement_ID__c']}`;
-                console.log('$mapKey: ',mapKey);
-                let contractId = excelMapProd.has(mapKey) ? excelMapProd.get(mapKey) : '#N/A';
-                let style = ``;
-                if(excelMapProd.has(mapKey) && !ring4ContractIdsMap.has(mapKey)){
-                    style = `style="background-color:yellow"`;
-                }
-                console.log('$contractId: ',contractId);
-                tds += `<td class="b_x_td" ${style}>${contractId}</td>`;
+                tds += `<td class="b_x_td" ${style}>${contractNumber}</td>`;
             }else{
                 tds += `<td class="b_x_td">${getIdelValue(item[col])}</td>`;
             }
