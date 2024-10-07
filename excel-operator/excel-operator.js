@@ -2,6 +2,12 @@ let excelData1;
 let excelData2;
 $(document).ready(function() {
     // $('.txt_area').val('RING4_P66_LEGACY_AGREEMENT_SITE_ID__C\nRING4_P66_LEGACY_AGREEMENT_ID__C');
+    /* let data =``;
+    navigator.clipboard.writeText(data).then(function() {
+        pasteExcel1();
+     }, function(err) {
+        console.error('error copying');
+     }); */
 });
 $(document).on('click', '.btn', function(e) {
     let btn = $(this).data('btn');
@@ -64,6 +70,8 @@ $(document).on('click', '.btn', function(e) {
         fillContractIds();
     } else if (btn == 'Fill ContractIds Prod') {
         fillContractIdsProd();
+    } else if (btn == 'Highlight Duplicates') {
+        highlightDuplicates();
     }
 });
 
@@ -588,6 +596,77 @@ function copyToCLipboard_TimeOut(value, _this, label, time, copied) {
             }else{
                 tds += `<td class="b_x_td">${getIdelValue(item[col])}</td>`;
             }
+            j++;
+        }
+        trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+        i++;
+    }
+    let table = `
+        <table class="b_x_table" id="table_bottom_id">
+            <thead class="b_x_thead">
+                <tr  class="b_x_tr b_x_th_tr">
+                    ${ths}
+                </tr>
+            </thead>
+            <tbody class="b_x_body">
+                ${trs}
+            </tbody>
+        </table>
+    `;
+    $('.cleftdvs_bottom').html(table);
+}
+ function highlightDuplicates(){
+    let colorsMap = new Map();
+    let i = 0;
+    while(i < excelJson_top.length){
+        let item = excelJson_top[i];
+        if(!colorsMap.has(item['ALI__AgreementLineItem__c_Id']))
+            colorsMap.set(item['ALI__AgreementLineItem__c_Id'], '#'+(Math.random().toString(16)+'00000').slice(2,8));
+        i++;
+    }
+
+    let columns = Object.keys(excelJson_top[0]);
+    console.log('$columns: ',columns);
+    i = 0;
+    let ths = '';
+    while (i < columns.length) {
+        let col = columns[i];
+        ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
+        i++;
+    }
+    console.log('$ths: ',ths);
+    i = 0;
+    let trs = '';
+    while(i < excelJson_top.length){
+        let item = excelJson_top[i];
+
+        let concated = item['ALI__AgreementLineItem__c_Id'] + item['ARS_Apttus_Rebate__PeriodStartDt__c'];
+        console.log('$concated: ',concated);
+
+        let f = 0;
+        let highlight = false;
+        while(f < excelJson_top.length){
+            let item_f = excelJson_top[f];
+            
+            if(f != i){
+                let concated_f = item_f['ALI__AgreementLineItem__c_Id'] + item_f['ARS_Apttus_Rebate__PeriodStartDt__c'];
+                if(concated == concated_f && !highlight){
+                    highlight = true;
+                }
+            }
+
+            f++;
+        }
+
+        let j = 0;
+        let tds = '';
+        while(j < columns.length){
+            let col = columns[j];
+            let style = ``;
+            if(highlight){
+                style = `style="background-color:${colorsMap.get(item['ALI__AgreementLineItem__c_Id'])}"`;
+            }
+            tds += `<td class="b_x_td" ${style}>${getIdelValue(item[col])}</td>`;
             j++;
         }
         trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
