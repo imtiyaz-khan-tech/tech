@@ -70,6 +70,8 @@ $(document).on('click', '.btn', function(e) {
         fillContractIds();
     } else if (btn == 'Fill ContractIds Prod') {
         fillContractIdsProd();
+    } else if (btn == 'Fill Ship To And Sold To') {
+        fillShipToAndSoldTo();
     } else if (btn == 'Highlight Duplicates') {
         highlightDuplicates();
     }
@@ -530,6 +532,54 @@ function copyToCLipboard_TimeOut(value, _this, label, time, copied) {
                 tds += `<td class="b_x_td" ${style}>${contractNumber}</td>`;
             }else{
                 tds += `<td class="b_x_td">${getIdelValue(item[col])}</td>`;
+            }
+            j++;
+        }
+        trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+        i++;
+    }
+    let table = `
+        <table class="b_x_table" id="table_bottom_id">
+            <thead class="b_x_thead">
+                <tr  class="b_x_tr b_x_th_tr">
+                    ${ths}
+                </tr>
+            </thead>
+            <tbody class="b_x_body">
+                ${trs}
+            </tbody>
+        </table>
+    `;
+    $('.cleftdvs_bottom').html(table);
+}
+function fillShipToAndSoldTo(){
+    console.log('$legacyAccountKeyAndSfIDMap:' , legacyAccountKeyAndSfIDMap);
+    let columns = Object.keys(excelJson_top[0]);
+    console.log('$columns: ',columns);
+    columns.splice(1, 0, columns[0]);
+    console.log('$columns: ',columns);
+    let i = 0;
+    let ths = '';
+    while (i < columns.length) {
+        let col = columns[i];
+        ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
+        i++;
+    }
+    console.log('$ths: ',ths);
+
+    i = 0;
+    let trs = '';
+    while(i < excelJson_top.length){
+        let item = excelJson_top[i];
+        let j = 0;
+        let tds = '';
+        while(j < columns.length){
+            if(j == 1){
+                let mapKey = `${item[columns[j - 1]]}`;
+                let accountId = legacyAccountKeyAndSfIDMap.has(mapKey) ? legacyAccountKeyAndSfIDMap.get(mapKey) : '#N/A';
+                tds += `<td class="b_x_td">${accountId}</td>`;
+            }else{
+                tds += `<td class="b_x_td">${getIdelValue(item[columns[j]])}</td>`;
             }
             j++;
         }
