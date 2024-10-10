@@ -772,6 +772,7 @@ function fillShipToAndSoldTo(){
     let columns = Object.keys(excelJson_top[0]);
     console.log('$columns: ',columns);
     columns.splice(1, 0, columns[0] + '-SF');
+    $('.txt_area').val(columns[0] + '-SF');
     console.log('$columns: ',columns);
     let i = 0;
     let ths = '';
