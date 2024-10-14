@@ -405,8 +405,9 @@ $(document).on('keyup', 'body', function (e){
 });
 
 function clear(){
+    txt_1('');
     txt_2('');
-    $('.inp:not(.skip_row_count)').val('');
+    // $('.inp:not(.skip_row_count)').val('');
 }
 
 function blank(){
