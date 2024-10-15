@@ -174,14 +174,14 @@ function fillColumnsMP(){
             }else if(col == 'p66_Internal_Transaction_Number__c'){
                 value = foundItem ? foundItem['AFTN_Internal_Transaction_Number__c'] : '#N/A';
             }else if(col == 'p66_SAP_External_Reference_Date__c'){
-                // value = foundItem ? foundItem['AFTN_External_Reference_Dt'] : '#N/A';
-                value = foundItem ? (foundItem['AFTN_External_Reference_Dt'] ? convertDate(foundItem['AFTN_External_Reference_Dt']) : '') : '#N/A';
+                value = foundItem ? foundItem['AFTN_External_Reference_Dt'] : '#N/A';
+                // value = foundItem ? (foundItem['AFTN_External_Reference_Dt'] ? convertDate(foundItem['AFTN_External_Reference_Dt']) : '') : '#N/A';
             }else if(col == 'p66_Posting_Date__c'){
-                // value = foundItem ? foundItem['AFTN_Posting_Dt'] : '#N/A';
-                value = foundItem ? (foundItem['AFTN_Posting_Dt'] ? convertDate(foundItem['AFTN_Posting_Dt']) : '') : '#N/A';
+                value = foundItem ? foundItem['AFTN_Posting_Dt'] : '#N/A';
+                // value = foundItem ? (foundItem['AFTN_Posting_Dt'] ? convertDate(foundItem['AFTN_Posting_Dt']) : '') : '#N/A';
             }else if(col == 'P66_Invoice_Payment_Date__c'){
-                // value = foundItem ? foundItem['PP_Payment_Invoice_Dt__c'] : '#N/A';
-                value = foundItem ? (foundItem['PP_Payment_Invoice_Dt__c'] ? convertDate(foundItem['PP_Payment_Invoice_Dt__c']) : '') : '#N/A';
+                value = foundItem ? foundItem['PP_Payment_Invoice_Dt__c'] : '#N/A';
+                // value = foundItem ? (foundItem['PP_Payment_Invoice_Dt__c'] ? convertDate(foundItem['PP_Payment_Invoice_Dt__c']) : '') : '#N/A';
             }else if(col == 'p66_SF_Contractual_Program_Balance__c'){
                 value = foundItem ? foundItem['CAS_Contractual_Balance__c'] : '#N/A';
             }else if(col == 'p66_Legacy_SAP_Quantity__c'){
