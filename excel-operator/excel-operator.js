@@ -1,11 +1,14 @@
+/*
+    *Functionality is if you want to prepare diffrent column excel with provided excel: rPUpdateData(columsArray)
+*/
 let excelData1;
 let excelData2;
 let excelJson_top = null;
 let excelJson_bottom = null;
 $(document).ready(function() {
     console.clear();
-    // $('.txt_area').val('RING4_P66_LEGACY_AGREEMENT_SITE_ID__C\nRING4_P66_LEGACY_AGREEMENT_ID__C');
-    /* let data =``;
+    /* $('.txt_area').val('__Id\np66_Ship_To_Account__c');
+    let data =``;
     navigator.clipboard.writeText(data).then(function() {
         pasteExcel1();
      }, function(err) {
@@ -22,6 +25,8 @@ $(document).on('click', '.btn', function(e) {
         clearTop();
     } else if (btn == 'Clear Bottom') {
         clearBottom();
+    } else if (btn == 'Blank') {
+        blankAll();
     } else if (btn == 'Include Columns') {
         let columsArray = $('.txt_area').val().split('\n');
         includeColumns(columsArray);
@@ -88,8 +93,133 @@ $(document).on('click', '.btn', function(e) {
         fillDataCB();
     } else if (btn == 'Fill Columns-CB') {
         fillColumnsCB();
+    } else if (btn == 'RP Update Data') {
+        let columsArray = $('.txt_area').val().split('\n');
+        rPUpdateData(columsArray);
+    } else if (btn == 'Fill Members') {
+        let columsArray = $('.txt_area').val().split('\n');
+        fillMembers(columsArray);
     }
 });
+function fillMembers(columsArray){
+    columsArray = columsArray.filter(Boolean);
+    if(columsArray.length == 2){
+        let column1 = columsArray.at(0);
+        let column2 = columsArray.at(1);
+        console.log('$column1: ',column1);
+        console.log('$column2: ',column2);
+        
+        let i = 0;
+        let ths = '';
+        let columns = ['ID', 'RebateProgramId', 'p66_IsMigrated__c', 'AccountId', 'MemberStatus', 'CreatedById', 'Name'];
+        while (i < columns.length) {
+            let col = columns[i];
+            ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
+            i++;
+        }
+        console.log('$ths: ',ths);
+
+        i = 0;
+        let trs = '';
+        while(i < excelJson_top.length){
+            let item = excelJson_top[i];
+            let j = 0;
+            let tds = '';
+            while(j < columns.length){
+                let col = columns[j];
+                if(col == 'ID'){
+                    tds += `<td class="b_x_td"></td>`;
+                }else if(col == 'RebateProgramId'){
+                    tds += `<td class="b_x_td">${item[column1]}</td>`;
+                }else if(col == 'p66_IsMigrated__c'){
+                    tds += `<td class="b_x_td">TRUE</td>`;
+                }else if(col == 'AccountId'){
+                    tds += `<td class="b_x_td">${item[column2]}</td>`;
+                }else if(col == 'MemberStatus'){
+                    tds += `<td class="b_x_td">Active</td>`;
+                }else if(col == 'CreatedById'){
+                    tds += `<td class="b_x_td">0054x000007ae7TAAQ</td>`;
+                }else if(col == 'Name'){
+                    tds += `<td class="b_x_td">Member-${productIdAndRebateProgramNameMap.get(item['p66_Product__c'])}</td>`;
+                }
+                j++;
+            }
+            trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+            i++;
+        }
+        let table = `
+            <table class="b_x_table" id="table_bottom_id">
+                <thead class="b_x_thead">
+                    <tr  class="b_x_tr b_x_th_tr">
+                        ${ths}
+                    </tr>
+                </thead>
+                <tbody class="b_x_body">
+                    ${trs}
+                </tbody>
+            </table>
+        `;
+        $('.cleftdvs_bottom').html(table);
+        let html = $('.cleftdvs_bottom').html();
+        copyToCLipboard(html);
+    }
+}
+
+function rPUpdateData(columsArray){
+    columsArray = columsArray.filter(Boolean);
+    if(columsArray.length == 2){
+        let column1 = columsArray.at(0);
+        let column2 = columsArray.at(1);
+        console.log('$column1: ',column1);
+        console.log('$column2: ',column2);
+        
+        let i = 0;
+        let ths = '';
+        let columns = ['Id','p66_Rebate_Program_Member__c','p66_Rebate_Program_Status__c'];
+        while (i < columns.length) {
+            let col = columns[i];
+            ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
+            i++;
+        }
+        console.log('$ths: ',ths);
+
+        i = 0;
+        let trs = '';
+        while(i < excelJson_top.length){
+            let item = excelJson_top[i];
+            let j = 0;
+            let tds = '';
+            while(j < columns.length){
+                let col = columns[j];
+                if(col == 'p66_Rebate_Program_Member__c'){
+                    tds += `<td class="b_x_td">${item[column1]}</td>`;
+                }else if(col == 'Id'){
+                    tds += `<td class="b_x_td">${item[column2]}</td>`;
+                }else if(col == 'p66_Rebate_Program_Status__c'){
+                    tds += `<td class="b_x_td">Active</td>`;
+                }
+                j++;
+            }
+            trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+            i++;
+        }
+        let table = `
+            <table class="b_x_table" id="table_bottom_id">
+                <thead class="b_x_thead">
+                    <tr  class="b_x_tr b_x_th_tr">
+                        ${ths}
+                    </tr>
+                </thead>
+                <tbody class="b_x_body">
+                    ${trs}
+                </tbody>
+            </table>
+        `;
+        $('.cleftdvs_bottom').html(table);
+        let html = $('.cleftdvs_bottom').html();
+        copyToCLipboard(html);
+    }
+}
 
 function fillColumnsMP(){
     console.log('$excelJson_top: ',excelJson_top);
@@ -2304,6 +2434,12 @@ function clearTop(){
 }
 
 function clearBottom(){
+    $('.cleftdvs_bottom').html(`<button class="btn pst_btn" data-btn="Paste Excel - 2">Paste Excel</button>`);
+}
+function blankAll(){
+    $('.txt_area').val('');
+    $('.inp_formatted_date').val('');
+    $('.cleftdvs_top').html(`<button class="btn pst_btn" data-btn="Paste Excel - 1">Paste Excel</button>`);
     $('.cleftdvs_bottom').html(`<button class="btn pst_btn" data-btn="Paste Excel - 2">Paste Excel</button>`);
 }
 
