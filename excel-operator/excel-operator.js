@@ -99,6 +99,8 @@ $(document).on('click', '.btn', function(e) {
     } else if (btn == 'Fill Members') {
         let columsArray = $('.txt_area').val().split('\n');
         fillMembers(columsArray);
+    } else if (btn == 'Temp') {
+        doTemp();
     }
 });
 function fillMembers(columsArray){
@@ -3259,4 +3261,57 @@ function createMap(keyColums){
         console.log(mapString);
         $('.txt_area').val(mapString);
     } */
+}
+function doTemp(){
+    let i = 0;
+    let ths = '';
+    let columns = ['Id','p66_Legacy_Agreement_Line_Item_ID__c', 'ALI_Apttus__AgreementLineItem__c_Name', 'p66_Legacy_AGL_Bundle_ID__c'];
+    while (i < columns.length) {
+        let col = columns[i];
+        ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
+        i++;
+    }
+    console.log('$ths: ',ths);
+
+    i = 0;
+    let trs = '';
+    while(i < excelJson_top.length){
+        let item = excelJson_top[i];
+        let j = 0;
+        let tds = '';
+        while(j < columns.length){
+            let col = columns[j];
+            if(col == 'Id'){
+                tds += `<td class="b_x_td">${item['__Id']}</td>`;
+            }else if(col == 'p66_Legacy_Agreement_Line_Item_ID__c'){
+                tds += `<td class="b_x_td"></td>`;
+            }else if(col == 'p66_Legacy_AGL_Bundle_ID__c'){
+                tds += `<td class="b_x_td">${item['p66_Legacy_AGL_Bundle_ID__c']}</td>`;
+            }else if(col == 'ALI_Apttus__AgreementLineItem__c_Name'){
+                let startChar = 'AL';
+                let replaceValue = 'AL';
+                let regex = new RegExp(`^[^${startChar}]*${startChar}`, 'g');
+                let result = item['Name'].replace(regex, replaceValue);
+                tds += `<td class="b_x_td">${result}</td>`;
+            }
+            j++;
+        }
+        trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+        i++;
+    }
+    let table = `
+        <table class="b_x_table" id="table_bottom_id">
+            <thead class="b_x_thead">
+                <tr  class="b_x_tr b_x_th_tr">
+                    ${ths}
+                </tr>
+            </thead>
+            <tbody class="b_x_body">
+                ${trs}
+            </tbody>
+        </table>
+    `;
+    $('.cleftdvs_bottom').html(table);
+    let html = $('.cleftdvs_bottom').html();
+    copyToCLipboard(html);
 }
