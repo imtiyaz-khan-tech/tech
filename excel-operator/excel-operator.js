@@ -107,6 +107,8 @@ $(document).on('click', '.btn', function(e) {
         getALIColumns();
     } else if (btn == 'Fill ALI Columns') {
         fillALIColumns();
+    } else if (btn == 'ID TO ALI') {
+        fillIDTOALI();
     }
 });
 function fillMembers(columsArray){
@@ -3404,4 +3406,49 @@ function fillALIColumns(){
         </table>
     `;
     $('.cleftdvs_bottom').html(table);
+}
+function fillIDTOALI(){
+    // console.log('$rPIdAndAliIdMap: ',rPIdAndAliIdMap);
+    let i = 0;
+    let ths = '';
+    let columns = ['__Id','p66_Legacy_Agreement_Line_Item_ID__c'];
+    while (i < columns.length) {
+        let col = columns[i];
+        ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
+        i++;
+    }
+    console.log('$ths: ',ths);
+
+    i = 0;
+    let trs = '';
+    while(i < excelJson_top.length){
+        let item = excelJson_top[i];
+        let j = 0;
+        let tds = '';
+        while(j < columns.length){
+            let col = columns[j];
+            if(col == '__Id'){
+                tds += `<td class="b_x_td">${item['__Id']}</td>`;
+            }else if(col == 'p66_Legacy_Agreement_Line_Item_ID__c'){
+                tds += `<td class="b_x_td">${rPIdAndAliIdMap.get(item['__Id']) ? rPIdAndAliIdMap.get(item['__Id']) : '#N/A'}</td>`;
+            }
+            j++;
+        }
+        trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+        i++;
+    }
+    let table = `
+        <table class="b_x_table" id="table_bottom_id">
+            <thead class="b_x_thead">
+                <tr  class="b_x_tr b_x_th_tr">
+                    ${ths}
+                </tr>
+            </thead>
+            <tbody class="b_x_body">
+                ${trs}
+            </tbody>
+        </table>
+    `;
+    $('.cleftdvs_bottom').html(table);
+    let html = $('.cleftdvs_bottom').html();
 }
