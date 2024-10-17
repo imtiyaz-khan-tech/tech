@@ -7,8 +7,8 @@ let excelJson_top = null;
 let excelJson_bottom = null;
 $(document).ready(function() {
     console.clear();
-    /* $('.txt_area').val('__Id\np66_Ship_To_Account__c');
-    let data =``;
+    // $('.txt_area').val('__Id\np66_Ship_To_Account__c');
+    /* let data =``;
     navigator.clipboard.writeText(data).then(function() {
         pasteExcel1();
      }, function(err) {
@@ -21,6 +21,10 @@ $(document).on('click', '.btn', function(e) {
         pasteExcel1();
     } else if (btn == 'Paste Excel - 2') {
         pasteExcel2();
+    } else if (btn == 'Paste Special-1') {
+        pasteSpecial1();
+    } else if (btn == 'Paste Special-2') {
+        pasteSpecial2();
     } else if (btn == 'Clear Top') {
         clearTop();
     } else if (btn == 'Clear Bottom') {
@@ -2463,6 +2467,7 @@ function pasteExcel1() {
     });
 }
 
+
 function convertExcelToJson_Top(){
     const workbook = XLSX.read(excelData1, { type: 'string', raw: true });
     const sheetName = workbook.SheetNames[0];
@@ -3235,32 +3240,6 @@ function createMap(keyColums){
             $('.txt_area').val(mapString);
         }
     }
-
-    /* if(keyColums.length == 2){
-        let keyColum1 = keyColums.at(0);
-        let keyColum2 = keyColums.at(1);
-        console.log('$keyColum1: ',keyColum1);
-        console.log('$keyColum2: ',keyColum2);
-        console.log('$excelJson_top: ',excelJson_top);
-
-        let i = 0;
-        let excelMap = new Map();
-        while(i < excelJson_top.length){
-            let item = excelJson_top[i];
-            excelMap.set(getIdelValue(item[keyColum1])+getIdelValue(item[keyColum2]), getIdelValue(item[valueColumn]));
-            i++;
-        }
-        console.log('$excelMap: ', excelMap);
-        console.log('$excelMap-Size: ', excelMap.size);
-        
-        let mapDataArray = [];
-        for (const [key, value] of excelMap) {
-            mapDataArray.push(`["${key}", "${value}"]`);
-        }
-        let mapString = `let excelMap = new Map([\n\t${mapDataArray.join(',\n\t')}\t\n]);`;
-        console.log(mapString);
-        $('.txt_area').val(mapString);
-    } */
 }
 function doTemp(){
     let i = 0;
@@ -3314,4 +3293,54 @@ function doTemp(){
     $('.cleftdvs_bottom').html(table);
     let html = $('.cleftdvs_bottom').html();
     copyToCLipboard(html);
+}
+function pasteSpecial1() {
+    navigator.clipboard.readText().then(text => {
+        excelData1 = text.trim();
+        let rows = excelData1.split('\n').map(row => row.trim());
+        let headers = rows[0].split('\t').map(head => head.trim());
+        let jsonResult = [];
+        let i = 1;
+        while (i < rows.length) {
+            let row = rows[i].split('\t');
+            let obj = {};
+            let j = 0;
+            while (j < headers.length) {
+                obj[headers[j].trim()] = row[j] ? row[j].trim() : null;
+                j++;
+            }
+            jsonResult.push(obj);
+            i++;
+        }
+        excelJson_top = jsonResult;
+        generateJsonToTable_Top();
+
+    }).catch(err => {
+        console.error(err);
+    });
+}
+function pasteSpecial2() {
+    navigator.clipboard.readText().then(text => {
+        excelData2 = text.trim();
+        let rows = excelData2.split('\n').map(row => row.trim());
+        let headers = rows[0].split('\t').map(head => head.trim());
+        let jsonResult = [];
+        let i = 1;
+        while (i < rows.length) {
+            let row = rows[i].split('\t');
+            let obj = {};
+            let j = 0;
+            while (j < headers.length) {
+                obj[headers[j].trim()] = row[j] ? row[j].trim() : null;
+                j++;
+            }
+            jsonResult.push(obj);
+            i++;
+        }
+        excelJson_bottom = jsonResult;
+        generateJsonToTable_Bottom();
+
+    }).catch(err => {
+        console.error(err);
+    });
 }
