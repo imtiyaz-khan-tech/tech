@@ -103,8 +103,10 @@ $(document).on('click', '.btn', function(e) {
     } else if (btn == 'Fill Members') {
         let columsArray = $('.txt_area').val().split('\n');
         fillMembers(columsArray);
-    } else if (btn == 'Temp') {
-        doTemp();
+    } else if (btn == 'Get ALI Columns') {
+        getALIColumns();
+    } else if (btn == 'Fill ALI Columns') {
+        fillALIColumns();
     }
 });
 function fillMembers(columsArray){
@@ -2463,7 +2465,9 @@ function pasteExcel1() {
         excelData1 = text;
         convertExcelToJson_Top();
     }).catch(err => {
-        console.error(err);
+        console.error('$error: ', err);
+        console.log('$error message: ', err.message);
+        alert(err.message + ' - Use Paste Special');
     });
 }
 
@@ -2610,7 +2614,9 @@ function pasteExcel2() {
         excelData2 = text;
         convertExcelToJson_Bottom();
     }).catch(err => {
-        console.error(err);
+        console.error('$error: ', err);
+        console.log('$error message: ', err.message);
+        alert(err.message + ' - Use Paste Special');
     });
 }
 
@@ -3241,7 +3247,61 @@ function createMap(keyColums){
         }
     }
 }
-function doTemp(){
+function pasteSpecial1() {
+    navigator.clipboard.readText().then(text => {
+        excelData1 = text.trim();
+        let rows = excelData1.split('\n').map(row => row.trim());
+        let headers = rows[0].split('\t').map(head => head.trim());
+        let jsonResult = [];
+        let i = 1;
+        while (i < rows.length) {
+            let row = rows[i].split('\t');
+            let obj = {};
+            let j = 0;
+            while (j < headers.length) {
+                obj[headers[j].trim()] = row[j] ? row[j].trim() : null;
+                j++;
+            }
+            jsonResult.push(obj);
+            i++;
+        }
+        excelJson_top = jsonResult;
+        generateJsonToTable_Top();
+
+    }).catch(err => {
+        console.error(err);
+        console.error('$error: ', err);
+        console.log('$error message: ', err.message);
+        alert(err.message);
+    });
+}
+function pasteSpecial2() {
+    navigator.clipboard.readText().then(text => {
+        excelData2 = text.trim();
+        let rows = excelData2.split('\n').map(row => row.trim());
+        let headers = rows[0].split('\t').map(head => head.trim());
+        let jsonResult = [];
+        let i = 1;
+        while (i < rows.length) {
+            let row = rows[i].split('\t');
+            let obj = {};
+            let j = 0;
+            while (j < headers.length) {
+                obj[headers[j].trim()] = row[j] ? row[j].trim() : null;
+                j++;
+            }
+            jsonResult.push(obj);
+            i++;
+        }
+        excelJson_bottom = jsonResult;
+        generateJsonToTable_Bottom();
+
+    }).catch(err => {
+        console.error(err);
+        alert(err.message);
+    });
+}
+function getALIColumns(){
     let i = 0;
     let ths = '';
     let columns = ['Id','p66_Legacy_Agreement_Line_Item_ID__c', 'ALI_Apttus__AgreementLineItem__c_Name', 'p66_Legacy_AGL_Bundle_ID__c'];
@@ -3263,7 +3323,7 @@ function doTemp(){
             if(col == 'Id'){
                 tds += `<td class="b_x_td">${item['__Id']}</td>`;
             }else if(col == 'p66_Legacy_Agreement_Line_Item_ID__c'){
-                tds += `<td class="b_x_td"></td>`;
+                tds += `<td class="b_x_td">-</td>`;
             }else if(col == 'p66_Legacy_AGL_Bundle_ID__c'){
                 tds += `<td class="b_x_td">${item['p66_Legacy_AGL_Bundle_ID__c']}</td>`;
             }else if(col == 'ALI_Apttus__AgreementLineItem__c_Name'){
@@ -3292,55 +3352,56 @@ function doTemp(){
     `;
     $('.cleftdvs_bottom').html(table);
     let html = $('.cleftdvs_bottom').html();
-    copyToCLipboard(html);
 }
-function pasteSpecial1() {
-    navigator.clipboard.readText().then(text => {
-        excelData1 = text.trim();
-        let rows = excelData1.split('\n').map(row => row.trim());
-        let headers = rows[0].split('\t').map(head => head.trim());
-        let jsonResult = [];
-        let i = 1;
-        while (i < rows.length) {
-            let row = rows[i].split('\t');
-            let obj = {};
-            let j = 0;
-            while (j < headers.length) {
-                obj[headers[j].trim()] = row[j] ? row[j].trim() : null;
-                j++;
-            }
-            jsonResult.push(obj);
-            i++;
-        }
-        excelJson_top = jsonResult;
-        generateJsonToTable_Top();
+function fillALIColumns(){
+    const tableBottom = document.getElementById('table_bottom_id');
+    const workbook = XLSX.utils.table_to_book(tableBottom, {sheet: "Sheet1"});
+    excelJson_bottom = XLSX.utils.sheet_to_json(workbook.Sheets["Sheet1"]);
+    console.log('$excelJson_bottom: ',excelJson_bottom);
+    let i = 0;
+    let ths = '';
+    let columns = Object.keys(excelJson_bottom[0]);
+    console.log('$columns: ',columns);
+    while (i < columns.length) {
+        let col = columns[i];
+        ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
+        i++;
+    }
+    console.log('$ths: ',ths);
 
-    }).catch(err => {
-        console.error(err);
-    });
-}
-function pasteSpecial2() {
-    navigator.clipboard.readText().then(text => {
-        excelData2 = text.trim();
-        let rows = excelData2.split('\n').map(row => row.trim());
-        let headers = rows[0].split('\t').map(head => head.trim());
-        let jsonResult = [];
-        let i = 1;
-        while (i < rows.length) {
-            let row = rows[i].split('\t');
-            let obj = {};
-            let j = 0;
-            while (j < headers.length) {
-                obj[headers[j].trim()] = row[j] ? row[j].trim() : null;
-                j++;
+    i = 0;
+    let trs = '';
+    while(i < excelJson_bottom.length){
+        let item = excelJson_bottom[i];
+        let j = 0;
+        let tds = '';
+        while(j < columns.length){
+            let col = columns[j];
+            if(col == 'p66_Legacy_Agreement_Line_Item_ID__c'){
+                let element = excelJson_top.find(element => {
+                    return element['ALI_Apttus__AgreementLineItem__c_Name'] == item['ALI_Apttus__AgreementLineItem__c_Name'];
+                });
+                console.log('$element: ',element);
+                tds += `<td class="b_x_td">${element ? element['ALI_ID'] : '#N/A'}</td>`;
+            }else{
+                tds += `<td class="b_x_td">${item[col]}</td>`;
             }
-            jsonResult.push(obj);
-            i++;
+            j++;
         }
-        excelJson_bottom = jsonResult;
-        generateJsonToTable_Bottom();
-
-    }).catch(err => {
-        console.error(err);
-    });
+        trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+        i++;
+    }
+    let table = `
+        <table class="b_x_table" id="table_bottom_id">
+            <thead class="b_x_thead">
+                <tr  class="b_x_tr b_x_th_tr">
+                    ${ths}
+                </tr>
+            </thead>
+            <tbody class="b_x_body">
+                ${trs}
+            </tbody>
+        </table>
+    `;
+    $('.cleftdvs_bottom').html(table);
 }
