@@ -274,7 +274,7 @@ function processRPRow(i, columns, isLegacy, prodRPDetail) {
         }else if(col == 'p66_Price_Method__c'){
             tds += `<td class="b_x_td">${getIdelValue(item['bundle_Apttus_CMConfig__PriceMethod__c'])}</td>`;
         }else if(col == 'p66_Pricing_UOM__c'){
-            tds += `<td class="b_x_td">${item['ALI_Apttus_CMConfig__Uom__c']}</td>`;
+            tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig__Uom__c'])}</td>`;
         }else if(col == 'p66_Rebate_Program_Status__c'){
             tds += `<td class="b_x_td">Draft</td>`;
         }else if(col == 'p66_Volume_Basis__c'){
