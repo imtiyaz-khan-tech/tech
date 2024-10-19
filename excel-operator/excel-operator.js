@@ -109,8 +109,314 @@ $(document).on('click', '.btn', function(e) {
         fillALIColumns();
     } else if (btn == 'ID TO ALI') {
         fillIDTOALI();
+    } else if (btn == 'Fill Data-RP') {
+        fillDataRP();
+    } else if (btn == 'Fill Columns-RP') {
+        fillColumnsRP();
     }
 });
+function fillColumnsRP(){
+    
+    let isLegacy = $('.txt_area').val();
+    console.log('$isLegacy: ',isLegacy);
+    let productCode = $('.inp_col').val();
+    console.log('$productCode: ',productCode);
+
+    let codeProductRpDetails = JSON.parse(productCodeRPDetailJson);
+    console.log('$codeProductRpDetails: ',codeProductRpDetails);
+    let prodRPDetail = codeProductRpDetails.find(element => {
+        return element.ProductCode == productCode;
+    });
+    console.log('$prodRPDetail: ',prodRPDetail);
+
+    if(productCode && prodRPDetail && (isLegacy == 'true' || isLegacy == 'false')){
+        let i = 0;
+        let ths = '';
+        let columns = ['p66_IsMigrated__c', 'p66_IsLegacy__c', 'p66_Sold_To_Account__c', 'p66_Ship_To_Account__c', 'p66_Child_Contract__c',
+                        'Contract Number', 'p66_Product__c', 'p66_Parent_Rebate_Program__c', 'Parent Rebate Program Name', 
+                        'ALI_Apttus__AgreementLineItem__c_Name', 'Name', 'p66_Legacy_Products_List__c', 'p66_Legacy_Agreement_Site_ID__c', 
+                        'p66_Legacy_Agreement_ID__c', 'p66_Legacy_Agreement_Line_Item_ID__c', 'p66_Base_Price__c', 'p66_Rebate_Rate_CPG__c', 
+                        'p66_Base_Price_Method__c', 'p66_Comments__c', 'Description', 'p66_Exclude_from_Contractual_Balance__c', 'Frequency', 
+                        'p66_Rebate_Program_Frequency__c', 'p66_Frequency__c', 'p66_Incentive_Type__c', 'p66_Is_Financial_Schedule__c', 
+                        'p66_Payment_Processing_Day__c', 'p66_Price_Method__c', 'p66_Pricing_UOM__c', 'p66_Rebate_Program_Status__c', 'p66_Volume_Basis__c', 
+                        'p66_Volume_Source__c', 'p66_Price_Type__c', 'p66_Legacy_Product_category__c', 'p66_Tier_1_CPG__c', 'p66_Tier_1_Volume__c', 
+                        'p66_Tier_1_Start_Date__c', 'p66_Tier_1_End_Date__c', 'p66_Tier_1_TLA_Base_Price_CPG__c', 'p66_Tier_2_CPG__c', 'p66_Tier_2_Volume__c', 
+                        'p66_Tier_2_Start_Date__c', 'p66_Tier_2_TLA_Base_Price_CPG__c', 'p66_Tier_2_End_Date__c', 'p66_Tier_3_CPG__c', 'p66_Tier_3_Volume__c', 
+                        'p66_Tier_4_CPG__c', 'p66_Tier_4_Volume__c', 'p66_Tier_6_CPG__c', 'p66_Tier_6_Volume__c', 'p66_Withholding__c', 'p66_Trueup_period_months__c', 
+                        'p66_ContractualAmoritizationDelay_months__c', 'p66_Contractual_Amortization_Method__c', 'p66_ContractualAmoritizationTermsmonths__c', 
+                        'p66_Contractual_Rolling_Balance_months__c', 'p66_Out_Standing_Balance__c', 'p66_Legacy_AGL_Bundle_ID__c', 
+                        'p66_True_Up_Base_price__c', 'p66_ProgramEffective_Date__c', 'EndDate', 'StartDate', 'p66_Term__c', 'CreatedById'
+                    ];
+        while (i < columns.length) {
+            let col = columns[i];
+            ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
+            i++;
+        }
+        console.log('$ths: ',ths);
+
+        i = 0;
+        let trs = '';
+        while(i < excelJson_top.length){
+            let item = excelJson_top[i];
+            let j = 0;
+            let tds = '';
+            while(j < columns.length){
+                let col = columns[j];
+                if(col == 'p66_IsMigrated__c'){
+                    tds += `<td class="b_x_td">TRUE</td>`;
+                }else if(col == 'p66_IsLegacy__c'){
+                    tds += `<td class="b_x_td">${isLegacy.toUpperCase()}</td>`;
+                }else if(col == 'p66_Sold_To_Account__c'){
+                    let key = item['ALI_Soldto__c'];
+                    let accountId = legacyAccountKeyAndSfIDMap.has(key) ? legacyAccountKeyAndSfIDMap.get(key) : '#N/A';
+                    tds += `<td class="b_x_td">${accountId}</td>`;
+                }else if(col == 'p66_Ship_To_Account__c'){
+                    let key = item['ALI_ShipTo__c'];
+                    let accountId = legacyAccountKeyAndSfIDMap.has(key) ? legacyAccountKeyAndSfIDMap.get(key) : '#N/A';
+                    tds += `<td class="b_x_td">${accountId}</td>`;
+                }else if(col == 'p66_Child_Contract__c'){
+                    let mapKey = `${item['ALI_Agreement_Site__c']}${item['ALI_Apttus__AgreementId__c']}`;
+                    let contractId = ring4ContractIdsMap.has(mapKey) ? ring4ContractIdsMap.get(mapKey) : '#N/A';
+                    tds += `<td class="b_x_td">${contractId}</td>`;
+                }else if(col == 'Contract Number'){
+                    let mapKey = `${item['ALI_Agreement_Site__c']}${item['ALI_Apttus__AgreementId__c']}`;
+                    let contractNumber = rin4ContractNumbersMap.has(mapKey) ? rin4ContractNumbersMap.get(mapKey) : '#N/A';
+                    tds += `<td class="b_x_td">${contractNumber}</td>`;
+                }else if(col == 'p66_Product__c'){
+                    tds += `<td class="b_x_td">${prodRPDetail.Id}</td>`;
+                }else if(col == 'p66_Parent_Rebate_Program__c'){
+                    tds += `<td class="b_x_td">${prodRPDetail.p66_Rebate_Program__c}</td>`;
+                }else if(col == 'Parent Rebate Program Name'){
+                    tds += `<td class="b_x_td">${prodRPDetail.p66_Rebate_Program__r.Name}</td>`;
+                }else if(col == 'ALI_Apttus__AgreementLineItem__c_Name'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus__AgreementLineItem__c_Name'])}</td>`;
+                }else if(col == 'Name'){
+                    let name;
+                    let mapKey = `${item['ALI_Agreement_Site__c']}${item['ALI_Apttus__AgreementId__c']}`;
+                    let contractNumber = rin4ContractNumbersMap.has(mapKey) ? rin4ContractNumbersMap.get(mapKey) : '#N/A';
+                    if(isLegacy == 'false'){
+                        name = prodRPDetail.p66_Rebate_Program__r.Name + '-' + contractNumber + '-' + item['ALI_Apttus__AgreementLineItem__c_Name'];
+                    }else{
+                        name = 'LRP-'+ item['ALI_Apttus_CMConfig__OptionId__Name'] + '-' + prodRPDetail.p66_Rebate_Program__r.Name + '-' + contractNumber + '-' + item['ALI_Apttus__AgreementLineItem__c_Name'];
+                    }
+                    tds += `<td class="b_x_td">${name}</td>`;
+                }else if(col == 'p66_Legacy_Products_List__c'){
+                    tds += `<td class="b_x_td">${item['ALI_Apttus__Product__Name']}-${item['ALI_Apttus_CMConfig__OptionId__Name']}</td>`;
+                }else if(col == 'p66_Legacy_Agreement_Site_ID__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Agreement_Site__c'])}</td>`;
+                }else if(col == 'p66_Legacy_Agreement_ID__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus__AgreementId__c'])}</td>`;
+                }else if(col == 'p66_Legacy_Agreement_Line_Item_ID__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_ID'])}</td>`;
+                }else if(col == 'p66_Base_Price__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig_BasePrice'])}</td>`;
+                }else if(col == 'p66_Rebate_Rate_CPG__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig_BasePrice'])}</td>`;
+                }else if(col == 'p66_Base_Price_Method__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig_BasePriceMethod'])}</td>`;
+                }else if(col == 'p66_Comments__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig_Comments'])}</td>`;
+                }else if(col == 'Description'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus__Description__c'])}</td>`;
+                }else if(col == 'p66_Exclude_from_Contractual_Balance__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_p66_Exclude_from_Contractual_Balance'])}</td>`;
+                }else if(col == 'Frequency'){
+                    let freq = item['ALI_Apttus_CMConfig__Frequency'];
+                    if(freq && freq.toLowerCase() == 'one time'){
+                        freq = 'ProgramStartAndEndDate';
+                    }
+                    tds += `<td class="b_x_td">${getIdelValue(freq)}</td>`;
+                }else if(col == 'p66_Rebate_Program_Frequency__c'){
+                    let freq = item['ALI_Apttus_CMConfig__Frequency'];
+                    if(freq && freq.toLowerCase() == 'one time'){
+                        freq = 'Upfront';
+                    }
+                    tds += `<td class="b_x_td">${getIdelValue(freq)}</td>`;
+                }else if(col == 'p66_Frequency__c'){
+                    let freq = item['ALI_Apttus_CMConfig__Frequency'];
+                    if(freq && freq.toLowerCase() == 'one time'){
+                        freq = 'Upfront';
+                    }
+                    tds += `<td class="b_x_td">${getIdelValue(freq)}</td>`;
+                }else if(col == 'p66_Incentive_Type__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig__IncentiveType'])}</td>`;
+                }else if(col == 'p66_Is_Financial_Schedule__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Ammortized'])}</td>`;
+                }else if(col == 'p66_Payment_Processing_Day__c'){
+                    let ppday = item['ALI_Payment_Processing_day'];
+                    if(ppday && (ppday == 1 || ppday == '1')){
+                        ppday = '1 Working Day';
+                    }else if(ppday && (ppday == 2 || ppday == '2')){
+                        ppday = '2 Working Days';
+                    }else if(ppday && (ppday == 10 || ppday == '10')){
+                        ppday = '10 Working Days';
+                    }
+                    tds += `<td class="b_x_td">${getIdelValue(ppday)}</td>`;
+                }else if(col == 'p66_Price_Method__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['bundle_Apttus_CMConfig__PriceMethod__c'])}</td>`;
+                }else if(col == 'p66_Pricing_UOM__c'){
+                    tds += `<td class="b_x_td">${item['ALI_Apttus_CMConfig__Uom__c']}</td>`;
+                }else if(col == 'p66_Rebate_Program_Status__c'){
+                    tds += `<td class="b_x_td">Draft</td>`;
+                }else if(col == 'p66_Volume_Basis__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Volume_Basis'])}</td>`;
+                }else if(col == 'p66_Volume_Source__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Volume_Source'])}</td>`;
+                }else if(col == 'p66_Price_Type__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Price_Type'])}</td>`;
+                }else if(col == 'p66_Legacy_Product_category__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Product_category'])}</td>`;
+                }else if(col == 'p66_Tier_1_CPG__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_1_CPG__c'])}</td>`;
+                }else if(col == 'p66_Tier_1_Volume__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_1_Volume__c'])}</td>`;
+                }else if(col == 'p66_Tier_1_Start_Date__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['--'])}</td>`;
+                }else if(col == 'p66_Tier_1_End_Date__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['--'])}</td>`;
+                }else if(col == 'p66_Tier_1_TLA_Base_Price_CPG__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_1_TLA_Base_Price_CPG__c'])}</td>`;
+                }else if(col == 'p66_Tier_2_CPG__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_2_CPG__c'])}</td>`;
+                }else if(col == 'p66_Tier_2_Volume__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_2_Volume__c'])}</td>`;
+                }else if(col == 'p66_Tier_2_Start_Date__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['--'])}</td>`;
+                }else if(col == 'p66_Tier_2_TLA_Base_Price_CPG__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_2_TLA_Base_Price_CPG__c'])}</td>`;
+                }else if(col == 'p66_Tier_2_End_Date__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['--'])}</td>`;
+                }else if(col == 'p66_Tier_3_CPG__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_3_CPG__c'])}</td>`;
+                }else if(col == 'p66_Tier_3_Volume__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_3_Volume__c'])}</td>`;
+                }else if(col == 'p66_Tier_4_CPG__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_4_CPG__c'])}</td>`;
+                }else if(col == 'p66_Tier_4_Volume__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_4_Volume__c'])}</td>`;
+                }else if(col == 'p66_Tier_6_CPG__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_6_CPG__c'])}</td>`;
+                }else if(col == 'p66_Tier_6_Volume__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_6_Volume__c'])}</td>`;
+                }else if(col == 'p66_Withholding__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Withholding__c'])}</td>`;
+                }else if(col == 'p66_Trueup_period_months__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Trueup_period_months__c'])}</td>`;
+                }else if(col == 'p66_ContractualAmoritizationDelay_months__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['bundle_ALI_Contractual_Amoritization_Delay'])}</td>`;
+                }else if(col == 'p66_Contractual_Amortization_Method__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['bundle_ALI_Contractual_Amortization_method'])}</td>`;
+                }else if(col == 'p66_ContractualAmoritizationTermsmonths__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['derived_SF_contractual_term'])}</td>`;
+                }else if(col == 'p66_Contractual_Rolling_Balance_months__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['bundle_ALI_Contractual_rolling_Balance'])}</td>`;
+                }else if(col == 'p66_Out_Standing_Balance__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['bundle_Recovered_Contractual_Balance__c'])}</td>`;
+                }else if(col == 'p66_Legacy_AGL_Bundle_ID__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['bundle_ALI_ID'])}</td>`;
+                }else if(col == 'p66_True_Up_Base_price__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['--'])}</td>`;
+                }else if(col == 'p66_ProgramEffective_Date__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig__EffectiveDt'])}</td>`;
+                }else if(col == 'EndDate'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig__EndDt'])}</td>`;
+                }else if(col == 'StartDate'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig__StartDt'])}</td>`;
+                }else if(col == 'p66_Term__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['bundle_Contractual_Amortization_Term__C'])}</td>`;
+                }else if(col == 'CreatedById'){
+                    tds += `<td class="b_x_td">0054x000007ae7TAAQ</td>`;
+                }else{
+                    tds += `<td class="b_x_td">-</td>`;
+                }
+                j++;
+            }
+            trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+            i++;
+        }
+        let table = `
+            <table class="b_x_table" id="table_bottom_id">
+                <thead class="b_x_thead">
+                    <tr  class="b_x_tr b_x_th_tr">
+                        ${ths}
+                    </tr>
+                </thead>
+                <tbody class="b_x_body">
+                    ${trs}
+                </tbody>
+            </table>
+        `;
+        $('.cleftdvs_bottom').html(table);
+        let html = $('.cleftdvs_bottom').html();
+        copyToCLipboard(html);
+    }
+}
+function fillDataRP(){
+    $('.inp_col').val('R4V4');
+    $('.txt_area').val('true');
+    let data =`ALI_Soldto__Account_Name	ALI_Soldto__c	ALI_Agreement_Site__c	ALI_Apttus__AgreementId__c	ALI_Agreement__c_Name	ALI_ID	ALI_Apttus__AgreementLineItem__c_Name	ALI_Apttus_CMConfig_BasePrice	ALI_Apttus_CMConfig_BasePriceMethod	ALI_Apttus_CMConfig_Comments	ALI_Apttus__Description__c	ALI_p66_Exclude_from_Contractual_Balance	ALI_Apttus_CMConfig__BillingFrequency	ALI_Apttus_CMConfig__IncentiveType	ALI_Ammortized	ALI_Payment_Processing_day	ALI_Apttus_CMConfig_PriceMethod	ALI_Apttus_CMConfig__Uom__c	ALI_Apttus__Product__c	ALI_Apttus__Product__Name	ALI_Apttus_CMConfig__Frequency	ALI_Status	ALI_Apttus_CMConfig__ShipToAccountId	ALI_Volume_Basis	ALI_Volume_Source	ALI_Price_Type	ALI_Product_category	ALI_Apttus_CMConfig__OptionId__Name	ALI_ChargeType__c	p66_Tier_1_CPG__c	p66_Tier_1_Volume__c	p66_Tier_1_TLA_Base_Price_CPG__c	p66_Tier_2_CPG__c	p66_Tier_2_Volume__c	p66_Tier_2_TLA_Base_Price_CPG__c	p66_Tier_3_CPG__c	p66_Tier_3_Volume__c	p66_Tier_3_TLA_Base_Price_CPG__c	p66_Tier_4_CPG__c	p66_Tier_4_Volume__c	p66_Tier_4_TLA_Base_Price_CPG__c	p66_Tier_6_CPG__c	p66_Tier_6_Volume__c	p66_Tier_6_TLA_Base_Price_CPG__c	p66_Withholding__c	p66_Trueup_period_months__c	bundle_ALI_Contractual_Amoritization_Delay	bundle_ALI_Contractual_Amortization_method	bundle_ALI_Contractual_rolling_Balance	bundle_Recovered_Amount__c	bundle_Recovered_Contractual_Balance__c	bundle_Waived_Contractual_Balance__c	bundle_ALI_ID	Agreement_Site__c_Name	Agreement_Site_Agreement_Type__c	ALI_SAP_Ship_To__c	ALI_ShipTo__c	ALI_SoldTo_Number__c	ALI_Apttus__ListPrice__c	related_trueup_base_price	related_trueup_term	related_trueup_volume_source	ALI_Apttus_CMConfig__EffectiveDt	ALI_Apttus_CMConfig__EndDt	ALI_Apttus_CMConfig__StartDt	bundle_Recovered_Dt__c	bundle_Contractual_Amortization_Term__C	bundle_Apttus_CMConfig__EffectiveDate__c	bundle_Apttus_Rebate__TermMonths__c	bundle_Apttus_CMConfig__PriceMethod__c	bundle_Apttus_CMConfig__BasePriceMethod__c	bundle_Apttus_CMConfig__Frequency__c	derived_SF_contractual_term	derived_Contractual_Amortization_Term
+THABET MANAGEMENT INC	0010e00001L8UJ4AAN	a4G0e000000MW1IEAW	a110e00000gpysSAAQ	THABET MANAGEMENT INC - BMA	a147V00000DYwcMQAT	AL-0000297235	32782.19	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																		110	Delayed Straight Line	0				a147V00000DYwcLQAT	BUY2 005-OR-00898050	BMA	898050	0010e00001NAEgkAAH	10114385	0				01-08-2021	31-10-2030	01-08-2021		111	0.00.00		Flat Price	Flat Price	One Time	1	
+COLEMAN OIL CO	0016000000H8FS0AAN	a4G0e000000MbESEA0	a110e00000olNhUAAU	COLEMAN OIL CO - BMA	a147V00000DrpyeQAB	AL-0000316591	139884.85	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	172	60	Delayed Straight Line	0				a147V00000DrpydQAB	BEAVER TRAP JUNCTION-WA-00900622	BMA	900622	0010e00001P3tRTAAZ	10048403	0				01-10-2022	31-01-2037	01-10-2022		172	0.00.00	172	Flat Price	Flat Price	One Time	112	
+JACKSONS FOOD STORES INC	0016000000H8FgiAAF	a4G0e000000Met8EAC	a1160000000ECtYAAW	JACKSONS FOOD STORES INC - BMA	a147V00000GmoARQAZ	AL-0000319754	125211.41	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	146	145	Delayed Straight Line	0				a147V00000GmoAQQAZ	MOXEE-WA-00902231	BMA	902231	0010e00001PiaNcAAJ	10083265	0				01-02-2023	31-03-2035	01-02-2023		146	0.00.00	146	Flat Price	Flat Price	One Time	1	
+DON SMALL & SONS OIL DISTRIBUTOR CO	0016000000H8FT9AAN	a4G60000000LDWcEAO	a1160000000ECvFAAW	DON SMALL & SONS OIL DISTRIBUTOR CO - BMA	a147V00000DYwcCQAT	AL-0000297231	2355.05	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																		109	Delayed Straight Line	0				a147V00000DYwcBQAT	DOUGS AUTO ROW 76-WA-00807838	BMA	807838	0016000000woz88AAA	10048836	0				01-08-2021	30-09-2030	01-08-2021		110	0.00.00		Flat Price	Flat Price	One Time	1	
+ED STAUB & SONS PETROLEUM INC	0016000000H8FJQAA3	a4G0e000000MVqCEAW	a110e00000gpyS6AAI	ED STAUB & SONS PETROLEUM INC - BMA	a147V000008RASLQA4	AL-0000293980	11831.5	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	111	110	Delayed Straight Line	0				a147V000008RASKQA4	CAMPUS FUEL MART-OR-00896333	BMA	896333	0010e00001NA6fXAAT	10044559	0				01-06-2021	31-08-2030	01-06-2021		111	0.00.00	111	Flat Price	Flat Price	One Time	1	
+SUTEY OIL CO INC	0016000000H8FcGAAV	a4G60000000LKhHEAW	a1160000000ECujAAG	SUTEY OIL CO INC - BMA	a147V00000DZ2TaQAL	AL-0000302870	2606.88	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																		109	Delayed Straight Line	0				a147V00000DZ2TZQA1	THRIFTWAY 16-MT-00869269	BMA	869269	0016000000woz4kAAA	10057801	0				01-12-2021	31-01-2031	01-12-2021		110	0.00.00		Flat Price	Flat Price	One Time	1	
+COUGAR DEN INC	0010e00001LtHYOAA3	a4G7V000000tWAyUAM	a110e00000pb18VAAQ	COUGAR DEN INC - BMA	a147V00000DZItmQAH	AL-0000310710	68623.98	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																		53	Delayed Straight Line	0				a147V00000DZItlQAH	LUMMI MINI MART-WA-00910333	BMA	910333	0017V00001XDpAiQAL	10115911	0				01-01-2022	30-06-2026	01-01-2022		54	0.00.00		Flat Price	Flat Price	One Time	1	
+TC FUELS LP	0010e00001JVC1CAAX	a4G0e000000ccK6EAI	a110e00000gpjceAAA	TC FUELS LP - BMA	a147V000008R9GzQAK	AL-0000293164	1886.35	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	50	49	Delayed Straight Line	0				a147V000008R9GyQAK	FLASH MART 103-IA-00894488	BMA	894488	0010e00001LsJlEAAV	10115501	0				01-06-2021	31-07-2025	01-06-2021		50	0.00.00	50	Flat Price	Flat Price	One Time	1	
+PACWEST ENERGY LLC	0010e00001QgkOzAAJ	a4G0e000000dK1lEAE	a110e00000pKFLKAA4	PACWEST ENERGY LLC - MBRA	a140e000008R7JeAAK	AL-0000291351	36479.65	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																		108	Delayed Straight Line	0				a140e000008R7JdAAK	BALDWIN OIL-CA-851440	MBRA	904547	0010e00001QgmE4AAJ	10124202	0				01-05-2021	31-05-2030	01-05-2021		109	0.00.00	109	Flat Price	Flat Price	One Time	1	
+COLVIN OIL I LLC	0013200001IaXUTAA3	a4G0e000000ccKoEAI	a113200000DHgJ7AAL	COLVIN OIL I LLC - BMA	a147V00000DZ4BYQA1	AL-0000305074	68623.98	Flat Price		BIP Upfront True Up Deferral Option	0			1	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Transferred			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																		53	Delayed Straight Line	0				a147V00000DZ4BXQA1	LUMMI MINI MART-WA-00894493	BMA	894493	0010e00001LsLaCAAV	10109453	0				01-01-2022	27-04-2022	01-01-2022		54	0.00.00		Flat Price	Flat Price	One Time	1	
+TABISH BROTHERS DISTRIBUTORS INC	0016000000H8Fc4AAF	a4G60000000LJ46EAG	a1160000000ECuoAAG	TABISH BROTHERS DISTRIBUTORS INC - BMA	a147V000008R83YQAS	AL-0000292470	4655.96	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	110	109	Delayed Straight Line	0				a147V000008R83XQAS	ARNIES GAS & TIRE-MT-00205018	BMA	205018	0016000000woz3oAAA	10057764	0				01-05-2021	30-06-2030	01-05-2021		110	0.00.00	110	Flat Price	Flat Price	One Time	1	
+CALIFORNIA FRESNO INVESTMENT CO	0016000000LQdYJAA1	a4G0e000000caMBEAY	a110e00000gpjU1AAI	CALIFORNIA FRESNO INVESTMENT CO - BRA	a140e000008R1dhAAC	AL-0000287329	53285.92	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Transferred			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																		109	Delayed Straight Line	0				a140e000008R1dgAAC	CAL FRESNO 110-CA-893799	BRA	893799	0010e00001L9ds5AAB	10092142	0				01-03-2021	01-07-2022	01-03-2021		110	0.00.00		Flat Price	Flat Price	One Time	1	
+RED TRIANGLE OIL CO	0016000000tr09aAAA	a4G7V000000tTXFUA2	a117V00000v7WGJQA2	RED TRIANGLE OIL CO - MBRA	a147V00000DZtjAQAT	AL-0000315758	53285.92	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																		109	Delayed Straight Line	0				a147V00000DZtj9QAD	BEYOND MART SELMA-CA-893799	MBRA	909437	0017V00001T6ZtkQAF	10100941	0				01-03-2021	30-04-2030	01-03-2021		110	0.00.00		Flat Price	Flat Price	One Time	1	
+SIERRA FUEL INC	00160000013UY55AAG	a4G60000000LLK2EAO	a1160000007ZkKsAAK	SIERRA FUEL INC - BRA	a140e000009AD91AAG	AL-0000284957	70611.21	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	96	95	Delayed Straight Line	0				a140e000009AD90AAG	SIERRA FUEL INC-CA-878504	BRA	878504	00160000014An8NAAS	10102316	0				01-01-2021	31-12-2028	01-01-2021		96	0.00.00	96	Flat Price	Flat Price	One Time	1	
+TC FUELS LP	0010e00001JVC1CAAX	a4G0e000000ccK5EAI	a110e00000gpjceAAA	TC FUELS LP - BMA	a147V000008R9GVQA0	AL-0000293152	1379.58	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	50	49	Delayed Straight Line	0				a147V000008R9GUQA0	FLASH MART 102-IA-00894505	BMA	894505	0010e00001LsJlDAAV	10115501	0				01-06-2021	31-07-2025	01-06-2021		50	0.00.00	50	Flat Price	Flat Price	One Time	1	
+PETROCARD INC	0016000000H8FLrAAN	a4G60000000LDy0EAG	a1160000000ECuCAAW	PETROCARD INC - BMA	a140e000008R6mTAAS	AL-0000290725	13358.31	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	109	108	Delayed Straight Line	0				a140e000008R6mSAAS	ROCKET MARKET LLC-WA-00834499	BMA	834499	0016000000woyw1AAA	10045237	0				01-04-2021	30-04-2030	01-04-2021		109	0.00.00	109	Flat Price	Flat Price	One Time	1	
+DIVINE CORP	0016000000H8FJFAA3	a4G60000000LS3yEAG	a1160000007Y171AAC	DIVINE CORP - BMA	a140e000009A8d2AAC	AL-0000282761	4559.76	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	145	144	Delayed Straight Line	0				a140e000009A8d1AAC	DIVINE PINES-WA-00852943	BMA	852943	0016000000woyvaAAA	10044498	0				01-12-2020	31-12-2032	01-12-2020		145	0.00.00	145	Flat Price	Flat Price	One Time	1	
+TC FUELS LP	0010e00001JVC1CAAX	a4G0e000000ccK9EAI	a110e00000gpjceAAA	TC FUELS LP - BMA	a147V000008R9HiQAK	AL-0000293187	3119.79	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	48	47	Delayed Straight Line	0				a147V000008R9HhQAK	SUNNYS RUFE SNOW-TX-00894501	BMA	894501	0010e00001LsJlHAAV	10115501	0				01-06-2021	31-05-2025	01-06-2021		48	0.00.00	48	Flat Price	Flat Price	One Time	1	
+PETROCARD INC	0016000000H8FLrAAN	a4G60000000LHhjEAG	a1160000000ECuCAAW	PETROCARD INC - BMA	a147V000008RBQ5QAO	AL-0000295537	4782.46	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	110	109	Delayed Straight Line	0				a147V000008RBQ4QAO	RIVERSIDE POWERSPORTS-WA-00834496	BMA	834496	0016000000woyvyAAA	10045237	0				01-07-2021	31-08-2030	01-07-2021		110	0.00.00	110	Flat Price	Flat Price	One Time	1	
+WALKER SIMS OIL CO INC	0016000000H8F32AAF	a4G60000000LHb2EAG	a1160000000ECv2AAG	WALKER SIMS OIL CO INC - BMA	a147V00000DYz7xQAD	AL-0000299001	9370.84	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																		106	Delayed Straight Line	0				a147V00000DYz7wQAD	PHILLIPS FOOD PL-NM-00813979	BMA	813979	0016000000woxlxAAA	10003247	0				01-09-2021	31-07-2030	01-09-2021		107	0.00.00		Flat Price	Flat Price	One Time	1	
+CALIFORNIA FUEL SUPPLY	0016000000H8FakAAF	a4G60000000LLDUEA4	a1160000007Zju6AAC	CALIFORNIA FUEL SUPPLY - MBRA	a140e000008R314AAC	AL-0000287831	49684.02	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Terminated			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	111	110	Delayed Straight Line	0	0			a140e000008R313AAC	FALCO INC-CA-256429	MBRA	877072	00160000010t5pEAAQ	10055539	0				01-03-2021	01-03-2021	01-03-2021		111	0.00.00	111	Flat Price	Flat Price	One Time	1	
+BECK OIL INC	0016000000H8FSvAAN	a4G60000000LE6TEAW	a1160000000ECsiAAG	BECK OIL INC - BMA	a140e000009AAB4AAO	AL-0000283246	14296.61	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	110	109	Delayed Straight Line	0				a140e000009AAB3AAO	BARSTOW ENTERPRISES INC-CA-00838679	BMA	838679	0016000000wpC6KAAU	10048773	0				01-12-2020	31-01-2030	01-12-2020		110	0.00.00	110	Flat Price	Flat Price	One Time	1	
+BEST 4 LESS PLACENTIA	0016000000m60XMAAY	a4G0e000000IChQEAW	a113200000GfkvyAAB	BEST 4 LESS PLACENTIA - MBRA	a140e000009ADNkAAO	AL-0000285282	60628.99	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	111	110	Delayed Straight Line	0				a140e000009ADNjAAO	BEST 4 LESS LA HABRA-CA-890684	MBRA	890684	0010e00001K5BEpAAN	10099823	0				01-01-2021	31-03-2030	01-01-2021		111	0.00.00	111	Flat Price	Flat Price	One Time	1	
+BEST 4 LESS PLACENTIA	0016000000m60XMAAY	a4G0e000000chf1EAA	a113200000GfkvyAAB	BEST 4 LESS PLACENTIA - MBRA	a147V00000DZ5whQAD	AL-0000307404	193609.41	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	111	110	Delayed Straight Line	0				a147V00000DZ5wgQAD	GALAXY CYPRESS-CA-896266	MBRA	896266	0010e00001MtWIpAAN	10099823	0				01-02-2022	30-04-2031	01-02-2022		111	0.00.00	111	Flat Price	Flat Price	One Time	1	
+JACKSONS FOOD STORES INC	0016000000H8FgiAAF	a4G0e000000cZBVEA2	a1160000000ECtYAAW	JACKSONS FOOD STORES INC - BMA	a147V000008RARwQAO	AL-0000293970	29779.1	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	110	109	Delayed Straight Line	0				a147V000008RARvQAO	MERRITT 1 INC-OR-00893317	BMA	893317	0010e00001L8jVqAAJ	10083265	0				01-06-2021	31-07-2030	01-06-2021		110	0.00.00	110	Flat Price	Flat Price	One Time	1	
+THABET MANAGEMENT INC	0010e00001L8UJ4AAN	a4G0e000000cdMREAY	a110e00000gpysSAAQ	THABET MANAGEMENT INC - BMA	a140e000008R6dJAAS	AL-0000290521	34206.73	Flat Price		BIP Upfront True Up Deferral Option	0			1	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	111	110	Delayed Straight Line	0				a140e000008R6dIAAS	BUY2 010-OR-00894908	BMA	894908	0010e00001MWDzJAAX	10114385	0				01-04-2021	30-06-2030	01-04-2021		111	0.00.00	111	Flat Price	Flat Price	One Time	1	
+HILLSDALE FOOD & FUEL LLC	0010e00001L6rvAAAR	a4G0e000000cXz5EAE	a110e00000gpYnxAAE	HILLSDALE FOOD & FUEL LLC - BRA	a140e000008R4z4AAC	AL-0000289202	19658.77	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	111	110	Delayed Straight Line	0				a140e000008R4z3AAC	HILLSDALE FOOD & FUEL LLC-OR-254566	BRA	892832	0010e00001L7BEQAA3	10113822	0				01-03-2021	31-05-2030	01-03-2021		111	0.00.00	111	Flat Price	Flat Price	One Time	1	
+BRAD HALL & ASSOC INC	0016000000MTwsvAAD	a4G0e000000cb2MEAQ	a1160000007X6KYAA0	BRAD HALL & ASSOC INC - BMA	a140e000009ADO5AAO	AL-0000285291	3681.91	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	111	110	Delayed Straight Line	0				a140e000009ADO3AAO	SKY CITY TRAVEL CENTER-NM-00894118	BMA	894118	0010e00001LqMEXAA3	10093045	0				01-01-2021	31-03-2030	01-01-2021		111	0.00.00	111	Flat Price	Flat Price	One Time	1	
+BRAD HALL & ASSOC INC	0016000000MTwsvAAD	a4G0e000000cb2NEAQ	a1160000007X6KYAA0	BRAD HALL & ASSOC INC - BMA	a140e000009ADO6AAO	AL-0000285292	8769.22	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	113	112	Delayed Straight Line	0				a140e000009ADO4AAO	SKY CITY EXPRESS-NM-00894117	BMA	894117	0010e00001LqMEYAA3	10093045	0				01-01-2021	31-05-2030	01-01-2021		113	0.00.00	113	Flat Price	Flat Price	One Time	1	
+TC FUELS LP	0010e00001JVC1CAAX	a4G0e000000ccK7EAI	a110e00000gpjceAAA	TC FUELS LP - BMA	a147V000008R9GpQAK	AL-0000293160	2218.63	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	50	49	Delayed Straight Line	0				a147V000008R9GoQAK	FLASH MART 104-IA-00894499	BMA	894499	0010e00001LsJlFAAV	10115501	0				01-06-2021	31-07-2025	01-06-2021		50	0.00.00	50	Flat Price	Flat Price	One Time	1	
+PETROCARD INC	0016000000H8FLrAAN	a4G0e000000cgMSEAY	a1160000000ECuCAAW	PETROCARD INC - BMA	a140e000008R7wyAAC	AL-0000292394	46956.86	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	110	109	Delayed Straight Line	0				a140e000008R7wxAAC	CLINTON SQUARE GAS & DELI-WA-00895647	BMA	895647	0010e00001Ms2oNAAR	10045237	0				01-05-2021	30-06-2030	01-05-2021		110	0.00.00	110	Flat Price	Flat Price	One Time	1	
+COLEMAN OIL CO	0016000000H8FS0AAN	a4G0e000000MblDEAS	a110e00000olNhUAAU	COLEMAN OIL CO - BMA	a147V00000DZzxKQAT	AL-0000316139	49050.97	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	101	100	Delayed Straight Line	0				a147V00000DZzxJQAT	OMAK STATION-WA-00900641	BMA	900641	0010e00001P4V9gAAF	10048403	0				01-10-2022	28-02-2031	01-10-2022		101	0.00.00	101	Flat Price	Flat Price	One Time	1	
+TC FUELS LP	0010e00001JVC1CAAX	a4G0e000000ccK8EAI	a110e00000gpjceAAA	TC FUELS LP - BMA	a147V000008R9GfQAK	AL-0000293156	2920.01	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	50	49	Delayed Straight Line	0				a147V000008R9GeQAK	FLASH MART 105-IA-00894500	BMA	894500	0010e00001LsJlGAAV	10115501	0				01-06-2021	31-07-2025	01-06-2021		50	0.00.00	50	Flat Price	Flat Price	One Time	1	
+STAN BOYETT & SON INC	0016000000H8FRxAAN	a4G0e000000MZ1hEAG	a1160000007WZakAAG	STAN BOYETT & SON INC - BMA	a147V000008R8xcQAC	AL-0000292866	188308.69	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	111	110	Delayed Straight Line	0				a147V000008R8xbQAC	ST GEORGE-CA-00899344	BMA	899344	0010e00001O5UArAAN	10048394	0				01-05-2021	31-07-2030	01-05-2021		111	0.00.00	111	Flat Price	Flat Price	One Time	1	
+S & H OIL LLC	0010e00001JAWjzAAH	a4G0e000000ccQnEAI	a110e00000gptgMAAQ	S & H OIL LLC - BRA	a147V00000DZ064QAD	AL-0000301188	27991.47	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																		110	Delayed Straight Line	0				a147V00000DZ063QAD	S & H OIL LLC-OR-894709	BRA	894709	0010e00001Lt1pOAAR	10116029	0				01-10-2021	31-12-2030	01-10-2021		111	0.00.00		Flat Price	Flat Price	One Time	1	
+PERKINS OIL CO	0016000000H8FX2AAN	a4G60000000LIuAEAW	a1160000000ECuBAAW	PERKINS OIL CO - BMA	a147V00000DZ5YHQA1	AL-0000306785	6019.18	Flat Price		BIP Upfront True Up Deferral Option	0			1	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	111	110	Delayed Straight Line	0				a147V00000DZ5YGQA1	WAMSUTTER CONOCO-WY-00204061	BMA	204061	0016000000woyzhAAA	10052854	0				01-01-2022	31-03-2031	01-01-2022		111	0.00.00	111	Flat Price	Flat Price	One Time	1	
+SPEARS INC	0016000000H8FOuAAN	a4G60000000LFq5EAG	a1160000007Zk4mAAC	SPEARS INC - BRA	a147V00000DYxDVQA1	AL-0000297363	17242.04	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																		110	Delayed Straight Line	0				a147V00000DYxDUQA1	SPEARS INC-WA-2602680	BRA	807354	0016000000woyuAAAQ	10047153	0				01-08-2021	30-09-2030	01-08-2021		111	0.00.00		Flat Price	Flat Price	One Time	1	
+ALSAKER CORP DBA BROADWAY GROUP	0016000000H8FcdAAF	a4G60000000LEAdEAO	a1160000000ECsZAAW	ALSAKER CORP DBA BROADWAY GROUP - BMA	a147V00000DZ4ClQAL	AL-0000305106	2055.22	Flat Price		BIP Upfront True Up Deferral Option	0			1	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	125	124	Delayed Straight Line	0				a147V00000DZ4CkQAL	ELLENSBURG CONOCO-WA-00840867	BMA	840867	0016000000woyxrAAA	10057923	0				01-01-2022	31-05-2032	01-01-2022		125	0.00.00	125	Flat Price	Flat Price	One Time	1	
+PETROCARD INC	0016000000H8FLrAAN	a4G60000000LHhiEAG	a1160000000ECuCAAW	PETROCARD INC - BMA	a140e000008R6GoAAK	AL-0000290053	4634.39	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	109	108	Delayed Straight Line	0				a140e000008R6GnAAK	TOWNS CONOCO-WA-00834495	BMA	834495	0016000000woyvxAAA	10045237	0				01-04-2021	30-04-2030	01-04-2021		109	0.00.00	109	Flat Price	Flat Price	One Time	1	
+NORTHWEST PETROLEUM CO	0016000000H8FazAAF	a4G7V000001SuPRUA0	a1160000000ECu4AAG	NORTHWEST PETROLEUM CO - BMA	a147V00000KKWP1QAP	AL-0000339152	2192.83	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Pending			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																		110	Delayed Straight Line	0				a147V00000KKWP0QAP	BAIRS TRUCKSTOP #2-MT-	BMA		0017V00002FjNWrQAN	10056862	0				01-08-2021	31-10-2030	01-08-2021		111	0.00.00		Flat Price	Flat Price	One Time	1	
+CALIFORNIA FUEL SUPPLY	0016000000H8FakAAF	a4G60000000LS2vEAG	a1160000007WZZ8AAO	CALIFORNIA FUEL SUPPLY - BMA	a147V000008R84RQAS	AL-0000292495	43194.81	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	111	110	Delayed Straight Line	0				a147V000008R84QQAS	BROADWAY 76-CA-00848428	BMA	848428	0016000000wp25rAAA	10055539	0				01-05-2021	31-07-2030	01-05-2021		111	0.00.00	111	Flat Price	Flat Price	One Time	1	
+JACKSONS FOOD STORES INC	0016000000H8FgiAAF	a4G60000000LKybEAG	a1160000000ECtYAAW	JACKSONS FOOD STORES INC - BMA	a140e000009A8aUAAS	AL-0000282745	11701.96	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	111	110	Delayed Straight Line	0				a140e000009A8aTAAS	EVERGREEN 76-WA-00872488	BMA	872488	0016000000woz9UAAQ	10083265	0				01-12-2020	28-02-2030	01-12-2020		111	0.00.00	111	Flat Price	Flat Price		1	
+KHAN OIL WASHINGTON LLC	0010e00001JAX1KAAX	a4G0e000000ccaCEAQ	a110e00000gpthjAAA	KHAN OIL WASHINGTON LLC - BRA	a147V00000DZ05pQAD	AL-0000301180	30539.53	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																		110	Delayed Straight Line	0				a147V00000DZ05oQAD	KHAN OIL WASHINGTON LLC-WA-895364	BRA	895364	0010e00001Lt3sOAAR	10116921	0				01-10-2021	31-12-2030	01-10-2021		111	0.00.00		Flat Price	Flat Price	One Time	1	
+BIG OIL & TIRE CO	0016000000H8FIvAAN	a4G60000000LDX2EAO	a1160000000ECskAAG	BIG OIL & TIRE CO - BMA	a147V000008R9TXQA0	AL-0000293417	4212.25	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	109	108	Delayed Straight Line	0				a147V000008R9TWQA0	BROADWAY GAS & DELI-CA-00810207	BMA	810207	0016000000wp24kAAA	10044412	0				01-06-2021	30-06-2030	01-06-2021		109	0.00.00	109	Flat Price	Flat Price	One Time	1	
+JACKSONS FOOD STORES INC	0016000000H8FgiAAF	a4G0e0000012hGLEAY	a1160000000ECtYAAW	JACKSONS FOOD STORES INC - BMA	a140e000008R75wAAC	AL-0000291079	76783.5	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	96	95	Delayed Straight Line	0				a140e000008R75vAAC	BREMERTON 76-WA-00891974	BMA	891974	0010e00001KP7n7AAD	10083265	0				01-04-2021	31-03-2029	01-04-2021		96	0.00.00	96	Flat Price	Flat Price	One Time	1	
+TRIMARK XI LLC	0016000000H8FSmAAN	a4G60000000LFwfEAG	a1160000007Zk5wAAC	TRIMARK XI LLC - BRA	a140e000008R0ejAAC	AL-0000286616	79753.53	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Transferred			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																		121	Delayed Straight Line	0				a140e000008R0eiAAC	TRIMARK XI LLC-WA-2634093	BRA	807214	0016000000woyuDAAQ	10048706	0				01-02-2021	01-06-2024	01-02-2021		122	0.00.00		Flat Price	Flat Price	One Time	1	
+PETROCARD INC	0016000000H8FLrAAN	a4G60000000LDy7EAG	a1160000000ECuCAAW	PETROCARD INC - BMA	a140e000009A5poAAC	AL-0000278537	27883.57	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	134	133	Delayed Straight Line	0				a140e000009A5pnAAC	WEST HILLS 76-WA-00834507	BMA	834507	0016000000woywdAAA	10045237	0				01-12-2020	31-01-2032	01-12-2020		134	0.00.00	134	Flat Price	Flat Price	One Time	1	
+ABDUL NOOR MAYAR	0016000000H8FYLAA3	a4G60000000LFsdEAG	a1160000007Zk83AAC	ABDUL NOOR MAYAR - BRA	a140e000008R6nRAAS	AL-0000290757	20918.16	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	111	110	Delayed Straight Line	0				a140e000008R6nQAAS	ABDUL NOOR MAYAR-CA-2611107	BRA	802348	0016000000wozD9AAI	10054285	0				01-04-2021	30-06-2030	01-04-2021		111	0.00.00	111	Flat Price	Flat Price	One Time	1	
+THABET MANAGEMENT INC	0010e00001L8UJ4AAN	a4G0e000000cgr7EAA	a110e00000gpysSAAQ	THABET MANAGEMENT INC - BMA	a147V00000DZ2CPQA1	AL-0000302362	76924.56	Flat Price		BIP Upfront True Up Deferral Option	0			1	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	107	106	Delayed Straight Line	0				a147V00000DZ2CNQA1	BUY2 032-OR-00895760	BMA	895760	0010e00001MsKGKAA3	10114385	0				01-11-2021	30-09-2030	01-11-2021		107	0.00.00	107	Flat Price	Flat Price	One Time	1	
+THABET MANAGEMENT INC	0010e00001L8UJ4AAN	a4G0e000000cdMUEAY	a110e00000gpysSAAQ	THABET MANAGEMENT INC - BMA	a147V00000DZ2COQA1	AL-0000302361	33253.72	Flat Price		BIP Upfront True Up Deferral Option	0			1	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	107	106	Delayed Straight Line	0				a147V00000DZ2CMQA1	BUY2 028-OR-00894925	BMA	894925	0010e00001MWDzMAAX	10114385	0				01-11-2021	30-09-2030	01-11-2021		107	0.00.00	107	Flat Price	Flat Price	One Time	1	
+JACKSONS FOOD STORES INC	0016000000H8FgiAAF	a4G0e000000cgJEEAY	a1160000000ECtYAAW	JACKSONS FOOD STORES INC - BMA	a140e000009ACgLAAW	AL-0000284634	17319.9	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	119	118	Delayed Straight Line	0				a140e000009ACgKAAW	BREWERS MINI MART II-WA-00895605	BMA	895605	0010e00001MrujNAAR	10083265	0				01-01-2021	30-11-2030	01-01-2021		119	0.00.00	119	Flat Price	Flat Price	One Time	1	
+PIT STOP EXPRESS LLC	0017V00002IGVaxQAH	a4G7V000001NAg5UAG	a117V000014MgYlQAK	PIT STOP EXPRESS LLC - BRA	a147V00000KKSdgQAH	AL-0000336927	79753.53	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																		121	Delayed Straight Line	0				a147V00000KKSdfQAH	PIT STOP EXPRESS LLC-WA-2634093	BRA	918571	0017V00002IGWMwQAP	10140531	0				01-02-2021	31-03-2031	01-02-2021		122	0.00.00		Flat Price	Flat Price	One Time	1	
+CALIFORNIA FUEL SUPPLY	0016000000H8FakAAF	a4G60000000LEQVEA4	a1160000007WZZ8AAO	CALIFORNIA FUEL SUPPLY - BMA	a147V000008R9feQAC	AL-0000293585	19669.47	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	111	110	Delayed Straight Line	0				a147V000008R9fdQAC	GAWFCO ENTERPRISES INC-CA-00877781	BMA	877781	00160000010t660AAA	10055539	0				01-06-2021	31-08-2030	01-06-2021		111	0.00.00	111	Flat Price	Flat Price	One Time	1	
+ALSAKER CORP DBA BROADWAY GROUP	0016000000H8FcdAAF	a4G60000000LItZEAW	a1160000000ECsZAAW	ALSAKER CORP DBA BROADWAY GROUP - BMA	a147V00000DYwXrQAL	AL-0000297030	2192.83	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																		110	Delayed Straight Line	0				a147V00000DYwXqQAL	BAIRS TRUCKSTOP #2-MT-00204000	BMA	204000	0016000000woyxnAAA	10057923	0				01-08-2021	31-10-2030	01-08-2021		111	0.00.00		Flat Price	Flat Price	One Time	1	
+JACKSONS FOOD STORES INC	0016000000H8FgiAAF	a4G0e000000cafLEAQ	a1160000000ECtYAAW	JACKSONS FOOD STORES INC - BMA	a147V00000DrpxlQAB	AL-0000316589	88461.29	Flat Price		BIP Upfront True Up Deferral Option	0			0	Immediate	Flat Price	Each	01t0e000006tcvpAAA	BIP Upfront True Up Deferral	One Time	Active			Contract	One Time	Gas	BIP Upfront True Up Deferral Option	Upfront																	124	36	Delayed Straight Line	0				a147V00000DrpxkQAB	HWY 99 76-OR-00894030	BMA	894030	0010e00001LpvpbAAB	10083265	0				01-10-2022	31-01-2033	01-10-2022		124	0.00.00	124	Flat Price	Flat Price	One Time	88	`;
+    navigator.clipboard.writeText(data).then(function() {
+        pasteExcel1();
+     }, function(err) {
+        console.error('error copying');
+     });
+     
+}
 function fillMembers(columsArray){
     columsArray = columsArray.filter(Boolean);
     if(columsArray.length == 2){
