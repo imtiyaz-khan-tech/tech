@@ -365,6 +365,22 @@ $(document).on('click', '.btn', function(e) {
             txt_2(txt1.trim().split('\n').map(l => replaceAfterChar(l.trim(), replace_after_value, replace_after_with_value)).join('\n'));
         }
         afterActions();
+    }else if (btn == 'Create Json Map') {
+        let txt1 = txt_1();
+        let key_field = inp('key_field');
+        let map_name = inp('map_name');
+        console.log('$txt1: ',txt1);
+        console.log('$key_field: ',key_field);
+        console.log('$map_name: ',map_name);
+        if(txt1 && key_field && map_name){
+            let json = txt1;
+            json = JSON.parse(json);
+            let dataMap = new Map(json.map(item => [item[key_field], item]));
+            let res = Array.from(dataMap.entries());
+            let obbStrArray = res.map( v => JSON.stringify(v, null, 2));
+            let mapString = "const "+map_name+" = new Map([\n"+obbStrArray.join(',\n')+"\n]);";
+            txt_2(mapString);
+        }
     }
 });
 
