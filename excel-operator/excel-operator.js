@@ -510,7 +510,7 @@ function fillMembers(columsArray){
                 }else if(col == 'CreatedById'){
                     tds += `<td class="b_x_td">0054x000007ae7TAAQ</td>`;
                 }else if(col == 'Name'){
-                    //Select Id, p66_Rebate_Program__r.Name From Product2 Where p66_Rebate_Program__c != null
+                    //Select Id, ProductCode, p66_Rebate_Program__c, p66_Rebate_Program__r.Name From Product2 Where p66_Rebate_Program__c != null And ProductCode != null
                     tds += `<td class="b_x_td">Member-${productIdAndRebateProgramNameMap.get(item['p66_Product__c'])}</td>`;
                 }
                 j++;
