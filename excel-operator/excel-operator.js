@@ -4,6 +4,7 @@
 let excelData1;
 let excelData2;
 let excelJson_top = null;
+let showLessData = false;
 let excelJson_bottom = null;
 $(document).ready(function() {
     console.clear();
@@ -78,6 +79,20 @@ $(document).on('click', '.btn', function(e) {
     } else if (btn == 'Create Map') {
         let columsArray = $('.txt_area').val().split('\n');
         createMap(columsArray);
+    } else if (btn == 'Show Less Or More Data') {
+        let text = $(this).text();
+        console.log('$text: ',text);
+        if(text == 'Show Less Data'){
+            $(this).text('Show More Data');
+            showLessData = false;
+            if(excelJson_top.length){
+                generateJsonToTable_Top();
+            }
+        }else{
+            $(this).text('Show Less Data');
+            showLessData = true;
+        }
+        console.log('$showLessData: ',showLessData);
     } else if (btn == 'Fill ContractIds') {
         fillContractIds();
     } else if (btn == 'Fill ContractIds Prod') {
@@ -2887,7 +2902,11 @@ function generateJsonToTable_Top(){
 
     i = 0;
     let trs = '';
-    while(i < excelJson_top.length){
+    let dataLength = excelJson_top.length;
+    if(showLessData && dataLength > 25){
+        dataLength = 25;
+    }
+    while(i < dataLength){
         let item = excelJson_top[i];
         let j = 0;
         let tds = '';
