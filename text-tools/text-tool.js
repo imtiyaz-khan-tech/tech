@@ -369,13 +369,45 @@ $(document).on('click', '.btn', function(e) {
         let txt1 = txt_1();
         let key_field = inp('key_field');
         let map_name = inp('map_name');
+        let remove_attr = inp('remove_attr');
         console.log('$txt1: ',txt1);
         console.log('$key_field: ',key_field);
         console.log('$map_name: ',map_name);
         if(txt1 && key_field && map_name){
+            let dataMap;
             let json = txt1;
             json = JSON.parse(json);
-            let dataMap = new Map(json.map(item => [item[key_field], item]));
+            
+            if(key_field.includes('.')){
+                let field_1 = key_field.split('.')[0];
+                let field_2 = key_field.split('.')[1];
+                dataMap = new Map(json.map(item => {
+                    delete item.attributes;
+                    if(remove_attr){
+                        delete item[remove_attr]['attributes'];
+                    }
+                    return [item[field_1][field_2], item];
+                }));
+            }else if(key_field.includes(' ')){
+                let field_1 = key_field.split(' ')[0];
+                let field_2 = key_field.split(' ')[1];
+                dataMap = new Map(json.map(item => {
+                    delete item.attributes;
+                    if(remove_attr){
+                        delete item[remove_attr]['attributes'];
+                    }
+                    return [item[field_1]+item[field_2], item];
+                }));
+            }else{
+                dataMap = new Map(json.map(item => {
+                    delete item.attributes;
+                    if(remove_attr){
+                        delete item[remove_attr]['attributes'];
+                    }
+                    return [item[key_field], item];
+                }));
+            }
+
             let res = Array.from(dataMap.entries());
             let obbStrArray = res.map( v => JSON.stringify(v, null, 2));
             let mapString = "const "+map_name+" = new Map([\n"+obbStrArray.join(',\n')+"\n]);";
