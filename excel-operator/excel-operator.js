@@ -15,6 +15,7 @@ $(document).ready(function() {
         console.error('error copying');
      }); */
 });
+
 $(document).on('click', '.btn', function(e) {
     let btn = $(this).data('btn');
     if (btn == 'Paste Excel - 1') {
@@ -170,6 +171,13 @@ async function fillColumnsRP(){
             </table>
         `;
         $('.cleftdvs_bottom').html(table);
+
+        let progressBarHtml = `
+            <div class="progress-wrap progress" data-progress-percent="0">
+                <div class="progress-bar progress"></div>
+            </div>
+        `;
+        $('.progress_td').html(progressBarHtml);
 
         while(i < excelJson_top.length){
             let item = excelJson_top[i];
@@ -347,7 +355,12 @@ async function fillColumnsRP(){
                 j++;
             }
             $('.btn-blank').text(`Excel Processed - [ ${i + 1} / ${excelJson_top.length} ]`);
-            if(i < 22){
+            // Calculate progress percentage based on array length
+            var percent = ((i + 1) / excelJson_top.length) * 100;
+
+            // Update the progress bar
+            updateProgressBar(percent);
+            if(i < 25){
                 $('.b_x_body').append(`<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`);
                 await delay(40);
             }else{
@@ -358,13 +371,25 @@ async function fillColumnsRP(){
         }
         
         $('.b_x_body').append(trs);
-        
+        // $('.progress-wrap').css('background-color','#EFEFEF');
+        $('.progress_td').html('');
+        $('.btn-blank').text('Blank');
         let b_x_table = document.getElementById("table_bottom_id");
         b_x_table.scrollIntoView({ behavior: 'smooth', block: 'end' });
         $('.btn-blank').text('Blank');
     }
 }
+// Function to update the progress bar
+function updateProgressBar(percent) {
+    var getProgressWrapWidth = $('.progress-wrap').width();
+    var progressTotal = (percent / 100) * getProgressWrapWidth;
+    var animationLength = 1; // Shorter animation for smooth progress
 
+    // Animate the progress bar width
+    $('.progress-bar').stop().animate({
+    left: progressTotal
+    }, animationLength);
+}
 function fillDataRP(){
     $('.inp_col').val('R4V4');
     $('.txt_area').val('true');
@@ -552,7 +577,7 @@ function rPUpdateData(columsArray){
     }
 }
 
-function fillColumnsMP(){
+async function fillColumnsMP(){
     console.log('$excelJson_top: ',excelJson_top);
     console.log('$excelJson_bottom: ',excelJson_bottom);
 
@@ -569,6 +594,12 @@ function fillColumnsMP(){
 
     i = 0;
     let trs = '';
+    let progressBarHtml = `
+        <div class="progress-wrap progress" data-progress-percent="0">
+            <div class="progress-bar progress"></div>
+        </div>
+    `;
+    $('.progress_td').html(progressBarHtml);
     while(i < excelJson_bottom.length){
         let item = excelJson_bottom[i];
         let j = 0;
@@ -657,6 +688,10 @@ function fillColumnsMP(){
             j++;
         }
         trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+        $('.btn-blank').text(`Excel Processed - [ ${i + 1} / ${excelJson_bottom.length} ]`);
+        var percent = ((i + 1) / excelJson_bottom.length) * 100;
+        updateProgressBar(percent);
+        await delay(1);
         i++;
     }
     let table = `
@@ -672,7 +707,8 @@ function fillColumnsMP(){
         </table>
     `;
     $('.cleftdvs_bottom').html(table);
-    console.log('$excelJson_bottom: ',excelJson_bottom);
+    $('.progress_td').html('');
+    $('.btn-blank').text('Blank');
     //Convert Excel Into Csv Data
     // let csv = Papa.unparse(excelJson_bottom);
     // console.log('$csv: ',csv);
@@ -701,7 +737,7 @@ function convertDate(inputDate) {
     return date.toISOString().split('T')[0];
 }
 
-function fillColumnsPP(){
+async function fillColumnsPP(){
     console.log('$excelJson_top: ',excelJson_top);
     console.log('$excelJson_bottom: ',excelJson_bottom);
 
@@ -718,6 +754,12 @@ function fillColumnsPP(){
 
     i = 0;
     let trs = '';
+    let progressBarHtml = `
+        <div class="progress-wrap progress" data-progress-percent="0">
+            <div class="progress-bar progress"></div>
+        </div>
+    `;
+    $('.progress_td').html(progressBarHtml);
     while(i < excelJson_bottom.length){
         let item = excelJson_bottom[i];
         let j = 0;
@@ -743,6 +785,10 @@ function fillColumnsPP(){
             j++;
         }
         trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+        $('.btn-blank').text(`Excel Processed - [ ${i + 1} / ${excelJson_bottom.length} ]`);
+        var percent = ((i + 1) / excelJson_bottom.length) * 100;
+        updateProgressBar(percent);
+        await delay(1);
         i++;
     }
     let table = `
@@ -758,7 +804,8 @@ function fillColumnsPP(){
         </table>
     `;
     $('.cleftdvs_bottom').html(table);
-    console.log('$excelJson_bottom: ',excelJson_bottom);
+    $('.progress_td').html('');
+    $('.btn-blank').text('Blank');
     //Convert Excel Into Csv Data
     // let csv = Papa.unparse(excelJson_bottom);
     // console.log('$csv: ',csv);
@@ -770,7 +817,7 @@ function fillColumnsPP(){
     console.log('$tsv: ',tsv);
     copyToCLipboard(tsv);
 }
-function fillColumnsCB(){
+async function fillColumnsCB(){
     console.log('$excelJson_top: ',excelJson_top);
     console.log('$excelJson_bottom: ',excelJson_bottom);
 
@@ -787,6 +834,12 @@ function fillColumnsCB(){
 
     i = 0;
     let trs = '';
+    let progressBarHtml = `
+        <div class="progress-wrap progress" data-progress-percent="0">
+            <div class="progress-bar progress"></div>
+        </div>
+    `;
+    $('.progress_td').html(progressBarHtml);
     while(i < excelJson_bottom.length){
         let item = excelJson_bottom[i];
         let j = 0;
@@ -818,6 +871,10 @@ function fillColumnsCB(){
             j++;
         }
         trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+        $('.btn-blank').text(`Excel Processed - [ ${i + 1} / ${excelJson_bottom.length} ]`);
+        var percent = ((i + 1) / excelJson_bottom.length) * 100;
+        updateProgressBar(percent);
+        await delay(1);
         i++;
     }
     let table = `
@@ -833,7 +890,8 @@ function fillColumnsCB(){
         </table>
     `;
     $('.cleftdvs_bottom').html(table);
-    console.log('$excelJson_bottom: ',excelJson_bottom);
+    $('.progress_td').html('');
+    $('.btn-blank').text('Blank');
     //Convert Excel Into Csv Data
     // let csv = Papa.unparse(excelJson_bottom);
     // console.log('$csv: ',csv);

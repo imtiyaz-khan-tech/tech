@@ -112,3 +112,18 @@
     -ms-user-select: none !important;
     user-select: none !important;
 }
+
+.progress {
+    width: 100%;
+    height: 4px;
+}
+.progress-wrap {
+    background: #c8c8c8;
+    overflow: hidden;
+    position: relative;
+}
+.progress-bar {
+    background: #EFEFEF;
+    height: 100%;
+    position: absolute;
+} 
