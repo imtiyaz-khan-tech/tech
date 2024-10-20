@@ -115,7 +115,12 @@ $(document).on('click', '.btn', function(e) {
         fillColumnsRP();
     }
 });
-function fillColumnsRP(){
+
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function fillColumnsRP(){
     
     let isLegacy = $('.txt_area').val();
     let productCode = $('.inp_col').val();
@@ -147,8 +152,12 @@ function fillColumnsRP(){
             ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
             i++;
         }
+
         
-        let tableHtml = `
+        i = 0;
+        let trs = '';
+        
+        let table = `
             <table class="b_x_table" id="table_bottom_id">
                 <thead class="b_x_thead">
                     <tr  class="b_x_tr b_x_th_tr">
@@ -156,216 +165,206 @@ function fillColumnsRP(){
                     </tr>
                 </thead>
                 <tbody class="b_x_body">
+                    ${trs}
                 </tbody>
             </table>
         `;
-        $('.cleftdvs_bottom').html(tableHtml);
-        processRPRow(0, columns, isLegacy, prodRPDetail);
-    }
-}
-let all_trs = '';
-let delayTimeout = 50;
-function processRPRow(i, columns, isLegacy, prodRPDetail) {
-    let lngth = excelJson_top.length;
-    if (i >= lngth) {
-        $('.b_x_body').append(all_trs);
-        $('.btn-blank').text('Blank');
-        document.title = 'Excel Operator : [ ' + (excelJson_top.length  + 1) +' ]';
+        $('.cleftdvs_bottom').html(table);
+
+        while(i < excelJson_top.length){
+            let item = excelJson_top[i];
+            let j = 0;
+            let tds = '';
+            while(j < columns.length){
+                let col = columns[j];
+                if(col == 'p66_IsMigrated__c'){
+                    tds += `<td class="b_x_td">TRUE</td>`;
+                }else if(col == 'p66_IsLegacy__c'){
+                    tds += `<td class="b_x_td">${isLegacy.toUpperCase()}</td>`;
+                }else if(col == 'p66_Sold_To_Account__c'){
+                    let key = item['ALI_Soldto__c'];
+                    let accountId = legacyAccountKeyAndSfIDMap.has(key) ? legacyAccountKeyAndSfIDMap.get(key) : '#N/A';
+                    tds += `<td class="b_x_td">${accountId}</td>`;
+                }else if(col == 'p66_Ship_To_Account__c'){
+                    let key = item['ALI_ShipTo__c'];
+                    let accountId = legacyAccountKeyAndSfIDMap.has(key) ? legacyAccountKeyAndSfIDMap.get(key) : '#N/A';
+                    tds += `<td class="b_x_td">${accountId}</td>`;
+                }else if(col == 'p66_Child_Contract__c'){
+                    let mapKey = `${item['ALI_Agreement_Site__c']}${item['ALI_Apttus__AgreementId__c']}`;
+                    let contractId = ring4ContractIdsMap.has(mapKey) ? ring4ContractIdsMap.get(mapKey) : '#N/A';
+                    tds += `<td class="b_x_td">${contractId}</td>`;
+                }else if(col == 'Contract Number'){
+                    let mapKey = `${item['ALI_Agreement_Site__c']}${item['ALI_Apttus__AgreementId__c']}`;
+                    let contractNumber = rin4ContractNumbersMap.has(mapKey) ? rin4ContractNumbersMap.get(mapKey) : '#N/A';
+                    tds += `<td class="b_x_td">${contractNumber}</td>`;
+                }else if(col == 'p66_Product__c'){
+                    tds += `<td class="b_x_td">${prodRPDetail.Id}</td>`;
+                }else if(col == 'p66_Parent_Rebate_Program__c'){
+                    tds += `<td class="b_x_td">${prodRPDetail.p66_Rebate_Program__c}</td>`;
+                }else if(col == 'Parent Rebate Program Name'){
+                    tds += `<td class="b_x_td">${prodRPDetail.p66_Rebate_Program__r.Name}</td>`;
+                }else if(col == 'ALI_Apttus__AgreementLineItem__c_Name'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus__AgreementLineItem__c_Name'])}</td>`;
+                }else if(col == 'Name'){
+                    let name;
+                    let mapKey = `${item['ALI_Agreement_Site__c']}${item['ALI_Apttus__AgreementId__c']}`;
+                    let contractNumber = rin4ContractNumbersMap.has(mapKey) ? rin4ContractNumbersMap.get(mapKey) : '#N/A';
+                    if(isLegacy == 'false'){
+                        name = prodRPDetail.p66_Rebate_Program__r.Name + '-' + contractNumber + '-' + item['ALI_Apttus__AgreementLineItem__c_Name'];
+                    }else{
+                        name = 'LRP-'+ item['ALI_Apttus_CMConfig__OptionId__Name'] + '-' + prodRPDetail.p66_Rebate_Program__r.Name + '-' + contractNumber + '-' + item['ALI_Apttus__AgreementLineItem__c_Name'];
+                    }
+                    tds += `<td class="b_x_td">${name}</td>`;
+                }else if(col == 'p66_Legacy_Products_List__c'){
+                    tds += `<td class="b_x_td">${item['ALI_Apttus__Product__Name']}-${item['ALI_Apttus_CMConfig__OptionId__Name']}</td>`;
+                }else if(col == 'p66_Legacy_Agreement_Site_ID__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Agreement_Site__c'])}</td>`;
+                }else if(col == 'p66_Legacy_Agreement_ID__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus__AgreementId__c'])}</td>`;
+                }else if(col == 'p66_Legacy_Agreement_Line_Item_ID__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_ID'])}</td>`;
+                }else if(col == 'p66_Base_Price__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig_BasePrice'])}</td>`;
+                }else if(col == 'p66_Rebate_Rate_CPG__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig_BasePrice'])}</td>`;
+                }else if(col == 'p66_Base_Price_Method__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig_BasePriceMethod'])}</td>`;
+                }else if(col == 'p66_Comments__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig_Comments'])}</td>`;
+                }else if(col == 'Description'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus__Description__c'])}</td>`;
+                }else if(col == 'p66_Exclude_from_Contractual_Balance__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_p66_Exclude_from_Contractual_Balance'])}</td>`;
+                }else if(col == 'Frequency'){
+                    let freq = item['ALI_Apttus_CMConfig__Frequency'];
+                    if(freq && freq.toLowerCase() == 'one time'){
+                        freq = 'ProgramStartAndEndDate';
+                    }
+                    tds += `<td class="b_x_td">${getIdelValue(freq)}</td>`;
+                }else if(col == 'p66_Rebate_Program_Frequency__c'){
+                    let freq = item['ALI_Apttus_CMConfig__Frequency'];
+                    if(freq && freq.toLowerCase() == 'one time'){
+                        freq = 'Upfront';
+                    }
+                    tds += `<td class="b_x_td">${getIdelValue(freq)}</td>`;
+                }else if(col == 'p66_Frequency__c'){
+                    let freq = item['ALI_Apttus_CMConfig__Frequency'];
+                    if(freq && freq.toLowerCase() == 'one time'){
+                        freq = 'Upfront';
+                    }
+                    tds += `<td class="b_x_td">${getIdelValue(freq)}</td>`;
+                }else if(col == 'p66_Incentive_Type__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig__IncentiveType'])}</td>`;
+                }else if(col == 'p66_Is_Financial_Schedule__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Ammortized'])}</td>`;
+                }else if(col == 'p66_Payment_Processing_Day__c'){
+                    let ppday = item['ALI_Payment_Processing_day'];
+                    if(ppday && (ppday == 1 || ppday == '1')){
+                        ppday = '1 Working Day';
+                    }else if(ppday && (ppday == 2 || ppday == '2')){
+                        ppday = '2 Working Days';
+                    }else if(ppday && (ppday == 10 || ppday == '10')){
+                        ppday = '10 Working Days';
+                    }
+                    tds += `<td class="b_x_td">${getIdelValue(ppday)}</td>`;
+                }else if(col == 'p66_Price_Method__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['bundle_Apttus_CMConfig__PriceMethod__c'])}</td>`;
+                }else if(col == 'p66_Pricing_UOM__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig__Uom__c'])}</td>`;
+                }else if(col == 'p66_Rebate_Program_Status__c'){
+                    tds += `<td class="b_x_td">Draft</td>`;
+                }else if(col == 'p66_Volume_Basis__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Volume_Basis'])}</td>`;
+                }else if(col == 'p66_Volume_Source__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Volume_Source'])}</td>`;
+                }else if(col == 'p66_Price_Type__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Price_Type'])}</td>`;
+                }else if(col == 'p66_Legacy_Product_category__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Product_category'])}</td>`;
+                }else if(col == 'p66_Tier_1_CPG__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_1_CPG__c'])}</td>`;
+                }else if(col == 'p66_Tier_1_Volume__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_1_Volume__c'])}</td>`;
+                }else if(col == 'p66_Tier_1_Start_Date__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['--'])}</td>`;
+                }else if(col == 'p66_Tier_1_End_Date__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['--'])}</td>`;
+                }else if(col == 'p66_Tier_1_TLA_Base_Price_CPG__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_1_TLA_Base_Price_CPG__c'])}</td>`;
+                }else if(col == 'p66_Tier_2_CPG__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_2_CPG__c'])}</td>`;
+                }else if(col == 'p66_Tier_2_Volume__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_2_Volume__c'])}</td>`;
+                }else if(col == 'p66_Tier_2_Start_Date__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['--'])}</td>`;
+                }else if(col == 'p66_Tier_2_TLA_Base_Price_CPG__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_2_TLA_Base_Price_CPG__c'])}</td>`;
+                }else if(col == 'p66_Tier_2_End_Date__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['--'])}</td>`;
+                }else if(col == 'p66_Tier_3_CPG__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_3_CPG__c'])}</td>`;
+                }else if(col == 'p66_Tier_3_Volume__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_3_Volume__c'])}</td>`;
+                }else if(col == 'p66_Tier_4_CPG__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_4_CPG__c'])}</td>`;
+                }else if(col == 'p66_Tier_4_Volume__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_4_Volume__c'])}</td>`;
+                }else if(col == 'p66_Tier_6_CPG__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_6_CPG__c'])}</td>`;
+                }else if(col == 'p66_Tier_6_Volume__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_6_Volume__c'])}</td>`;
+                }else if(col == 'p66_Withholding__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Withholding__c'])}</td>`;
+                }else if(col == 'p66_Trueup_period_months__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['p66_Trueup_period_months__c'])}</td>`;
+                }else if(col == 'p66_ContractualAmoritizationDelay_months__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['bundle_ALI_Contractual_Amoritization_Delay'])}</td>`;
+                }else if(col == 'p66_Contractual_Amortization_Method__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['bundle_ALI_Contractual_Amortization_method'])}</td>`;
+                }else if(col == 'p66_ContractualAmoritizationTermsmonths__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['derived_SF_contractual_term'])}</td>`;
+                }else if(col == 'p66_Contractual_Rolling_Balance_months__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['bundle_ALI_Contractual_rolling_Balance'])}</td>`;
+                }else if(col == 'p66_Out_Standing_Balance__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['bundle_Recovered_Contractual_Balance__c'])}</td>`;
+                }else if(col == 'p66_Legacy_AGL_Bundle_ID__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['bundle_ALI_ID'])}</td>`;
+                }else if(col == 'p66_True_Up_Base_price__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['--'])}</td>`;
+                }else if(col == 'p66_ProgramEffective_Date__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig__EffectiveDt'])}</td>`;
+                }else if(col == 'EndDate'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig__EndDt'])}</td>`;
+                }else if(col == 'StartDate'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig__StartDt'])}</td>`;
+                }else if(col == 'p66_Term__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['bundle_Contractual_Amortization_Term__C'])}</td>`;
+                }else if(col == 'CreatedById'){
+                    tds += `<td class="b_x_td">0054x000007ae7TAAQ</td>`;
+                }else{
+                    tds += `<td class="b_x_td">-</td>`;
+                }
+                j++;
+            }
+            $('.btn-blank').text(`Excel Processed - [ ${i + 1} / ${excelJson_top.length} ]`);
+            if(i < 22){
+                $('.b_x_body').append(`<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`);
+                await delay(40);
+            }else{
+                trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+                await delay(1);
+            }
+            i++;
+        }
+        
+        $('.b_x_body').append(trs);
+        
         let b_x_table = document.getElementById("table_bottom_id");
         b_x_table.scrollIntoView({ behavior: 'smooth', block: 'end' });
-        return;
+        $('.btn-blank').text('Blank');
     }
-
-    let item = excelJson_top[i];
-    let j = 0;
-    let tds = '';
-    while(j < columns.length){
-        let col = columns[j];
-        if(col == 'p66_IsMigrated__c'){
-            tds += `<td class="b_x_td">TRUE</td>`;
-        }else if(col == 'p66_IsLegacy__c'){
-            tds += `<td class="b_x_td">${isLegacy.toUpperCase()}</td>`;
-        }else if(col == 'p66_Sold_To_Account__c'){
-            let key = item['ALI_Soldto__c'];
-            let accountId = legacyAccountKeyAndSfIDMap.has(key) ? legacyAccountKeyAndSfIDMap.get(key) : '#N/A';
-            tds += `<td class="b_x_td">${accountId}</td>`;
-        }else if(col == 'p66_Ship_To_Account__c'){
-            let key = item['ALI_ShipTo__c'];
-            let accountId = legacyAccountKeyAndSfIDMap.has(key) ? legacyAccountKeyAndSfIDMap.get(key) : '#N/A';
-            tds += `<td class="b_x_td">${accountId}</td>`;
-        }else if(col == 'p66_Child_Contract__c'){
-            let mapKey = `${item['ALI_Agreement_Site__c']}${item['ALI_Apttus__AgreementId__c']}`;
-            let contractId = ring4ContractIdsMap.has(mapKey) ? ring4ContractIdsMap.get(mapKey) : '#N/A';
-            tds += `<td class="b_x_td">${contractId}</td>`;
-        }else if(col == 'Contract Number'){
-            let mapKey = `${item['ALI_Agreement_Site__c']}${item['ALI_Apttus__AgreementId__c']}`;
-            let contractNumber = rin4ContractNumbersMap.has(mapKey) ? rin4ContractNumbersMap.get(mapKey) : '#N/A';
-            tds += `<td class="b_x_td">${contractNumber}</td>`;
-        }else if(col == 'p66_Product__c'){
-            tds += `<td class="b_x_td">${prodRPDetail.Id}</td>`;
-        }else if(col == 'p66_Parent_Rebate_Program__c'){
-            tds += `<td class="b_x_td">${prodRPDetail.p66_Rebate_Program__c}</td>`;
-        }else if(col == 'Parent Rebate Program Name'){
-            tds += `<td class="b_x_td">${prodRPDetail.p66_Rebate_Program__r.Name}</td>`;
-        }else if(col == 'ALI_Apttus__AgreementLineItem__c_Name'){
-            tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus__AgreementLineItem__c_Name'])}</td>`;
-        }else if(col == 'Name'){
-            let name;
-            let mapKey = `${item['ALI_Agreement_Site__c']}${item['ALI_Apttus__AgreementId__c']}`;
-            let contractNumber = rin4ContractNumbersMap.has(mapKey) ? rin4ContractNumbersMap.get(mapKey) : '#N/A';
-            if(isLegacy == 'false'){
-                name = prodRPDetail.p66_Rebate_Program__r.Name + '-' + contractNumber + '-' + item['ALI_Apttus__AgreementLineItem__c_Name'];
-            }else{
-                name = 'LRP-'+ item['ALI_Apttus_CMConfig__OptionId__Name'] + '-' + prodRPDetail.p66_Rebate_Program__r.Name + '-' + contractNumber + '-' + item['ALI_Apttus__AgreementLineItem__c_Name'];
-            }
-            tds += `<td class="b_x_td">${name}</td>`;
-        }else if(col == 'p66_Legacy_Products_List__c'){
-            tds += `<td class="b_x_td">${item['ALI_Apttus__Product__Name']}-${item['ALI_Apttus_CMConfig__OptionId__Name']}</td>`;
-        }else if(col == 'p66_Legacy_Agreement_Site_ID__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['ALI_Agreement_Site__c'])}</td>`;
-        }else if(col == 'p66_Legacy_Agreement_ID__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus__AgreementId__c'])}</td>`;
-        }else if(col == 'p66_Legacy_Agreement_Line_Item_ID__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['ALI_ID'])}</td>`;
-        }else if(col == 'p66_Base_Price__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig_BasePrice'])}</td>`;
-        }else if(col == 'p66_Rebate_Rate_CPG__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig_BasePrice'])}</td>`;
-        }else if(col == 'p66_Base_Price_Method__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig_BasePriceMethod'])}</td>`;
-        }else if(col == 'p66_Comments__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig_Comments'])}</td>`;
-        }else if(col == 'Description'){
-            tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus__Description__c'])}</td>`;
-        }else if(col == 'p66_Exclude_from_Contractual_Balance__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['ALI_p66_Exclude_from_Contractual_Balance'])}</td>`;
-        }else if(col == 'Frequency'){
-            let freq = item['ALI_Apttus_CMConfig__Frequency'];
-            if(freq && freq.toLowerCase() == 'one time'){
-                freq = 'ProgramStartAndEndDate';
-            }
-            tds += `<td class="b_x_td">${getIdelValue(freq)}</td>`;
-        }else if(col == 'p66_Rebate_Program_Frequency__c'){
-            let freq = item['ALI_Apttus_CMConfig__Frequency'];
-            if(freq && freq.toLowerCase() == 'one time'){
-                freq = 'Upfront';
-            }
-            tds += `<td class="b_x_td">${getIdelValue(freq)}</td>`;
-        }else if(col == 'p66_Frequency__c'){
-            let freq = item['ALI_Apttus_CMConfig__Frequency'];
-            if(freq && freq.toLowerCase() == 'one time'){
-                freq = 'Upfront';
-            }
-            tds += `<td class="b_x_td">${getIdelValue(freq)}</td>`;
-        }else if(col == 'p66_Incentive_Type__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig__IncentiveType'])}</td>`;
-        }else if(col == 'p66_Is_Financial_Schedule__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['ALI_Ammortized'])}</td>`;
-        }else if(col == 'p66_Payment_Processing_Day__c'){
-            let ppday = item['ALI_Payment_Processing_day'];
-            if(ppday && (ppday == 1 || ppday == '1')){
-                ppday = '1 Working Day';
-            }else if(ppday && (ppday == 2 || ppday == '2')){
-                ppday = '2 Working Days';
-            }else if(ppday && (ppday == 10 || ppday == '10')){
-                ppday = '10 Working Days';
-            }
-            tds += `<td class="b_x_td">${getIdelValue(ppday)}</td>`;
-        }else if(col == 'p66_Price_Method__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['bundle_Apttus_CMConfig__PriceMethod__c'])}</td>`;
-        }else if(col == 'p66_Pricing_UOM__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig__Uom__c'])}</td>`;
-        }else if(col == 'p66_Rebate_Program_Status__c'){
-            tds += `<td class="b_x_td">Draft</td>`;
-        }else if(col == 'p66_Volume_Basis__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['ALI_Volume_Basis'])}</td>`;
-        }else if(col == 'p66_Volume_Source__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['ALI_Volume_Source'])}</td>`;
-        }else if(col == 'p66_Price_Type__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['ALI_Price_Type'])}</td>`;
-        }else if(col == 'p66_Legacy_Product_category__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['ALI_Product_category'])}</td>`;
-        }else if(col == 'p66_Tier_1_CPG__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_1_CPG__c'])}</td>`;
-        }else if(col == 'p66_Tier_1_Volume__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_1_Volume__c'])}</td>`;
-        }else if(col == 'p66_Tier_1_Start_Date__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['--'])}</td>`;
-        }else if(col == 'p66_Tier_1_End_Date__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['--'])}</td>`;
-        }else if(col == 'p66_Tier_1_TLA_Base_Price_CPG__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_1_TLA_Base_Price_CPG__c'])}</td>`;
-        }else if(col == 'p66_Tier_2_CPG__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_2_CPG__c'])}</td>`;
-        }else if(col == 'p66_Tier_2_Volume__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_2_Volume__c'])}</td>`;
-        }else if(col == 'p66_Tier_2_Start_Date__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['--'])}</td>`;
-        }else if(col == 'p66_Tier_2_TLA_Base_Price_CPG__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_2_TLA_Base_Price_CPG__c'])}</td>`;
-        }else if(col == 'p66_Tier_2_End_Date__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['--'])}</td>`;
-        }else if(col == 'p66_Tier_3_CPG__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_3_CPG__c'])}</td>`;
-        }else if(col == 'p66_Tier_3_Volume__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_3_Volume__c'])}</td>`;
-        }else if(col == 'p66_Tier_4_CPG__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_4_CPG__c'])}</td>`;
-        }else if(col == 'p66_Tier_4_Volume__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_4_Volume__c'])}</td>`;
-        }else if(col == 'p66_Tier_6_CPG__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_6_CPG__c'])}</td>`;
-        }else if(col == 'p66_Tier_6_Volume__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['p66_Tier_6_Volume__c'])}</td>`;
-        }else if(col == 'p66_Withholding__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['p66_Withholding__c'])}</td>`;
-        }else if(col == 'p66_Trueup_period_months__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['p66_Trueup_period_months__c'])}</td>`;
-        }else if(col == 'p66_ContractualAmoritizationDelay_months__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['bundle_ALI_Contractual_Amoritization_Delay'])}</td>`;
-        }else if(col == 'p66_Contractual_Amortization_Method__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['bundle_ALI_Contractual_Amortization_method'])}</td>`;
-        }else if(col == 'p66_ContractualAmoritizationTermsmonths__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['derived_SF_contractual_term'])}</td>`;
-        }else if(col == 'p66_Contractual_Rolling_Balance_months__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['bundle_ALI_Contractual_rolling_Balance'])}</td>`;
-        }else if(col == 'p66_Out_Standing_Balance__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['bundle_Recovered_Contractual_Balance__c'])}</td>`;
-        }else if(col == 'p66_Legacy_AGL_Bundle_ID__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['bundle_ALI_ID'])}</td>`;
-        }else if(col == 'p66_True_Up_Base_price__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['--'])}</td>`;
-        }else if(col == 'p66_ProgramEffective_Date__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig__EffectiveDt'])}</td>`;
-        }else if(col == 'EndDate'){
-            tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig__EndDt'])}</td>`;
-        }else if(col == 'StartDate'){
-            tds += `<td class="b_x_td">${getIdelValue(item['ALI_Apttus_CMConfig__StartDt'])}</td>`;
-        }else if(col == 'p66_Term__c'){
-            tds += `<td class="b_x_td">${getIdelValue(item['bundle_Contractual_Amortization_Term__C'])}</td>`;
-        }else if(col == 'CreatedById'){
-            tds += `<td class="b_x_td">0054x000007ae7TAAQ</td>`;
-        }else{
-            tds += `<td class="b_x_td">-</td>`;
-        }
-        j++;
-    }
-    if(i < 25){
-        $('.b_x_body').append(`<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`);
-    }else{
-        if(delayTimeout != 1){
-            delayTimeout = 1;
-        }
-        all_trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
-    }
-    // document.title = `Excel Processed - [ ${i + 1} / ${excelJson_top.length} ]`;
-    $('.btn-blank').text(`Excel Processed - [ ${i + 1} / ${excelJson_top.length} ]`);
-    // let b_x_table = document.getElementById("table_bottom_id");
-    // b_x_table.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    setTimeout(() => {
-        processRPRow(i + 1, columns, isLegacy, prodRPDetail);
-    }, delayTimeout);
 }
+
 function fillDataRP(){
     $('.inp_col').val('R4V4');
     $('.txt_area').val('true');
