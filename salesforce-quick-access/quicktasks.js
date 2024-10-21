@@ -322,7 +322,7 @@ async function handleButtonClick(_this, button, copiedText){
         // 0i8O80000000KmjIAE
         if(idCheck(copiedText) && copiedText.startsWith('0i8')){
             addSpin(_this);
-            let query = `Select+p66_Period_Program_Year__c,p66_Period_Program_Quarter__c,p66_Self_AM_Qtrly_Interest__c,p66_Self_AM_Qtrly_Principal__c,p66_Self_AM_Qtrly_Loan_Balance__c,p66_Actual_quantity__c,p66_Self_AM_Qtrly_Rebate__c,p66_Excess_Rebate__c+From+RebateProgramMemberPayout+Where+Period.RebateProgramId+=+'${copiedText}'+And+p66_Period_Program_Year__c+!=+null+And+p66_Trueup__c+=+False+Order+By+Period.StartDate+Asc`;
+            let query = `Select+p66_Period_Program_Year__c,p66_Period_Program_Quarter__c,p66_Self_AM_Qtrly_Interest__c,p66_Self_AM_Qtrly_Principal__c,p66_Self_AM_Qtrly_Loan_Balance__c,p66_Actual_quantity__c,p66_Ramp_Up_Max_Period_Volume__c,p66_Self_AM_Qtrly_Rebate__c,p66_Excess_Rebate__c+From+RebateProgramMemberPayout+Where+Period.RebateProgramId+=+'${copiedText}'+And+p66_Period_Program_Year__c+!=+null+And+p66_Trueup__c+=+False+Order+By+Period.StartDate+Asc`;
             const response = await fetchRecord(query);
             console.log('$response:', response);
             if(response.errorCode){
