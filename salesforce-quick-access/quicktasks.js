@@ -276,7 +276,7 @@ async function handleButtonClick(_this, button, copiedText){
         // 0i8O80000000JsHIAU
         if(idCheck(copiedText) && copiedText.startsWith('0i8')){
             addSpin(_this);
-            let query = `Select+p66_Rebate_Rate_CPG__c,+p66_Product_category__c,+p66_Base_Price__c,+p66_Max_Period_Volume__c,+p66_Quote__r.p66_Gas_Avgas_GLS_YR1__c,+p66_Quote__r.p66_Diesel_Jet_GLS_YR1__c+From+RebateProgram+Where+Id+=+'${copiedText}'+LIMIT+1`;
+            let query = `Select+p66_Rebate_Rate_CPG__c,+p66_Product_category__c,+p66_Base_Price__c,+p66_Self_AM_Max_Period_Volume__c,+p66_Quote__r.p66_Gas_Avgas_GLS_YR1__c,+p66_Quote__r.p66_Diesel_Jet_GLS_YR1__c+From+RebateProgram+Where+Id+=+'${copiedText}'+LIMIT+1`;
             const response = await fetchRecord(query);
             console.log('$response:', response);
             if(response.errorCode){
