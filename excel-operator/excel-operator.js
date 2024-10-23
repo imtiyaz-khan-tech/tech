@@ -943,6 +943,7 @@ async function fillColumnsCB(){
 }
 
 function fillDataCB(){
+    clearInputs();
     let data =`op_CAS_ID	op_ALI_ID	op_CAS_Amortization__c	op_CAS_Closing_Balance__c	op_CAS_Comment__c	op_CAS_Opening_Balance__c	op_CAS_Status__c	op_ALI_Product_Name	Formatted	op_CAS_Period_Start_Dt__c	op_CAS_Period_End_Dt__c
 a4Q7V00006Gjo12UAB	a140e000009A5VsAAK		0		0	Active	BIP Front Loaded Rebate-3	11/1/2022	11/1/2022	11/30/2022
 a4Q7V00006Gjo13UAB	a140e000009A5VsAAK	10	0		0	Active	BIP Front Loaded Rebate-3	12/1/2022	12/1/2022	12/31/2022
@@ -2537,6 +2538,7 @@ a5gVC000000AEjoYAG		0i8VC0000003wM6YAI	a140e000006Ra77AAC	6/1/2021	6/1/2021					
      
 }
 function fillDataPP(){
+    clearInputs();
     let data =`ARS_Agreement_Id__c	ARS_Agreement_Site__c	ALI__AgreementLineItem__c_Id	ARS_ID	ARS_Apttus_Rebate__Comments__c	ALI_Product_Name	ARS_Apttus_Rebate__ScheduleType__c	ARS_Apttus_Rebate__PeriodStartDt__c	ARS_Apttus_Rebate__PeriodDt__c	lkp_Prrdlst_lkp_rp_LKP_OPTION_NM	op_ARS_Apttus_Rebate__Status__c
 a1160000000ECtYAAW	a4G0e000000MjO1EAK	a140e000008yqAqAAI	a407V000006pVKUQA2	BIP Upfront True Up Deferral 1	BIP Front Loaded Rebate	Rebate	01-03-2022	31-03-2022	BIP Front Loaded Rebate Combined	Reconciled
 a1160000000ECtYAAW	a4G0e000000MjO1EAK	a140e000008yqAqAAI	a407V000006pVKVQA2	BIP Upfront True Up Deferral 2	BIP Front Loaded Rebate	Rebate	01-04-2022	30-06-2022	BIP Front Loaded Rebate Combined	Reconciled
@@ -2618,6 +2620,7 @@ a1160000007ZkH7AAK	a4G60000000LFxcEAG	a1432000002o0TSAAY	a4032000003eIZmAAM	BIP 
      
 }
 function fillDataMP(){
+    clearInputs();
     let data =`AGR_Agreement_Site__c	AGR_Agreement_Id__c	Apttus__AgreementLineItem__Id	ARS_Apttus_Rebate__ActualQuantity	PP_ID	PP_Entry_Type__c	PP_Is_Incld_Contrct_Amrtzn__c	PP_Payment_Invoice_Amount__c	PP_Payment_Invoice_num	PP_Rate	PP_Quantity	PP_Sequence_Number	PP_Status	PP_Transaction_Reason	PP_Transaction_Type	PP_Treasury_Hold_Pending_Security	PP_Type	PP_Comments	AFTN_Company_Code_c	AFTN_Currency_Code_USD_c	AFTN_Description	AFTN_SAP_Feed_Code	AFTN_Line_Item_Number	AFTN_Material_Code	AFTN_Payment_Terms	AFTN_Plant_Code	AFTN_PO_Number	AFTN_External_Reference_Type	AFTN__ID	AFTN_ShipTo	AFTN_SoldTo_c	AFTN_Status	AFTN_Sytem	ARS_ID	ALI_Product2_Name	AFTN_Internal_Transaction_Number__c	AFTN_External_Reference_Dt	AFTN_Posting_Dt	PP_Payment_Invoice_Dt__c	lkp_rp_LKP_OPTION_NM	CAS_Contractual_Balance__c	PP_PERIOD_START_DT	PP_PERIOD_END_DT	Bundle_ALI_ID
 a4G0e000000MjO1EAK	a1160000000ECtYAAW	a140e000008yqAqAAI	112491	a4i7V000003Cb2FQAS	System	0	3374.73	9004521779		1	0007427640	Reconciled	Rebate	Customer	0	Payment		NAWC	USD	BIPFR Quarterly Rebate	452	10	11313617	N03	03H9	0007427640	Credit	a4C7V000009fhaaUAA	0010e00001QW1PHAA1	0016000000H8FgiAAF	Reconciled	SD	a407V000006pVKUQA2	BIP Front Loaded Rebate		30-06-2022	30-06-2022	30-06-2022	BIP Front Loaded Rebate Combined	0	03-01-2022	03/31/2022	a140e000008yqApAAI
 a4G0e000000MjO1EAK	a1160000000ECtYAAW	a140e000008yqAqAAI	271262	a4i7V000003CglmQAC	System	0	8137.86	9004688349		1	0007446622	Reconciled	Rebate	Customer	0	Payment		1011	USD	BIPFR Quarterly Rebate	452	10	11313617	N03	03H9	0007446622	Credit	a4C7V000009fhw0UAA	0010e00001QW1PHAA1	0016000000H8FgiAAF	Reconciled	SD	a407V000006pVKVQA2	BIP Front Loaded Rebate		19-07-2022	19-07-2022		BIP Front Loaded Rebate Combined	0	04-01-2022	06/30/2022	a140e000008yqApAAI
@@ -3714,4 +3717,8 @@ function fillIDTOALI(){
     `;
     $('.cleftdvs_bottom').html(table);
     let html = $('.cleftdvs_bottom').html();
+}
+function clearInputs(){
+    $('.inp_col').val('');
+    $('.txt_area').val('');
 }
