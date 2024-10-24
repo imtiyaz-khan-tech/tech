@@ -620,6 +620,21 @@ async function fillColumnsMP(){
         </div>
     `;
     $('.progress_td').html(progressBarHtml);
+
+    i = 0;
+    let jsonTopMap = new Map();
+    while(i < excelJson_top.length){
+        let date_apptus = excelJson_top[i]['PP_PERIOD_START_DT'];
+        if(datePosition == 1){
+            date_apptus = replaceBeforeChar(date_apptus, '-');
+        }else{
+            date_apptus = replaceTextBetween(date_apptus, '-','-','-');
+        }
+        jsonTopMap.set(excelJson_top[i]['Apttus__AgreementLineItem__Id']+date_apptus, excelJson_top[i]);
+        i++;
+    }
+
+    i = 0;
     while(i < excelJson_bottom.length){
         let item = excelJson_bottom[i];
         let j = 0;
@@ -627,17 +642,10 @@ async function fillColumnsMP(){
         while(j < columns.length){
             let col = columns[j];
             let value = item[col];
-            let foundItem = excelJson_top.find(itemApptus => {
-                let date_apptus = itemApptus['PP_PERIOD_START_DT'];
-                if(datePosition == 1){
-                    date_apptus = replaceBeforeChar(date_apptus, '-');
-                }else{
-                    date_apptus = replaceTextBetween(date_apptus, '-','-','-');
-                }
-                let date_salesforce = replaceBeforeChar(item['P66_Period_Start__c'], '-');
-                return itemApptus['Apttus__AgreementLineItem__Id']+date_apptus ==  item['p66_Legacy_Agreement_Line_Item_ID__c']+date_salesforce;
-            });
-            console.log('$foundItem: ',foundItem);
+
+            let date_salesforce = replaceBeforeChar(item['P66_Period_Start__c'], '-');
+            let foundItem = jsonTopMap.get(item['p66_Legacy_Agreement_Line_Item_ID__c']+date_salesforce);
+
             if(col == 'p66_IsMigrated__c'){
                 value = 'TRUE';
             }else if(col == 'p66_Legacy_Program_Payment_ID__c'){
@@ -745,7 +753,8 @@ async function fillColumnsMP(){
     const rows = excelJson_bottom.map(obj => headers.map(header => obj[header]).join('\t'));
     let tsv = [headers.join('\t'), ...rows].join('\n');
     console.log('$tsv: ',tsv);
-    copyToCLipboard(tsv);
+    let _this = $('button[data-btn="Fill Columns-MP"]');
+    copyToCLipboard_TimeOut(tsv, _this, _this.text().trim(), 1000, 'Copied.');
 }
 
 function convertDate(inputDate) {
@@ -791,6 +800,21 @@ async function fillColumnsPP(){
         </div>
     `;
     $('.progress_td').html(progressBarHtml);
+
+    i = 0;
+    let jsonTopMap = new Map();
+    while(i < excelJson_top.length){
+        let date_apptus = excelJson_top[i]['ARS_Apttus_Rebate__PeriodStartDt__c'];
+        if(datePosition == 1){
+            date_apptus = replaceBeforeChar(date_apptus, '-');
+        }else{
+            date_apptus = replaceTextBetween(date_apptus, '-','-','-');
+        }
+        jsonTopMap.set(excelJson_top[i]['ALI__AgreementLineItem__c_Id']+date_apptus, excelJson_top[i]);
+        i++;
+    }
+
+    i = 0;
     while(i < excelJson_bottom.length){
         let item = excelJson_bottom[i];
         let j = 0;
@@ -798,17 +822,10 @@ async function fillColumnsPP(){
         while(j < columns.length){
             let col = columns[j];
             let value = item[col];
-            let foundItem = excelJson_top.find(itemApptus => {
-                let date_apptus = itemApptus['ARS_Apttus_Rebate__PeriodStartDt__c'];
-                if(datePosition == 1){
-                    date_apptus = replaceBeforeChar(date_apptus, '-');
-                }else{
-                    date_apptus = replaceTextBetween(date_apptus, '-','-','-');
-                }
-                let date_salesforce = replaceBeforeChar(item['StartDate'], '-');
-                return itemApptus['ALI__AgreementLineItem__c_Id']+date_apptus ==  item['p66_Legacy_Agreement_Line_Item_ID__c']+date_salesforce;
-            });
-            console.log('$foundItem: ',foundItem);
+            
+            let date_salesforce = replaceBeforeChar(item['StartDate'], '-');
+            let foundItem = jsonTopMap.get(item['p66_Legacy_Agreement_Line_Item_ID__c']+date_salesforce);
+
             if(col == 'p66_IsMigrated__c'){
                 value = 'TRUE';
             }else if(col == 'p66_Legacy_Revenue_Schedule_ID__c'){
@@ -853,7 +870,8 @@ async function fillColumnsPP(){
     const rows = excelJson_bottom.map(obj => headers.map(header => obj[header]).join('\t'));
     let tsv = [headers.join('\t'), ...rows].join('\n');
     console.log('$tsv: ',tsv);
-    copyToCLipboard(tsv);
+    let _this = $('button[data-btn="Fill Columns-PP"]');
+    copyToCLipboard_TimeOut(tsv, _this, _this.text().trim(), 1000, 'Copied.');
 }
 async function fillColumnsCB(){
     console.log('$excelJson_top: ',excelJson_top);
@@ -878,6 +896,16 @@ async function fillColumnsCB(){
         </div>
     `;
     $('.progress_td').html(progressBarHtml);
+
+    //Create Map
+    i = 0;
+    let jsonTopMap = new Map();
+    while(i < excelJson_top.length){
+        jsonTopMap.set(excelJson_top[i]['op_ALI_ID']+excelJson_top[i]['op_CAS_Period_Start_Dt__c'], excelJson_top[i]);
+        i++;
+    }
+
+    i = 0;
     while(i < excelJson_bottom.length){
         let item = excelJson_bottom[i];
         let j = 0;
@@ -885,9 +913,8 @@ async function fillColumnsCB(){
         while(j < columns.length){
             let col = columns[j];
             let value = item[col];
-            let foundItem = excelJson_top.find(fi => {
-                return fi['op_ALI_ID']+fi['op_CAS_Period_Start_Dt__c'] ==  item['p66_Legacy_AGL_Bundle_ID__c']+item['p66_Contractual_Payout_Date__c'];
-            });
+
+            let foundItem = jsonTopMap.get(item['p66_Legacy_AGL_Bundle_ID__c']+item['p66_Contractual_Payout_Date__c']);
             console.log('$foundItem: ',foundItem);
             if(col == 'p66_IsMigrated__c'){
                 value = 'TRUE';
@@ -939,7 +966,8 @@ async function fillColumnsCB(){
     const rows = excelJson_bottom.map(obj => headers.map(header => obj[header]).join('\t'));
     let tsv = [headers.join('\t'), ...rows].join('\n');
     console.log('$tsv: ',tsv);
-    copyToCLipboard(tsv);
+    let _this = $('button[data-btn="Fill Columns-CB"]');
+    copyToCLipboard_TimeOut(tsv, _this, _this.text().trim(), 1000, 'Copied.');
 }
 
 function fillDataCB(){
@@ -2621,6 +2649,7 @@ a1160000007ZkH7AAK	a4G60000000LFxcEAG	a1432000002o0TSAAY	a4032000003eIZmAAM	BIP 
 }
 function fillDataMP(){
     clearInputs();
+    $('.inp_col').val('2');
     let data =`AGR_Agreement_Site__c	AGR_Agreement_Id__c	Apttus__AgreementLineItem__Id	ARS_Apttus_Rebate__ActualQuantity	PP_ID	PP_Entry_Type__c	PP_Is_Incld_Contrct_Amrtzn__c	PP_Payment_Invoice_Amount__c	PP_Payment_Invoice_num	PP_Rate	PP_Quantity	PP_Sequence_Number	PP_Status	PP_Transaction_Reason	PP_Transaction_Type	PP_Treasury_Hold_Pending_Security	PP_Type	PP_Comments	AFTN_Company_Code_c	AFTN_Currency_Code_USD_c	AFTN_Description	AFTN_SAP_Feed_Code	AFTN_Line_Item_Number	AFTN_Material_Code	AFTN_Payment_Terms	AFTN_Plant_Code	AFTN_PO_Number	AFTN_External_Reference_Type	AFTN__ID	AFTN_ShipTo	AFTN_SoldTo_c	AFTN_Status	AFTN_Sytem	ARS_ID	ALI_Product2_Name	AFTN_Internal_Transaction_Number__c	AFTN_External_Reference_Dt	AFTN_Posting_Dt	PP_Payment_Invoice_Dt__c	lkp_rp_LKP_OPTION_NM	CAS_Contractual_Balance__c	PP_PERIOD_START_DT	PP_PERIOD_END_DT	Bundle_ALI_ID
 a4G0e000000MjO1EAK	a1160000000ECtYAAW	a140e000008yqAqAAI	112491	a4i7V000003Cb2FQAS	System	0	3374.73	9004521779		1	0007427640	Reconciled	Rebate	Customer	0	Payment		NAWC	USD	BIPFR Quarterly Rebate	452	10	11313617	N03	03H9	0007427640	Credit	a4C7V000009fhaaUAA	0010e00001QW1PHAA1	0016000000H8FgiAAF	Reconciled	SD	a407V000006pVKUQA2	BIP Front Loaded Rebate		30-06-2022	30-06-2022	30-06-2022	BIP Front Loaded Rebate Combined	0	03-01-2022	03/31/2022	a140e000008yqApAAI
 a4G0e000000MjO1EAK	a1160000000ECtYAAW	a140e000008yqAqAAI	271262	a4i7V000003CglmQAC	System	0	8137.86	9004688349		1	0007446622	Reconciled	Rebate	Customer	0	Payment		1011	USD	BIPFR Quarterly Rebate	452	10	11313617	N03	03H9	0007446622	Credit	a4C7V000009fhw0UAA	0010e00001QW1PHAA1	0016000000H8FgiAAF	Reconciled	SD	a407V000006pVKVQA2	BIP Front Loaded Rebate		19-07-2022	19-07-2022		BIP Front Loaded Rebate Combined	0	04-01-2022	06/30/2022	a140e000008yqApAAI
