@@ -5,6 +5,7 @@ let excelData1;
 let excelData2;
 let excelJson_top = null;
 let showLessData = false;
+let showLessData_Bottom = false;
 let excelJson_bottom = null;
 $(document).ready(function() {
     console.clear();
@@ -79,7 +80,7 @@ $(document).on('click', '.btn', function(e) {
     } else if (btn == 'Create Map') {
         let columsArray = $('.txt_area').val().split('\n');
         createMap(columsArray);
-    } else if (btn == 'Show Less Or More Data') {
+    } else if (btn == 'Show Less Or More Data-Top') {
         let text = $(this).text();
         console.log('$text: ',text);
         if(text == 'Show Less Data'){
@@ -93,6 +94,20 @@ $(document).on('click', '.btn', function(e) {
             showLessData = true;
         }
         console.log('$showLessData: ',showLessData);
+    } else if (btn == 'Show Less Or More Data-Bottom') {
+        let text = $(this).text();
+        console.log('$text: ',text);
+        if(text == 'Show Less Data'){
+            $(this).text('Show More Data');
+            showLessData_Bottom = false;
+            if(excelJson_bottom.length){
+                generateJsonToTable_Bottom();
+            }
+        }else{
+            $(this).text('Show Less Data');
+            showLessData_Bottom = true;
+        }
+        console.log('$showLessData_Bottom: ',showLessData_Bottom);
     } else if (btn == 'Fill ContractIds') {
         fillContractIds();
     } else if (btn == 'Fill ContractIds Prod') {
@@ -2865,7 +2880,11 @@ function generateJsonToTable_Bottom(){
 
     i = 0;
     let trs = '';
-    while(i < excelJson_bottom.length){
+    let dataLength = excelJson_bottom.length;
+    if(showLessData_Bottom && dataLength > 25){
+        dataLength = 25;
+    }
+    while(i < dataLength){
         let item = excelJson_bottom[i];
         let j = 0;
         let tds = '';
