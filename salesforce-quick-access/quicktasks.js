@@ -154,13 +154,14 @@ async function handleButtonClick(_this, button, copiedText){
                 }
             }
         }
-    }else if(button == 'Update Rebate Rate CPG'){
-        // let id = '0i8O800000007BBIAY';
-        if(idCheck(copiedText) && copiedText.startsWith('0i8')){
+    }else if(button == 'Expire Contract'){
+        // let id = '800O800000GerfVIAR';
+        if(idCheck(copiedText)){
             let code = `
-                String REBATE_PROGRAMM_ID = '${copiedText}';
-                RebateProgram rp = [Select p66_Quote_Line__r.p66_Self_Am_Rebate_Rate__c from RebateProgram Where Id =: REBATE_PROGRAMM_ID];
-                update new RebateProgram(Id = REBATE_PROGRAMM_ID, p66_Rebate_Rate_CPG__c = rp.p66_Quote_Line__r.p66_Self_Am_Rebate_Rate__c);
+                Id contractId = '${copiedText}';
+                delete [SELECT Id, Name FROM RebateProgramMemberPayout WHERE p66_Rebate_Program__r.p66_Child_Contract__c =:contractId];
+                delete [SELECT Id, Name FROM RebateProgram WHERE p66_Child_Contract__c  =:contractId];
+                update new Contract(Id = contractId, Status = 'Expired');
             `;
             executeAnonymousHandle(_this, code);
         }
