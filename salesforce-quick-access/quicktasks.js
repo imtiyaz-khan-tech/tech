@@ -331,11 +331,12 @@ async function handleButtonClick(_this, button, copiedText){
             }else{
                 let thsArray = [
                     { label: 'Year', apiname: 'p66_Period_Program_Year__c' },
+                    { label: 'RU_MaxPV', apiname: 'p66_Ramp_Up_Max_Period_Volume__c' },
+                    { label: 'Quantity', apiname: 'p66_Actual_quantity__c' },
                     { label: 'Quarter', apiname: 'p66_Period_Program_Quarter__c' },
                     { label: 'Interest', apiname: 'p66_Self_AM_Qtrly_Interest__c' },
                     { label: 'Principal', apiname: 'p66_Self_AM_Qtrly_Principal__c' },
                     { label: 'Loan Balance', apiname: 'p66_Self_AM_Qtrly_Loan_Balance__c' },
-                    { label: 'Quantity', apiname: 'p66_Actual_quantity__c' },
                     { label: 'Qtrly Rebate', apiname: 'p66_Self_AM_Qtrly_Rebate__c' },
                     { label: 'Excess Rebate', apiname: 'p66_Excess_Rebate__c' }
                 ];
