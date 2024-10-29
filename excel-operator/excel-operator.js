@@ -144,11 +144,133 @@ $(document).on('click', '.btn', function(e) {
         fillDataRP();
     } else if (btn == 'Fill Columns-RP') {
         fillColumnsRP();
+    } else if (btn == 'Fill Data-AO') {
+        fillDataAO();
+    } else if (btn == 'Fill Columns-AO') {
+        fillColumnsAO();
     }
 });
 
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function fillColumnsAO(){
+    
+    // console.log('$siteIdAliIdAndRPIdMap: ',siteIdAliIdAndRPIdMap);
+    // console.log('$legacylAgreementlSitelIDAndAccountIdMap: ',legacylAgreementlSitelIDAndAccountIdMap);
+
+
+    let i = 0;
+    let ths = '';
+    let columns = ['p66_Legacy_Accounting_Option_ID__c', 'Agreement_Site__c', 'ALI_ID', 'p66_Account_Code__c', 
+        'p66_Account_Ship_To__c', 'p66_Application_Name__c', 'p66_Company_Code__c', 'p66_Document_Type_SA__c', 
+        'p66_Material_Code__c', 'p66_Payment_Terms__c', 'p66_Posting_Key__c', 'p66_Tax__c', 'p66_Transaction_Type__c', 
+        'p66_Additional_Invoice_Text__c', 'p66_Plant_Code__c', 'p66_Rebate_Program__c', 'p66_Description__c'];
+    while (i < columns.length) {
+        let col = columns[i];
+        let style = ``;
+        if(col == 'Agreement_Site__c' || col == 'ALI_ID'){
+            style = `style="background-color:#ffff6a"`;
+        }
+        ths += `<td class="b_x_th" ${style}>${getIdelValue(col)}</td>`;
+        i++;
+    }
+
+    i = 0;
+    let trs = '';
+    
+    let table = `
+        <table class="b_x_table" id="table_bottom_id">
+            <thead class="b_x_thead">
+                <tr  class="b_x_tr b_x_th_tr">
+                    ${ths}
+                </tr>
+            </thead>
+            <tbody class="b_x_body">
+                ${trs}
+            </tbody>
+        </table>
+    `;
+    $('.cleftdvs_bottom').html(table);
+
+    let progressBarHtml = `
+        <div class="progress-wrap progress" data-progress-percent="0">
+            <div class="progress-bar progress"></div>
+        </div>
+    `;
+    $('.progress_td').html(progressBarHtml);
+
+    while(i < excelJson_top.length){
+        let item = excelJson_top[i];
+        let j = 0;
+        let tds = '';
+        while(j < columns.length){
+            let col = columns[j];
+            if(col == 'p66_Legacy_Accounting_Option_ID__c'){
+                tds += `<td class="b_x_td">${getIdelValue(item['Id'])}</td>`;
+            }else if(col == 'Agreement_Site__c'){
+                tds += `<td class="b_x_td">${getIdelValue(item['Agreement_Site__c'])}</td>`;
+            }else if(col == 'ALI_ID'){
+                tds += `<td class="b_x_td">${getIdelValue(item['ALI_ID'])}</td>`;
+            }else if(col == 'p66_Account_Code__c'){
+                tds += `<td class="b_x_td">${getIdelValue(item['Account_Code__c'])}</td>`;
+            }else if(col == 'p66_Account_Ship_To__c'){
+                let mapKey = item['Agreement_Site__c'];
+                let accountId = legacylAgreementlSitelIDAndAccountIdMap.has(mapKey) ? legacylAgreementlSitelIDAndAccountIdMap.get(mapKey) : '#N/A';
+                tds += `<td class="b_x_td">${accountId}</td>`;
+            }else if(col == 'p66_Application_Name__c'){
+                tds += `<td class="b_x_td">${getIdelValue(item['Application_Name__c'])}</td>`;
+            }else if(col == 'p66_Company_Code__c'){
+                tds += `<td class="b_x_td">${getIdelValue(item['Company_Code__c'])}</td>`;
+            }else if(col == 'p66_Document_Type_SA__c'){
+                tds += `<td class="b_x_td">${getIdelValue(item['Document_Type_SA__c'])}</td>`;
+            }else if(col == 'p66_Material_Code__c'){
+                tds += `<td class="b_x_td">${getIdelValue(item['Material_Code__c'])}</td>`;
+            }else if(col == 'p66_Payment_Terms__c'){
+                tds += `<td class="b_x_td">${getIdelValue(item['Payment_Terms__c'])}</td>`;
+            }else if(col == 'p66_Posting_Key__c'){
+                tds += `<td class="b_x_td">${getIdelValue(item['Posting_Key__c'])}</td>`;
+            }else if(col == 'p66_Tax__c'){
+                tds += `<td class="b_x_td">${getIdelValue(item['Tax__c'])}</td>`;
+            }else if(col == 'p66_Transaction_Type__c'){
+                tds += `<td class="b_x_td">${getIdelValue(item['Transaction_Type__c'])}</td>`;
+            }else if(col == 'p66_Additional_Invoice_Text__c'){
+                tds += `<td class="b_x_td">${getIdelValue(item['Additional_Invoice_Text__c'])}</td>`;
+            }else if(col == 'p66_Plant_Code__c'){
+                tds += `<td class="b_x_td">${getIdelValue(item['Plant_Code_New__c'])}</td>`;
+            }else if(col == 'p66_Rebate_Program__c'){
+                let mapKey = item['Agreement_Site__c']+item['ALI_ID'];
+                let rebetProgramId = siteIdAliIdAndRPIdMap.has(mapKey) ? siteIdAliIdAndRPIdMap.get(mapKey) : '#N/A';
+                tds += `<td class="b_x_td">${rebetProgramId}</td>`;
+            }else if(col == 'p66_Description__c'){
+                tds += `<td class="b_x_td">${getIdelValue(item['Description'])}</td>`;
+            }
+            j++;
+        }
+        $('.btn-blank').text(`Excel Processed - [ ${i + 1} / ${excelJson_top.length} ]`);
+        // Calculate progress percentage based on array length
+        var percent = ((i + 1) / excelJson_top.length) * 100;
+
+        // Update the progress bar
+        updateProgressBar(percent);
+        if(i < 25){
+            $('.b_x_body').append(`<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`);
+            await delay(40);
+        }else{
+            trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+            await delay(1);
+        }
+        i++;
+    }
+    
+    $('.b_x_body').append(trs);
+    // $('.progress-wrap').css('background-color','#EFEFEF');
+    $('.progress_td').html('');
+    $('.btn-blank').text('Blank');
+    let b_x_table = document.getElementById("table_bottom_id");
+    b_x_table.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    $('.btn-blank').text('Blank');
 }
 
 async function fillColumnsRP(){
@@ -419,6 +541,171 @@ function updateProgressBar(percent) {
     $('.progress-bar').stop().animate({
     left: progressTotal
     }, animationLength);
+}
+function fillDataAO(){
+    // $('.inp_col').val('R4V4');
+    // $('.txt_area').val('true');
+    let data =`Id	Name	Account_Code__c	Agreement_Site__c	Application_Name__c	Company_Code__c	Document_Type_SA__c	Material_Code__c	Payment_Terms__c	Posting_Key__c	Tax__c	Transaction_Type__c	Additional_Invoice_Text__c	Plant_Code_New__c	ALI_ID	Description	Terminal_Code
+a4D0e000000EsZ2EAK	ALIAO-471652	42000000	a4G60000000LKXQEA4	MDA	1011	SA	11313620		40	Y0	Clawback Amortization DR	N/A		a140e000006Ra78AAC	BIPFR Clearing after Clawback	03H9
+a4D0e000000EsZ3EAK	ALIAO-471653		a4G60000000LKXQEA4	MDA	1011	SA	11313617	N03			Rebate	N/A		a140e000006Ra78AAC	BIPFR Quarterly Rebate	03H9
+a4D0e000000EsZ4EAK	ALIAO-471654	42000000	a4G60000000LKXQEA4	MDA	1011	SA	11313620		40	Y0	Rebate Amortization DR	N/A		a140e000006Ra78AAC	BIPFR Monthly Amortization	03H9
+a4D0e000000EsZ5EAK	ALIAO-471655	18000000	a4G60000000LKXQEA4	MDA	1011	SA	11313620		50	Y0	Clawback Amortization CR	N/A		a140e000006Ra78AAC	BIPFR Clearing after Clawback	03H9
+a4D0e000000EsZ6EAK	ALIAO-471656	42000000	a4G60000000LKXQEA4	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup DR	N/A		a140e000006Ra78AAC	BIPFR Quarterly Trueup Amortization	03H9
+a4D0e000000EsZ7EAK	ALIAO-471657	18000000	a4G60000000LKXQEA4	MDA	1011	SA	11313620		50	Y0	Rebate Amortization CR	N/A		a140e000006Ra78AAC	BIPFR Monthly Amortization	03H9
+a4D0e000000EsZ8EAK	ALIAO-471658	18000000	a4G60000000LKXQEA4	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup CR	N/A		a140e000006Ra78AAC	BIPFR Quarterly Trueup Amortization	03H9
+a4D0e000000EsZ9EAK	ALIAO-471659		a4G60000000LKXQEA4	MDA	1011	SA	11313617	N30			Clawback	N/A		a140e000006Ra78AAC	BIPFR Clawback	03H9
+a4D0e000000EsZAEA0	ALIAO-471660	18000000	a4G60000000LKXQEA4	MDA	1011	SA	11313617		50	Y0	Termination Contra CR	N/A		a140e000006Ra78AAC	BIPFR Clearing after Clawback	03H9
+a4D0e000000EsZBEA0	ALIAO-471661	18000000	a4G60000000LKXQEA4	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup Contra DR	N/A		a140e000006Ra78AAC	BIPFR Quarterly Trueup Amortization	03H9
+a4D0e000000EsZCEA0	ALIAO-471662	42000000	a4G60000000LKXQEA4	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup Contra CR	N/A		a140e000006Ra78AAC	BIPFR Quarterly Trueup Amortization	03H9
+a4D0e000000EsZDEA0	ALIAO-471663	18000000	a4G60000000LKXQEA4	MDA	1011	SA	11313617		40	Y0	Termination DR	N/A		a140e000006Ra78AAC	BIPFR Clearing after Clawback	03H9
+a4D0e000000EsZEEA0	ALIAO-471664	42000000	a4G60000000LKXQEA4	MDA	1011	SA	11313617		50	Y0	Termination CR	N/A		a140e000006Ra78AAC	BIPFR Clearing after Clawback	03H9
+a4D0e000000EsZFEA0	ALIAO-471665	42000000	a4G60000000LKXQEA4	MDA	1011	SA	11313617		40	Y0	Termination Contra DR	N/A		a140e000006Ra78AAC	BIPFR Clearing after Clawback	03H9
+a4D0e000000NUB0EAO	ALIAO-565329	42000000	a4G60000000LEVBEA4	MDA	1011	SA	11313620		40	Y0	Clawback Amortization DR	N/A		a140e000008y1CsAAI	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NUB1EAO	ALIAO-565330		a4G60000000LEVBEA4	MDA	1011	SA	11313617	N03			Rebate	N/A		a140e000008y1CsAAI	BIPFR Quarterly Rebate	03MQ
+a4D0e000000NUB2EAO	ALIAO-565331	42000000	a4G60000000LEVBEA4	MDA	1011	SA	11313620		40	Y0	Rebate Amortization DR	N/A		a140e000008y1CsAAI	BIPFR Monthly Amortization	03MQ
+a4D0e000000NUB3EAO	ALIAO-565332	18000000	a4G60000000LEVBEA4	MDA	1011	SA	11313620		50	Y0	Clawback Amortization CR	N/A		a140e000008y1CsAAI	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NUB4EAO	ALIAO-565333	42000000	a4G60000000LEVBEA4	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup DR	N/A		a140e000008y1CsAAI	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e000000NUB5EAO	ALIAO-565334	18000000	a4G60000000LEVBEA4	MDA	1011	SA	11313620		50	Y0	Rebate Amortization CR	N/A		a140e000008y1CsAAI	BIPFR Monthly Amortization	03MQ
+a4D0e000000NUB6EAO	ALIAO-565335	18000000	a4G60000000LEVBEA4	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup CR	N/A		a140e000008y1CsAAI	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e000000NUB7EAO	ALIAO-565336		a4G60000000LEVBEA4	MDA	1011	SA	11313617	N30			Clawback	N/A		a140e000008y1CsAAI	BIPFR Clawback	03MQ
+a4D0e000000NUB8EAO	ALIAO-565337	18000000	a4G60000000LEVBEA4	MDA	1011	SA	11313617		50	Y0	Termination Contra CR	N/A		a140e000008y1CsAAI	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NUB9EAO	ALIAO-565338	18000000	a4G60000000LEVBEA4	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup Contra DR	N/A		a140e000008y1CsAAI	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e000000NUBAEA4	ALIAO-565339	42000000	a4G60000000LEVBEA4	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup Contra CR	N/A		a140e000008y1CsAAI	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e000000NUBBEA4	ALIAO-565340	18000000	a4G60000000LEVBEA4	MDA	1011	SA	11313617		40	Y0	Termination DR	N/A		a140e000008y1CsAAI	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NUBCEA4	ALIAO-565341	42000000	a4G60000000LEVBEA4	MDA	1011	SA	11313617		50	Y0	Termination CR	N/A		a140e000008y1CsAAI	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NUBDEA4	ALIAO-565342	42000000	a4G60000000LEVBEA4	MDA	1011	SA	11313617		40	Y0	Termination Contra DR	N/A		a140e000008y1CsAAI	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NUBhEAO	ALIAO-565372	42000000	a4G0e000000Mc0kEAC	MDA	1011	SA	11313620		40	Y0	Clawback Amortization DR	N/A		a140e000008y1D0AAI	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NUBiEAO	ALIAO-565373		a4G0e000000Mc0kEAC	MDA	1011	SA	11313617	N03			Rebate	N/A		a140e000008y1D0AAI	BIPFR Quarterly Rebate	03MQ
+a4D0e000000NUBjEAO	ALIAO-565374	42000000	a4G0e000000Mc0kEAC	MDA	1011	SA	11313620		40	Y0	Rebate Amortization DR	N/A		a140e000008y1D0AAI	BIPFR Monthly Amortization	03MQ
+a4D0e000000NUBkEAO	ALIAO-565375	18000000	a4G0e000000Mc0kEAC	MDA	1011	SA	11313620		50	Y0	Clawback Amortization CR	N/A		a140e000008y1D0AAI	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NUBlEAO	ALIAO-565376	42000000	a4G0e000000Mc0kEAC	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup DR	N/A		a140e000008y1D0AAI	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e000000NUBmEAO	ALIAO-565377	18000000	a4G0e000000Mc0kEAC	MDA	1011	SA	11313620		50	Y0	Rebate Amortization CR	N/A		a140e000008y1D0AAI	BIPFR Monthly Amortization	03MQ
+a4D0e000000NUBnEAO	ALIAO-565378	18000000	a4G0e000000Mc0kEAC	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup CR	N/A		a140e000008y1D0AAI	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e000000NUBoEAO	ALIAO-565379		a4G0e000000Mc0kEAC	MDA	1011	SA	11313617	N30			Clawback	N/A		a140e000008y1D0AAI	BIPFR Clawback	03MQ
+a4D0e000000NUBpEAO	ALIAO-565380	18000000	a4G0e000000Mc0kEAC	MDA	1011	SA	11313617		50	Y0	Termination Contra CR	N/A		a140e000008y1D0AAI	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NUBqEAO	ALIAO-565381	18000000	a4G0e000000Mc0kEAC	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup Contra DR	N/A		a140e000008y1D0AAI	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e000000NUBrEAO	ALIAO-565382	42000000	a4G0e000000Mc0kEAC	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup Contra CR	N/A		a140e000008y1D0AAI	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e000000NUBsEAO	ALIAO-565383	18000000	a4G0e000000Mc0kEAC	MDA	1011	SA	11313617		40	Y0	Termination DR	N/A		a140e000008y1D0AAI	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NUBtEAO	ALIAO-565384	42000000	a4G0e000000Mc0kEAC	MDA	1011	SA	11313617		50	Y0	Termination CR	N/A		a140e000008y1D0AAI	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NUBuEAO	ALIAO-565385	42000000	a4G0e000000Mc0kEAC	MDA	1011	SA	11313617		40	Y0	Termination Contra DR	N/A		a140e000008y1D0AAI	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NUE6EAO	ALIAO-565515	42000000	a4G0e000000Mc0pEAC	MDA	1011	SA	11313620		40	Y0	Clawback Amortization DR	N/A		a140e000008y1DqAAI	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NUE7EAO	ALIAO-565516		a4G0e000000Mc0pEAC	MDA	1011	SA	11313617	N03			Rebate	N/A		a140e000008y1DqAAI	BIPFR Quarterly Rebate	03MQ
+a4D0e000000NUE8EAO	ALIAO-565517	42000000	a4G0e000000Mc0pEAC	MDA	1011	SA	11313620		40	Y0	Rebate Amortization DR	N/A		a140e000008y1DqAAI	BIPFR Monthly Amortization	03MQ
+a4D0e000000NUE9EAO	ALIAO-565518	18000000	a4G0e000000Mc0pEAC	MDA	1011	SA	11313620		50	Y0	Clawback Amortization CR	N/A		a140e000008y1DqAAI	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NUEAEA4	ALIAO-565519	42000000	a4G0e000000Mc0pEAC	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup DR	N/A		a140e000008y1DqAAI	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e000000NUEBEA4	ALIAO-565520	18000000	a4G0e000000Mc0pEAC	MDA	1011	SA	11313620		50	Y0	Rebate Amortization CR	N/A		a140e000008y1DqAAI	BIPFR Monthly Amortization	03MQ
+a4D0e000000NUECEA4	ALIAO-565521	18000000	a4G0e000000Mc0pEAC	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup CR	N/A		a140e000008y1DqAAI	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e000000NUEDEA4	ALIAO-565522		a4G0e000000Mc0pEAC	MDA	1011	SA	11313617	N30			Clawback	N/A		a140e000008y1DqAAI	BIPFR Clawback	03MQ
+a4D0e000000NUEEEA4	ALIAO-565523	18000000	a4G0e000000Mc0pEAC	MDA	1011	SA	11313617		50	Y0	Termination Contra CR	N/A		a140e000008y1DqAAI	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NUEFEA4	ALIAO-565524	18000000	a4G0e000000Mc0pEAC	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup Contra DR	N/A		a140e000008y1DqAAI	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e000000NUEGEA4	ALIAO-565525	42000000	a4G0e000000Mc0pEAC	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup Contra CR	N/A		a140e000008y1DqAAI	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e000000NUEHEA4	ALIAO-565526	18000000	a4G0e000000Mc0pEAC	MDA	1011	SA	11313617		40	Y0	Termination DR	N/A		a140e000008y1DqAAI	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NUEIEA4	ALIAO-565527	42000000	a4G0e000000Mc0pEAC	MDA	1011	SA	11313617		50	Y0	Termination CR	N/A		a140e000008y1DqAAI	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NUEJEA4	ALIAO-565528	42000000	a4G0e000000Mc0pEAC	MDA	1011	SA	11313617		40	Y0	Termination Contra DR	N/A		a140e000008y1DqAAI	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NZdIEAW	ALIAO-579310	42000000	a4G0e000000cZ7sEAE	MDA	1011	SA	11313620		40	Y0	Clawback Amortization DR	N/A		a140e000008yefsAAA	BIPFR Clearing after Clawback	03H9
+a4D0e000000NZdJEAW	ALIAO-579311		a4G0e000000cZ7sEAE	MDA	1011	SA	11313617	N03			Rebate	N/A		a140e000008yefsAAA	BIPFR Quarterly Rebate	03H9
+a4D0e000000NZdKEAW	ALIAO-579312	42000000	a4G0e000000cZ7sEAE	MDA	1011	SA	11313620		40	Y0	Rebate Amortization DR	N/A		a140e000008yefsAAA	BIPFR Monthly Amortization	03H9
+a4D0e000000NZdLEAW	ALIAO-579313	18000000	a4G0e000000cZ7sEAE	MDA	1011	SA	11313620		50	Y0	Clawback Amortization CR	N/A		a140e000008yefsAAA	BIPFR Clearing after Clawback	03H9
+a4D0e000000NZdMEAW	ALIAO-579314	42000000	a4G0e000000cZ7sEAE	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup DR	N/A		a140e000008yefsAAA	BIPFR Quarterly Trueup Amortization	03H9
+a4D0e000000NZdNEAW	ALIAO-579315	18000000	a4G0e000000cZ7sEAE	MDA	1011	SA	11313620		50	Y0	Rebate Amortization CR	N/A		a140e000008yefsAAA	BIPFR Monthly Amortization	03H9
+a4D0e000000NZdOEAW	ALIAO-579316	18000000	a4G0e000000cZ7sEAE	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup CR	N/A		a140e000008yefsAAA	BIPFR Quarterly Trueup Amortization	03H9
+a4D0e000000NZdPEAW	ALIAO-579317		a4G0e000000cZ7sEAE	MDA	1011	SA	11313617	N30			Clawback	N/A		a140e000008yefsAAA	BIPFR Clawback	03H9
+a4D0e000000NZdQEAW	ALIAO-579318	18000000	a4G0e000000cZ7sEAE	MDA	1011	SA	11313617		50	Y0	Termination Contra CR	N/A		a140e000008yefsAAA	BIPFR Clearing after Clawback	03H9
+a4D0e000000NZdREAW	ALIAO-579319	18000000	a4G0e000000cZ7sEAE	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup Contra DR	N/A		a140e000008yefsAAA	BIPFR Quarterly Trueup Amortization	03H9
+a4D0e000000NZdSEAW	ALIAO-579320	42000000	a4G0e000000cZ7sEAE	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup Contra CR	N/A		a140e000008yefsAAA	BIPFR Quarterly Trueup Amortization	03H9
+a4D0e000000NZdTEAW	ALIAO-579321	18000000	a4G0e000000cZ7sEAE	MDA	1011	SA	11313617		40	Y0	Termination DR	N/A		a140e000008yefsAAA	BIPFR Clearing after Clawback	03H9
+a4D0e000000NZdUEAW	ALIAO-579322	42000000	a4G0e000000cZ7sEAE	MDA	1011	SA	11313617		50	Y0	Termination CR	N/A		a140e000008yefsAAA	BIPFR Clearing after Clawback	03H9
+a4D0e000000NZdVEAW	ALIAO-579323	42000000	a4G0e000000cZ7sEAE	MDA	1011	SA	11313617		40	Y0	Termination Contra DR	N/A		a140e000008yefsAAA	BIPFR Clearing after Clawback	03H9
+a4D0e000000NayAEAS	ALIAO-583195	42000000	a4G0e000000Mjc1EAC	MDA	1011	SA	11313620		40	Y0	Clawback Amortization DR	N/A		a140e000008ypbIAAQ	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NayBEAS	ALIAO-583196		a4G0e000000Mjc1EAC	MDA	1011	SA	11313617	N03			Rebate	N/A		a140e000008ypbIAAQ	BIPFR Quarterly Rebate	03MQ
+a4D0e000000NayCEAS	ALIAO-583197	42000000	a4G0e000000Mjc1EAC	MDA	1011	SA	11313620		40	Y0	Rebate Amortization DR	N/A		a140e000008ypbIAAQ	BIPFR Monthly Amortization	03MQ
+a4D0e000000NayDEAS	ALIAO-583198	18000000	a4G0e000000Mjc1EAC	MDA	1011	SA	11313620		50	Y0	Clawback Amortization CR	N/A		a140e000008ypbIAAQ	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NayEEAS	ALIAO-583199	42000000	a4G0e000000Mjc1EAC	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup DR	N/A		a140e000008ypbIAAQ	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e000000NayFEAS	ALIAO-583200	18000000	a4G0e000000Mjc1EAC	MDA	1011	SA	11313620		50	Y0	Rebate Amortization CR	N/A		a140e000008ypbIAAQ	BIPFR Monthly Amortization	03MQ
+a4D0e000000NayGEAS	ALIAO-583201	18000000	a4G0e000000Mjc1EAC	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup CR	N/A		a140e000008ypbIAAQ	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e000000NayHEAS	ALIAO-583202		a4G0e000000Mjc1EAC	MDA	1011	SA	11313617	N30			Clawback	N/A		a140e000008ypbIAAQ	BIPFR Clawback	03MQ
+a4D0e000000NayIEAS	ALIAO-583203	18000000	a4G0e000000Mjc1EAC	MDA	1011	SA	11313617		50	Y0	Termination Contra CR	N/A		a140e000008ypbIAAQ	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NayJEAS	ALIAO-583204	18000000	a4G0e000000Mjc1EAC	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup Contra DR	N/A		a140e000008ypbIAAQ	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e000000NayKEAS	ALIAO-583205	42000000	a4G0e000000Mjc1EAC	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup Contra CR	N/A		a140e000008ypbIAAQ	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e000000NayLEAS	ALIAO-583206	18000000	a4G0e000000Mjc1EAC	MDA	1011	SA	11313617		40	Y0	Termination DR	N/A		a140e000008ypbIAAQ	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NayMEAS	ALIAO-583207	42000000	a4G0e000000Mjc1EAC	MDA	1011	SA	11313617		50	Y0	Termination CR	N/A		a140e000008ypbIAAQ	BIPFR Clearing after Clawback	03MQ
+a4D0e000000NayNEAS	ALIAO-583208	42000000	a4G0e000000Mjc1EAC	MDA	1011	SA	11313617		40	Y0	Termination Contra DR	N/A		a140e000008ypbIAAQ	BIPFR Clearing after Clawback	03MQ
+a4D0e0000016amuEAA	ALIAO-587348	42000000	a4G60000000LJsdEAG	MDA	1011	SA	11313620		40	Y0	Clawback Amortization DR	N/A		a140e0000099oitAAA	BIPFR Clearing after Clawback	03MQ
+a4D0e0000016amvEAA	ALIAO-587349		a4G60000000LJsdEAG	MDA	1011	SA	11313617	N03			Rebate	N/A		a140e0000099oitAAA	BIPFR Quarterly Rebate	03MQ
+a4D0e0000016amwEAA	ALIAO-587350	42000000	a4G60000000LJsdEAG	MDA	1011	SA	11313620		40	Y0	Rebate Amortization DR	N/A		a140e0000099oitAAA	BIPFR Monthly Amortization	03MQ
+a4D0e0000016amxEAA	ALIAO-587351	18000000	a4G60000000LJsdEAG	MDA	1011	SA	11313620		50	Y0	Clawback Amortization CR	N/A		a140e0000099oitAAA	BIPFR Clearing after Clawback	03MQ
+a4D0e0000016amyEAA	ALIAO-587352	42000000	a4G60000000LJsdEAG	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup DR	N/A		a140e0000099oitAAA	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e0000016amzEAA	ALIAO-587353	18000000	a4G60000000LJsdEAG	MDA	1011	SA	11313620		50	Y0	Rebate Amortization CR	N/A		a140e0000099oitAAA	BIPFR Monthly Amortization	03MQ
+a4D0e0000016an0EAA	ALIAO-587354	18000000	a4G60000000LJsdEAG	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup CR	N/A		a140e0000099oitAAA	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e0000016an1EAA	ALIAO-587355		a4G60000000LJsdEAG	MDA	1011	SA	11313617	N30			Clawback	N/A		a140e0000099oitAAA	BIPFR Clawback	03MQ
+a4D0e0000016an2EAA	ALIAO-587356	18000000	a4G60000000LJsdEAG	MDA	1011	SA	11313617		50	Y0	Termination Contra CR	N/A		a140e0000099oitAAA	BIPFR Clearing after Clawback	03MQ
+a4D0e0000016an3EAA	ALIAO-587357	18000000	a4G60000000LJsdEAG	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup Contra DR	N/A		a140e0000099oitAAA	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e0000016an4EAA	ALIAO-587358	42000000	a4G60000000LJsdEAG	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup Contra CR	N/A		a140e0000099oitAAA	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e0000016an5EAA	ALIAO-587359	18000000	a4G60000000LJsdEAG	MDA	1011	SA	11313617		40	Y0	Termination DR	N/A		a140e0000099oitAAA	BIPFR Clearing after Clawback	03MQ
+a4D0e0000016an6EAA	ALIAO-587360	42000000	a4G60000000LJsdEAG	MDA	1011	SA	11313617		50	Y0	Termination CR	N/A		a140e0000099oitAAA	BIPFR Clearing after Clawback	03MQ
+a4D0e0000016an7EAA	ALIAO-587361	42000000	a4G60000000LJsdEAG	MDA	1011	SA	11313617		40	Y0	Termination Contra DR	N/A		a140e0000099oitAAA	BIPFR Clearing after Clawback	03MQ
+a4D0e0000016ePYEAY	ALIAO-597184	42000000	a4G0e000000dK0XEAU	MDA	1011	SA	11313620		40	Y0	Clawback Amortization DR	N/A		a140e000009A5VtAAK	BIPFR Clearing after Clawback	03MQ
+a4D0e0000016ePZEAY	ALIAO-597185		a4G0e000000dK0XEAU	MDA	1011	SA	11313617	N03			Rebate	N/A		a140e000009A5VtAAK	BIPFR Quarterly Rebate	03MQ
+a4D0e0000016ePaEAI	ALIAO-597186	42000000	a4G0e000000dK0XEAU	MDA	1011	SA	11313620		40	Y0	Rebate Amortization DR	N/A		a140e000009A5VtAAK	BIPFR Monthly Amortization	03MQ
+a4D0e0000016ePbEAI	ALIAO-597187	18000000	a4G0e000000dK0XEAU	MDA	1011	SA	11313620		50	Y0	Clawback Amortization CR	N/A		a140e000009A5VtAAK	BIPFR Clearing after Clawback	03MQ
+a4D0e0000016ePcEAI	ALIAO-597188	42000000	a4G0e000000dK0XEAU	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup DR	N/A		a140e000009A5VtAAK	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e0000016ePdEAI	ALIAO-597189	18000000	a4G0e000000dK0XEAU	MDA	1011	SA	11313620		50	Y0	Rebate Amortization CR	N/A		a140e000009A5VtAAK	BIPFR Monthly Amortization	03MQ
+a4D0e0000016ePeEAI	ALIAO-597190	18000000	a4G0e000000dK0XEAU	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup CR	N/A		a140e000009A5VtAAK	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e0000016ePfEAI	ALIAO-597191		a4G0e000000dK0XEAU	MDA	1011	SA	11313617	N30			Clawback	N/A		a140e000009A5VtAAK	BIPFR Clawback	03MQ
+a4D0e0000016ePgEAI	ALIAO-597192	18000000	a4G0e000000dK0XEAU	MDA	1011	SA	11313617		50	Y0	Termination Contra CR	N/A		a140e000009A5VtAAK	BIPFR Clearing after Clawback	03MQ
+a4D0e0000016ePhEAI	ALIAO-597193	18000000	a4G0e000000dK0XEAU	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup Contra DR	N/A		a140e000009A5VtAAK	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e0000016ePiEAI	ALIAO-597194	42000000	a4G0e000000dK0XEAU	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup Contra CR	N/A		a140e000009A5VtAAK	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e0000016ePjEAI	ALIAO-597195	18000000	a4G0e000000dK0XEAU	MDA	1011	SA	11313617		40	Y0	Termination DR	N/A		a140e000009A5VtAAK	BIPFR Clearing after Clawback	03MQ
+a4D0e0000016ePkEAI	ALIAO-597196	42000000	a4G0e000000dK0XEAU	MDA	1011	SA	11313617		50	Y0	Termination CR	N/A		a140e000009A5VtAAK	BIPFR Clearing after Clawback	03MQ
+a4D0e0000016ePlEAI	ALIAO-597197	42000000	a4G0e000000dK0XEAU	MDA	1011	SA	11313617		40	Y0	Termination Contra DR	N/A		a140e000009A5VtAAK	BIPFR Clearing after Clawback	03MQ
+a4D0e0000016ft5EAA	ALIAO-602440	42000000	a4G60000000LERTEA4	MDA	1011	SA	11313620		40	Y0	Clawback Amortization DR	N/A		a140e000009A81nAAC	BIPFR Clearing after Clawback	03MQ
+a4D0e0000016ft6EAA	ALIAO-602441		a4G60000000LERTEA4	MDA	1011	SA	11313617	N03			Rebate	N/A		a140e000009A81nAAC	BIPFR Quarterly Rebate	03MQ
+a4D0e0000016ft7EAA	ALIAO-602442	42000000	a4G60000000LERTEA4	MDA	1011	SA	11313620		40	Y0	Rebate Amortization DR	N/A		a140e000009A81nAAC	BIPFR Monthly Amortization	03MQ
+a4D0e0000016ft8EAA	ALIAO-602443	18000000	a4G60000000LERTEA4	MDA	1011	SA	11313620		50	Y0	Clawback Amortization CR	N/A		a140e000009A81nAAC	BIPFR Clearing after Clawback	03MQ
+a4D0e0000016ft9EAA	ALIAO-602444	42000000	a4G60000000LERTEA4	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup DR	N/A		a140e000009A81nAAC	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e0000016ftAEAQ	ALIAO-602445	18000000	a4G60000000LERTEA4	MDA	1011	SA	11313620		50	Y0	Rebate Amortization CR	N/A		a140e000009A81nAAC	BIPFR Monthly Amortization	03MQ
+a4D0e0000016ftBEAQ	ALIAO-602446	18000000	a4G60000000LERTEA4	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup CR	N/A		a140e000009A81nAAC	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e0000016ftCEAQ	ALIAO-602447		a4G60000000LERTEA4	MDA	1011	SA	11313617	N30			Clawback	N/A		a140e000009A81nAAC	BIPFR Clawback	03MQ
+a4D0e0000016ftDEAQ	ALIAO-602448	18000000	a4G60000000LERTEA4	MDA	1011	SA	11313617		50	Y0	Termination Contra CR	N/A		a140e000009A81nAAC	BIPFR Clearing after Clawback	03MQ
+a4D0e0000016ftEEAQ	ALIAO-602449	18000000	a4G60000000LERTEA4	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup Contra DR	N/A		a140e000009A81nAAC	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e0000016ftFEAQ	ALIAO-602450	42000000	a4G60000000LERTEA4	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup Contra CR	N/A		a140e000009A81nAAC	BIPFR Quarterly Trueup Amortization	03MQ
+a4D0e0000016ftGEAQ	ALIAO-602451	18000000	a4G60000000LERTEA4	MDA	1011	SA	11313617		40	Y0	Termination DR	N/A		a140e000009A81nAAC	BIPFR Clearing after Clawback	03MQ
+a4D0e0000016ftHEAQ	ALIAO-602452	42000000	a4G60000000LERTEA4	MDA	1011	SA	11313617		50	Y0	Termination CR	N/A		a140e000009A81nAAC	BIPFR Clearing after Clawback	03MQ
+a4D0e0000016ftIEAQ	ALIAO-602453	42000000	a4G60000000LERTEA4	MDA	1011	SA	11313617		40	Y0	Termination Contra DR	N/A		a140e000009A81nAAC	BIPFR Clearing after Clawback	03MQ
+a4D320000009KXhEAM	ALIAO-352462	18000000	a4G32000000g5irEAA	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup Contra DR			a1432000003unPmAAI	BIPFR Quarterly Trueup Amortization	03M2
+a4D320000009KXiEAM	ALIAO-352463	18000000	a4G32000000g5isEAA	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup Contra DR			a1432000003unPnAAI	BIPFR Quarterly Trueup Amortization	03M2
+a4D320000009KXjEAM	ALIAO-352464	42000000	a4G32000000g5irEAA	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup Contra CR			a1432000003unPmAAI	BIPFR Quarterly Trueup Amortization	03M2
+a4D320000009KXkEAM	ALIAO-352465	42000000	a4G32000000g5isEAA	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup Contra CR			a1432000003unPnAAI	BIPFR Quarterly Trueup Amortization	03M2
+a4D320000009KXlEAM	ALIAO-352466	42000000	a4G32000000g5irEAA	MDA	1011	SA	11313620		40	Y0	Clawback Amortization DR			a1432000003unPmAAI	BIPFR Clearing after Clawback	03M2
+a4D320000009KXmEAM	ALIAO-352467	42000000	a4G32000000g5isEAA	MDA	1011	SA	11313620		40	Y0	Clawback Amortization DR			a1432000003unPnAAI	BIPFR Clearing after Clawback	03M2
+a4D320000009KXnEAM	ALIAO-352468		a4G32000000g5irEAA	MDA	1011	SA	11313617	N03			Rebate			a1432000003unPmAAI	BIPFR Quarterly Rebate	03M2
+a4D320000009KXoEAM	ALIAO-352469		a4G32000000g5isEAA	MDA	1011	SA	11313617	N03			Rebate			a1432000003unPnAAI	BIPFR Quarterly Rebate	03M2
+a4D320000009KXpEAM	ALIAO-352470	42000000	a4G32000000g5irEAA	MDA	1011	SA	11313620		40	Y0	Rebate Amortization DR			a1432000003unPmAAI	BIPFR Monthly Amortization	03M2
+a4D320000009KXqEAM	ALIAO-352471	42000000	a4G32000000g5isEAA	MDA	1011	SA	11313620		40	Y0	Rebate Amortization DR			a1432000003unPnAAI	BIPFR Monthly Amortization	03M2
+a4D320000009KXrEAM	ALIAO-352472	18000000	a4G32000000g5irEAA	MDA	1011	SA	11313620		50	Y0	Clawback Amortization CR			a1432000003unPmAAI	BIPFR Clearing after Clawback	03M2
+a4D320000009KXsEAM	ALIAO-352473	18000000	a4G32000000g5isEAA	MDA	1011	SA	11313620		50	Y0	Clawback Amortization CR			a1432000003unPnAAI	BIPFR Clearing after Clawback	03M2
+a4D320000009KXtEAM	ALIAO-352474	42000000	a4G32000000g5irEAA	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup DR			a1432000003unPmAAI	BIPFR Quarterly Trueup Amortization	03M2
+a4D320000009KXuEAM	ALIAO-352475	42000000	a4G32000000g5isEAA	MDA	1011	SA	11320181		40	Y0	Rebate Amortization Trueup DR			a1432000003unPnAAI	BIPFR Quarterly Trueup Amortization	03M2
+a4D320000009KXvEAM	ALIAO-352476	18000000	a4G32000000g5irEAA	MDA	1011	SA	11313620		50	Y0	Rebate Amortization CR			a1432000003unPmAAI	BIPFR Monthly Amortization	03M2
+a4D320000009KXwEAM	ALIAO-352477	18000000	a4G32000000g5isEAA	MDA	1011	SA	11313620		50	Y0	Rebate Amortization CR			a1432000003unPnAAI	BIPFR Monthly Amortization	03M2
+a4D320000009KXxEAM	ALIAO-352478	18000000	a4G32000000g5irEAA	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup CR			a1432000003unPmAAI	BIPFR Quarterly Trueup Amortization	03M2
+a4D320000009KXyEAM	ALIAO-352479	18000000	a4G32000000g5isEAA	MDA	1011	SA	11320181		50	Y0	Rebate Amortization Trueup CR			a1432000003unPnAAI	BIPFR Quarterly Trueup Amortization	03M2
+a4D320000009KXzEAM	ALIAO-352480		a4G32000000g5irEAA	MDA	1011	SA	11313617	N30			Clawback			a1432000003unPmAAI	BIPFR Clawback	03M2
+a4D320000009KY0EAM	ALIAO-352481		a4G32000000g5isEAA	MDA	1011	SA	11313617	N30			Clawback			a1432000003unPnAAI	BIPFR Clawback	03M2
+a4D320000009KY1EAM	ALIAO-352482	18000000	a4G32000000g5irEAA	MDA	1011	SA	11313617		40	Y0	Termination DR			a1432000003unPmAAI	BIPFR Clearing after Clawback	03M2
+a4D320000009KY2EAM	ALIAO-352483	18000000	a4G32000000g5isEAA	MDA	1011	SA	11313617		40	Y0	Termination DR			a1432000003unPnAAI	BIPFR Clearing after Clawback	03M2
+a4D320000009KY3EAM	ALIAO-352484	42000000	a4G32000000g5irEAA	MDA	1011	SA	11313617		50	Y0	Termination CR			a1432000003unPmAAI	BIPFR Clearing after Clawback	03M2
+a4D320000009KY4EAM	ALIAO-352485	42000000	a4G32000000g5isEAA	MDA	1011	SA	11313617		50	Y0	Termination CR			a1432000003unPnAAI	BIPFR Clearing after Clawback	03M2
+a4D320000009KY5EAM	ALIAO-352486	42000000	a4G32000000g5irEAA	MDA	1011	SA	11313617		40	Y0	Termination Contra DR			a1432000003unPmAAI	BIPFR Clearing after Clawback	03M2
+a4D320000009KY6EAM	ALIAO-352487	42000000	a4G32000000g5isEAA	MDA	1011	SA	11313617		40	Y0	Termination Contra DR			a1432000003unPnAAI	BIPFR Clearing after Clawback	03M2
+a4D320000009KY7EAM	ALIAO-352488	18000000	a4G32000000g5irEAA	MDA	1011	SA	11313617		50	Y0	Termination Contra CR			a1432000003unPmAAI	BIPFR Clearing after Clawback	03M2
+a4D320000009KY8EAM	ALIAO-352489	18000000	a4G32000000g5isEAA	MDA	1011	SA	11313617		50	Y0	Termination Contra CR			a1432000003unPnAAI	BIPFR Clearing after Clawback	03M2`;
+    navigator.clipboard.writeText(data).then(function() {
+        pasteExcel1();
+     }, function(err) {
+        console.error('error copying');
+     });
+     
 }
 function fillDataRP(){
     $('.inp_col').val('R4V4');
