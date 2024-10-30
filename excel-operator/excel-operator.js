@@ -159,6 +159,31 @@ async function fillColumnsAO(){
     
     // console.log('$siteIdAliIdAndRPIdMap: ',siteIdAliIdAndRPIdMap);
     // console.log('$legacylAgreementlSitelIDAndAccountIdMap: ',legacylAgreementlSitelIDAndAccountIdMap);
+    let jsonBottomMap;
+    if(excelJson_bottom){
+        let indx = 0;
+        jsonBottomMap = new Map();
+        while(indx < excelJson_bottom.length){
+            let rebateProgramId = '#N/A';
+            
+            if(excelJson_bottom[indx]['__Id']){
+                rebateProgramId = excelJson_bottom[indx]['__Id'];
+            }else if(excelJson_bottom[indx]['ID']){
+                rebateProgramId = excelJson_bottom[indx]['ID'];
+            }else if(excelJson_bottom[indx]['Id']){
+                rebateProgramId = excelJson_bottom[indx]['Id'];
+            }else if(excelJson_bottom[indx]['id']){
+                rebateProgramId = excelJson_bottom[indx]['id'];
+            }else if(excelJson_bottom[indx]['recordId']){
+                rebateProgramId = excelJson_bottom[indx]['recordId'];
+            }else if(excelJson_bottom[indx]['__ID']){
+                rebateProgramId = excelJson_bottom[indx]['__ID'];
+            }
+            jsonBottomMap.set(excelJson_bottom[indx]['p66_Legacy_Agreement_Site_ID__c']+excelJson_bottom[indx]['p66_Legacy_Agreement_Line_Item_ID__c'],rebateProgramId);
+            indx++;
+        }
+    }
+    console.log('$jsonBottomMap: ',jsonBottomMap);
 
 
     let i = 0;
@@ -240,9 +265,16 @@ async function fillColumnsAO(){
             }else if(col == 'p66_Plant_Code__c'){
                 tds += `<td class="b_x_td">${getIdelValue(item['Plant_Code_New__c'])}</td>`;
             }else if(col == 'p66_Rebate_Program__c'){
-                let mapKey = item['Agreement_Site__c']+item['ALI_ID'];
-                let rebetProgramId = siteIdAliIdAndRPIdMap.has(mapKey) ? siteIdAliIdAndRPIdMap.get(mapKey) : '#N/A';
-                tds += `<td class="b_x_td">${rebetProgramId}</td>`;
+                if(jsonBottomMap){
+                    let mapKey = item['Agreement_Site__c']+item['ALI_ID'];
+                    let rebetProgramId = jsonBottomMap.has(mapKey) ? jsonBottomMap.get(mapKey) : '#N/A';
+                    tds += `<td class="b_x_td">${rebetProgramId}</td>`;
+                }else{
+                    let mapKey = item['Agreement_Site__c']+item['ALI_ID'];
+                    let rebetProgramId = siteIdAliIdAndRPIdMap.has(mapKey) ? siteIdAliIdAndRPIdMap.get(mapKey) : '#N/A';
+                    tds += `<td class="b_x_td">${rebetProgramId}</td>`;
+                }
+
             }else if(col == 'p66_Description__c'){
                 tds += `<td class="b_x_td">${getIdelValue(item['Description'])}</td>`;
             }
