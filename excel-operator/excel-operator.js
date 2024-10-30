@@ -268,6 +268,9 @@ async function fillColumnsAO(){
                 if(jsonBottomMap){
                     let mapKey = item['Agreement_Site__c']+item['ALI_ID'];
                     let rebetProgramId = jsonBottomMap.has(mapKey) ? jsonBottomMap.get(mapKey) : '#N/A';
+                    if(rebetProgramId == '#N/A'){
+                        rebetProgramId = siteIdAliIdAndRPIdMap.has(mapKey) ? siteIdAliIdAndRPIdMap.get(mapKey) : '#N/A';
+                    }
                     tds += `<td class="b_x_td">${rebetProgramId}</td>`;
                 }else{
                     let mapKey = item['Agreement_Site__c']+item['ALI_ID'];
