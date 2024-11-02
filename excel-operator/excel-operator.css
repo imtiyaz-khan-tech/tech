@@ -80,7 +80,8 @@
     font-family: system-ui;
 }
 .btn:not(.pst_btn):hover{
-    background-color: #eeeded;
+    /* background-color: #eeeded; */
+    background-color: #f1efef;
 }
 .inp{
     width: 97%;
