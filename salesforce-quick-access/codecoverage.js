@@ -36,7 +36,7 @@ $(document).ready(function() {
             </div>
         `;
         $('.c').html(tags);
-        doPopulate();
+        // doPopulate();
     }
 });
 
