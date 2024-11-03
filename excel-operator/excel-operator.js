@@ -56,7 +56,7 @@ $(document).on('click', '.btn', function(e) {
         XLSX.writeFile(wb, "SheetJSTable.xlsx");
     }else if (btn == 'Copy Top') {
         let html = $('.cleftdvs_top').html();
-        html = html.replace(/(<td\b[^>]*?)\s*style="[^"]*"/g, '$1');
+        // html = html.replace(/(<td\b[^>]*?)\s*style="[^"]*"/g, '$1');
         const blob = new Blob([html], { type: "text/html" });
         navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
         let label = $(this).text();
@@ -66,7 +66,7 @@ $(document).on('click', '.btn', function(e) {
         }, 1000);
     } else if (btn == 'Copy Bottom') {
         let html = $('.cleftdvs_bottom').html();
-        html = html.replace(/(<td\b[^>]*?)\s*style="[^"]*"/g, '$1');
+        // html = html.replace(/(<td\b[^>]*?)\s*style="[^"]*"/g, '$1');
         const blob = new Blob([html], { type: "text/html" });
         navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
         let label = $(this).text();
@@ -75,8 +75,16 @@ $(document).on('click', '.btn', function(e) {
             $(this).text(label);
         }, 1000);
     } else if (btn == 'Copy Formatted') {
+        /* let html = $('.cleftdvs_bottom').html();
+        copyToCLipboard_TimeOut(html, $(this), $(this).text().trim(), 1000, 'Copied.'); */
         let html = $('.cleftdvs_bottom').html();
-        copyToCLipboard_TimeOut(html, $(this), $(this).text().trim(), 1000, 'Copied.');
+        const blob = new Blob([html], { type: "text/html" });
+        navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
+        let label = $(this).text();
+        $(this).text('Copied.');
+        setTimeout( () => {
+            $(this).text(label);
+        }, 1000);
     } else if (btn == 'Create Map') {
         let columsArray = $('.txt_area').val().split('\n');
         createMap(columsArray);
