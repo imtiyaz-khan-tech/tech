@@ -1,4 +1,4 @@
-.c{
+.c {
     background-color: white;
     /* border: 1px solid lightgray; */
     display: grid;
@@ -6,7 +6,8 @@
     grid-template-columns: 70% auto;
     height: 97vh;
 }
-.cdv_left{
+
+.cdv_left {
     /* border: 1px solid lightgray; */
     display: grid;
     grid-template-rows: 50% 50%;
@@ -15,46 +16,61 @@
     color: #313131;
     height: 96vh;
 }
-.cleftdvs{
+
+.cleftdvs {
     border: 1px solid lightgray;
     padding: 5px;
     overflow: auto;
 }
+
 .cleftdvs::-webkit-scrollbar {
     height: 10px !important;
     width: 10px !important;
 }
+
 .cleftdvs::-webkit-scrollbar-track {
     background-color: #f1f1f1 !important;
 }
+
 .cleftdvs::-webkit-scrollbar-thumb {
     background-color: lightgray !important;
     border-radius: 0px;
 }
+
 .cleftdvs::-webkit-scrollbar-thumb:hover {
     background-color: #b1aeae !important;
 }
-.t_x_table, .b_x_table{
+
+.t_x_table,
+.b_x_table {
     border-collapse: collapse;
     min-width: 100%;
     text-indent: initial;
     unicode-bidi: isolate;
 }
-.t_x_th, .b_x_th{
+
+.t_x_th,
+.b_x_th {
     border: 1px solid #d3dbf9;
     color: #191717;
 }
-.t_x_td, .b_x_td{
+
+.t_x_td,
+.b_x_td {
     border: 1px solid #d3dbf9;
 }
-.t_x_th, .t_x_td{
+
+.t_x_th,
+.t_x_td {
     padding: 2px;
 }
-.t_x_th, .b_x_th{
+
+.t_x_th,
+.b_x_th {
     font-weight: bold;
 }
 
-.cdv_right{
+.cdv_right {
     border: 1px solid lightgray;
     display: grid;
     grid-template-rows: 50% 50%;
@@ -64,14 +80,17 @@
     padding: 3px;
     height: fit-content;
 }
-.btn_table{
+
+.btn_table {
     table-layout: fixed;
     border-collapse: separate;
 }
-.btn_td{
+
+.btn_td {
     width: 50%;
 }
-.btn:not(.pst_btn){
+
+.btn:not(.pst_btn) {
     width: 100%;
     cursor: pointer;
     background-color: #fbfbfb;
@@ -79,22 +98,26 @@
     border: 1px solid #d3dbf9;
     font-family: system-ui;
 }
-.btn:not(.pst_btn):hover{
+
+.btn:not(.pst_btn):hover {
     /* background-color: #eeeded; */
     background-color: #f1efef;
 }
-.inp{
+
+.inp {
     width: 97%;
     text-align: center;
     outline: none;
     border: 1px solid #d3dbf9;
 }
-.btns_dv_top{
+
+.btns_dv_top {
     display: grid;
     grid-column-gap: 5px;
     grid-template-columns: 1fr 1fr;
 }
-.pst_btn{
+
+.pst_btn {
     width: 100%;
     height: 100%;
     background-color: white;
@@ -103,17 +126,26 @@
     color: darkgray;
     cursor: pointer;
 }
-.txt_area{
+
+.txt_area {
     width: 98.6%;
     outline: none;
     size: 10;
     border: 1px solid #d3dbf9;
 }
-.t_x_th,.b_x_th,.t_x_td,.b_x_td{
+
+.t_x_th,
+.b_x_th,
+.t_x_td,
+.b_x_td {
     cursor: default;
     white-space: nowrap;
 }
-.t_x_th,.b_x_th,.t_x_td,.b_x_td{
+
+.t_x_th,
+.b_x_th,
+.t_x_td,
+.b_x_td {
     -webkit-touch-callout: none !important;
     -webkit-user-select: none !important;
     -khtml-user-select: none !important;
@@ -126,73 +158,76 @@
     width: 100%;
     height: 4px;
 }
+
 .progress-wrap {
     background: #c8c8c8;
     overflow: hidden;
     position: relative;
 }
+
 .progress-bar {
     background: #EFEFEF;
     height: 100%;
     position: absolute;
 }
+
 .list_dv {
     display: flex;
     align-items: center;
     justify-content: center;
     border-bottom: 1px solid lightgray !important;
-  }
-  
-  .btn:active {
+}
+
+.btn:active {
     transform: translateY(2px);
-  }
-  
-  .list_dv {
+}
+
+.list_dv {
     position: relative;
-  }
-  
-  .border-left,
-  .border-right {
+}
+
+.border-left,
+.border-right {
     position: absolute;
     height: 1px;
     width: 0;
     background-color: white;
     transition: width 0.3s ease-out;
     bottom: 0;
-  }
-  
-  .border-left {
+}
+
+.border-left {
     left: 0;
-  }
-  
-  .border-right {
+}
+
+.border-right {
     right: 0;
-  }
-  
-  .list_dv:hover .border-left,
-  .list_dv:hover .border-right {
+}
+
+.list_dv:hover .border-left,
+.list_dv:hover .border-right {
     width: 50%;
-  }
-  
-  .border-left_2,
-  .border-right_2 {
+}
+
+.border-left_2,
+.border-right_2 {
     position: absolute;
     height: 0px;
     width: 0;
     background-color: white;
     transition: width 0.3s ease-out;
     top: 0;
-  }
-  
-  .border-left_2 {
+}
+
+.border-left_2 {
     left: 0;
-  }
-  
-  .border-right_2 {
+}
+
+.border-right_2 {
     right: 0;
-  }
-  
-  .list_dv:hover .border-left_2,
-  .list_dv:hover .border-right_2 {
+}
+
+.list_dv:hover .border-left_2,
+.list_dv:hover .border-right_2 {
     width: 50%;
-  }
+}
