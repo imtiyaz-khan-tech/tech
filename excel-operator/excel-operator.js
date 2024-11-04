@@ -341,7 +341,7 @@ async function fillColumnsRP(){
                         'p66_Tier_4_CPG__c', 'p66_Tier_4_Volume__c', 'p66_Tier_6_CPG__c', 'p66_Tier_6_Volume__c', 'p66_Withholding__c', 'p66_Trueup_period_months__c', 
                         'p66_ContractualAmoritizationDelay_months__c', 'p66_Contractual_Amortization_Method__c', 'p66_ContractualAmoritizationTermsmonths__c', 
                         'p66_Contractual_Rolling_Balance_months__c', 'p66_Out_Standing_Balance__c', 'p66_Legacy_AGL_Bundle_ID__c', 
-                        'p66_True_Up_Base_price__c', 'p66_ProgramEffective_Date__c', 'EndDate', 'StartDate', 'p66_Term__c', 'CreatedById'
+                        'p66_True_Up_Base_price__c', 'p66_ProgramEffective_Date__c', 'EndDate', 'StartDate', 'p66_Term__c', 'CreatedById','p66_Legacy_Agreement_Line_Item_Status__c'
                     ];
         while (i < columns.length) {
             let col = columns[i];
@@ -544,6 +544,8 @@ async function fillColumnsRP(){
                     tds += `<td class="b_x_td">${getIdelValue(item['bundle_Contractual_Amortization_Term__C'])}</td>`;
                 }else if(col == 'CreatedById'){
                     tds += `<td class="b_x_td">0054x000007ae7TAAQ</td>`;
+                }else if(col == 'p66_Legacy_Agreement_Line_Item_Status__c'){
+                    tds += `<td class="b_x_td">${getIdelValue(item['ALI_Status'])}</td>`;
                 }else{
                     tds += `<td class="b_x_td">-</td>`;
                 }
