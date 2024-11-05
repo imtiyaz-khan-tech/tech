@@ -1088,7 +1088,7 @@ async function fillColumnsMP(){
             </tbody>
         </table>
     `;
-    $('.cleftdvs_bottom').html(table);
+    // $('.cleftdvs_bottom').html(table);
     $('.progress_td').html('');
     $('.btn-blank').text('Blank');
     //Convert Excel Into Csv Data
@@ -1096,12 +1096,22 @@ async function fillColumnsMP(){
     // console.log('$csv: ',csv);
 
     // Generate TSV string
-    const headers = Object.keys(excelJson_bottom[0]);
+    /* const headers = Object.keys(excelJson_bottom[0]);
     const rows = excelJson_bottom.map(obj => headers.map(header => obj[header]).join('\t'));
     let tsv = [headers.join('\t'), ...rows].join('\n');
     console.log('$tsv: ',tsv);
     let _this = $('button[data-btn="Fill Columns-MP"]');
-    copyToCLipboard_TimeOut(tsv, _this, _this.text().trim(), 1000, 'Copied.');
+    copyToCLipboard_TimeOut(tsv, _this, _this.text().trim(), 1000, 'Copied.'); */
+
+    if(showLessData_Bottom){
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = table;
+        const tableElement = tempDiv.querySelector('#table_bottom_id');
+        var wb = XLSX.utils.table_to_book(tableElement);
+        XLSX.writeFile(wb, `${getDynamicName('MP-SF_MAPPED')}.xlsx`);
+    }else{
+        $('.cleftdvs_bottom').html(table);
+    }
 }
 
 function convertDate(inputDate) {
@@ -1205,7 +1215,7 @@ async function fillColumnsPP(){
             </tbody>
         </table>
     `;
-    $('.cleftdvs_bottom').html(table);
+    // $('.cleftdvs_bottom').html(table);
     $('.progress_td').html('');
     $('.btn-blank').text('Blank');
     //Convert Excel Into Csv Data
@@ -1213,12 +1223,24 @@ async function fillColumnsPP(){
     // console.log('$csv: ',csv);
 
     // Generate TSV string
-    const headers = Object.keys(excelJson_bottom[0]);
+    /* const headers = Object.keys(excelJson_bottom[0]);
     const rows = excelJson_bottom.map(obj => headers.map(header => obj[header]).join('\t'));
     let tsv = [headers.join('\t'), ...rows].join('\n');
     console.log('$tsv: ',tsv);
     let _this = $('button[data-btn="Fill Columns-PP"]');
-    copyToCLipboard_TimeOut(tsv, _this, _this.text().trim(), 1000, 'Copied.');
+    copyToCLipboard_TimeOut(tsv, _this, _this.text().trim(), 1000, 'Copied.'); */
+    if(showLessData_Bottom){
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = table;
+        const tableElement = tempDiv.querySelector('#table_bottom_id');
+        var wb = XLSX.utils.table_to_book(tableElement);
+        XLSX.writeFile(wb, `${getDynamicName('PP-SF_MAPPED')}.xlsx`);
+    }else{
+        $('.cleftdvs_bottom').html(table);
+    }
+}
+function getDynamicName(prefix){
+    return prefix + ' ' + new Date().toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true});
 }
 async function fillColumnsCB(){
     console.log('$excelJson_top: ',excelJson_top);
@@ -1301,7 +1323,7 @@ async function fillColumnsCB(){
             </tbody>
         </table>
     `;
-    $('.cleftdvs_bottom').html(table);
+    // $('.cleftdvs_bottom').html(table);
     $('.progress_td').html('');
     $('.btn-blank').text('Blank');
     //Convert Excel Into Csv Data
@@ -1309,12 +1331,22 @@ async function fillColumnsCB(){
     // console.log('$csv: ',csv);
 
     // Generate TSV string
-    const headers = Object.keys(excelJson_bottom[0]);
+    /* const headers = Object.keys(excelJson_bottom[0]);
     const rows = excelJson_bottom.map(obj => headers.map(header => obj[header]).join('\t'));
     let tsv = [headers.join('\t'), ...rows].join('\n');
     console.log('$tsv: ',tsv);
     let _this = $('button[data-btn="Fill Columns-CB"]');
-    copyToCLipboard_TimeOut(tsv, _this, _this.text().trim(), 1000, 'Copied.');
+    copyToCLipboard_TimeOut(tsv, _this, _this.text().trim(), 1000, 'Copied.'); */
+
+    if(showLessData_Bottom){
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = table;
+        const tableElement = tempDiv.querySelector('#table_bottom_id');
+        var wb = XLSX.utils.table_to_book(tableElement);
+        XLSX.writeFile(wb, `${getDynamicName('CB-SF_MAPPED')}.xlsx`);
+    }else{
+        $('.cleftdvs_bottom').html(table);
+    }
 }
 
 function fillDataCB(){
