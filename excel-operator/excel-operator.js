@@ -834,7 +834,7 @@ function fillMembers(columsArray){
             ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
             i++;
         }
-        console.log('$ths: ',ths);
+        //console.log('$ths: ',ths);
 
         i = 0;
         let trs = '';
@@ -899,7 +899,7 @@ function rPUpdateData(columsArray){
             ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
             i++;
         }
-        console.log('$ths: ',ths);
+        //console.log('$ths: ',ths);
 
         i = 0;
         let trs = '';
@@ -949,7 +949,7 @@ async function fillColumnsMP(){
     
 
     let columns = Object.keys(excelJson_bottom[0]);
-    console.log('$columns: ',columns);
+    // console.log('$columns: ',columns);
     let i = 0;
     let ths = '';
     while (i < columns.length) {
@@ -957,7 +957,7 @@ async function fillColumnsMP(){
         ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
         i++;
     }
-    console.log('$ths: ',ths);
+    //console.log('$ths: ',ths);
 
     i = 0;
     let trs = '';
@@ -1139,7 +1139,7 @@ async function fillColumnsPP(){
     console.log('$datePosition: ',datePosition);
 
     let columns = Object.keys(excelJson_bottom[0]);
-    console.log('$columns: ',columns);
+    // console.log('$columns: ',columns);
     let i = 0;
     let ths = '';
     while (i < columns.length) {
@@ -1147,7 +1147,7 @@ async function fillColumnsPP(){
         ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
         i++;
     }
-    console.log('$ths: ',ths);
+    //console.log('$ths: ',ths);
 
     i = 0;
     let trs = '';
@@ -1247,7 +1247,7 @@ async function fillColumnsCB(){
     console.log('$excelJson_bottom: ',excelJson_bottom);
 
     let columns = Object.keys(excelJson_bottom[0]);
-    console.log('$columns: ',columns);
+    // console.log('$columns: ',columns);
     let i = 0;
     let ths = '';
     while (i < columns.length) {
@@ -1255,7 +1255,7 @@ async function fillColumnsCB(){
         ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
         i++;
     }
-    console.log('$ths: ',ths);
+    //console.log('$ths: ',ths);
 
     i = 0;
     let trs = '';
@@ -3154,7 +3154,7 @@ function convertExcelToJson_Top(){
         dynamicTyping: true,
         complete: function(results) {
             console.log(results);
-            console.log(results.data);
+            console.log('TOP: ', results.data);
             excelJson_top = results.data;
             document.title = 'Excel Operator : [ '+(excelJson_top.length + 1)+' ]';
             generateJsonToTable_Top();
@@ -3167,7 +3167,7 @@ function convertExcelToJson_Top(){
 
 function generateJsonToTable_Top(){
     let columns = Object.keys(excelJson_top[0]);
-    console.log('$columns: ',columns);
+    // console.log('$columns: ',columns);
     let i = 0;
     let ths = '';
     while (i < columns.length) {
@@ -3175,7 +3175,7 @@ function generateJsonToTable_Top(){
         ths += `<td class="t_x_th">${getIdelValue(col)}</td>`;
         i++;
     }
-    console.log('$ths: ',ths);
+    //console.log('$ths: ',ths);
 
     i = 0;
     let trs = '';
@@ -3220,7 +3220,7 @@ function convertExcelToJson_Bottom(){
         dynamicTyping: true,
         complete: function(results) {
             console.log(results);
-            console.log(results.data);
+            console.log('BOTTOM: ', results.data);
             excelJson_bottom = results.data;
             generateJsonToTable_Bottom();
         },
@@ -3232,7 +3232,7 @@ function convertExcelToJson_Bottom(){
 
 function generateJsonToTable_Bottom(){
     let columns = Object.keys(excelJson_bottom[0]);
-    console.log('$columns: ',columns);
+    // console.log('$columns: ',columns);
     let i = 0;
     let ths = '';
     while (i < columns.length) {
@@ -3240,7 +3240,7 @@ function generateJsonToTable_Bottom(){
         ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
         i++;
     }
-    console.log('$ths: ',ths);
+    //console.log('$ths: ',ths);
 
     i = 0;
     let trs = '';
@@ -3302,7 +3302,7 @@ function pasteExcel2() {
 
 function includeColumns(columsArray){
     let columns = Object.keys(excelJson_top[0]);
-    console.log('$columns: ',columns);
+    // console.log('$columns: ',columns);
     let i = 0;
     let ths = '';
     while (i < columns.length) {
@@ -3311,7 +3311,7 @@ function includeColumns(columsArray){
             ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
         i++;
     }
-    console.log('$ths: ',ths);
+    //console.log('$ths: ',ths);
 
     i = 0;
     let trs = '';
@@ -3346,7 +3346,7 @@ function includeColumns(columsArray){
 
 function excludeColumns(columsArray){
     let columns = Object.keys(excelJson_top[0]);
-    console.log('$columns: ',columns);
+    // console.log('$columns: ',columns);
     let i = 0;
     let ths = '';
     while (i < columns.length) {
@@ -3355,7 +3355,7 @@ function excludeColumns(columsArray){
             ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
         i++;
     }
-    console.log('$ths: ',ths);
+    //console.log('$ths: ',ths);
 
     i = 0;
     let trs = '';
@@ -3510,7 +3510,7 @@ function copyToCLipboard_TimeOut(value, _this, label, time, copied) {
     let columns = Object.keys(excelJson_top[0]);
     columns.splice(1, 0, 'p66_Child_Contract__c');
     columns.splice(2, 0, 'Contract Number');
-    console.log('$columns: ',columns);
+    // console.log('$columns: ',columns);
     let i = 0;
     let ths = '';
     while (i < columns.length) {
@@ -3518,7 +3518,7 @@ function copyToCLipboard_TimeOut(value, _this, label, time, copied) {
         ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
         i++;
     }
-    console.log('$ths: ',ths);
+    //console.log('$ths: ',ths);
 
     i = 0;
     let trs = '';
@@ -3578,10 +3578,10 @@ function copyToCLipboard_TimeOut(value, _this, label, time, copied) {
     console.log('$prodContractIdsMap:' , prodContractIdsMap);
     console.log('$prodContractNumbersMap:' , prodContractNumbersMap);
     let columns = Object.keys(excelJson_top[0]);
-    console.log('$columns: ',columns);
+    // console.log('$columns: ',columns);
     columns.splice(1, 0, 'p66_Child_Contract__c');
     columns.splice(2, 0, 'Contract Number');
-    console.log('$columns: ',columns);
+    // console.log('$columns: ',columns);
     let i = 0;
     let ths = '';
     while (i < columns.length) {
@@ -3589,7 +3589,7 @@ function copyToCLipboard_TimeOut(value, _this, label, time, copied) {
         ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
         i++;
     }
-    console.log('$ths: ',ths);
+    //console.log('$ths: ',ths);
 
     i = 0;
     let trs = '';
@@ -3648,7 +3648,7 @@ function copyToCLipboard_TimeOut(value, _this, label, time, copied) {
     }
 
     let columns = Object.keys(excelJson_top[0]);
-    console.log('$columns: ',columns);
+    // console.log('$columns: ',columns);
     i = 0;
     let ths = '';
     while (i < columns.length) {
@@ -3656,7 +3656,7 @@ function copyToCLipboard_TimeOut(value, _this, label, time, copied) {
         ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
         i++;
     }
-    console.log('$ths: ',ths);
+    //console.log('$ths: ',ths);
     i = 0;
     let trs = '';
     while(i < excelJson_top.length){
@@ -3710,7 +3710,7 @@ function copyToCLipboard_TimeOut(value, _this, label, time, copied) {
 }
 function formateDateColumn(colum){
     let columns = Object.keys(excelJson_top[0]);
-    console.log('$columns: ',columns);
+    // console.log('$columns: ',columns);
     let newColumn = 'Formatted-Date';
     let index = columns.indexOf(colum);
     console.log('$index: ',index);
@@ -3723,7 +3723,7 @@ function formateDateColumn(colum){
             ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
             i++;
         }
-        console.log('$ths: ',ths);
+        //console.log('$ths: ',ths);
 
         i = 0;
         let trs = '';
@@ -3822,10 +3822,10 @@ $(document).on('click', '.t_x_th,.b_x_th,.t_x_td,.b_x_td', function (e){
 function fillShipToAndSoldTo(){
     console.log('$legacyAccountKeyAndSfIDMap:' , legacyAccountKeyAndSfIDMap);
     let columns = Object.keys(excelJson_top[0]);
-    console.log('$columns: ',columns);
+    // console.log('$columns: ',columns);
     columns.splice(1, 0, columns[0] + '-SF');
     $('.txt_area').val(columns[0] + '-SF');
-    console.log('$columns: ',columns);
+    // console.log('$columns: ',columns);
     let i = 0;
     let ths = '';
     while (i < columns.length) {
@@ -3833,7 +3833,7 @@ function fillShipToAndSoldTo(){
         ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
         i++;
     }
-    console.log('$ths: ',ths);
+    //console.log('$ths: ',ths);
 
     i = 0;
     let trs = '';
@@ -3990,7 +3990,7 @@ function getALIColumns(){
         ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
         i++;
     }
-    console.log('$ths: ',ths);
+    //console.log('$ths: ',ths);
 
     i = 0;
     let trs = '';
@@ -4041,13 +4041,13 @@ function fillALIColumns(){
     let i = 0;
     let ths = '';
     let columns = Object.keys(excelJson_bottom[0]);
-    console.log('$columns: ',columns);
+    // console.log('$columns: ',columns);
     while (i < columns.length) {
         let col = columns[i];
         ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
         i++;
     }
-    console.log('$ths: ',ths);
+    //console.log('$ths: ',ths);
 
     i = 0;
     let trs = '';
@@ -4095,7 +4095,7 @@ function fillIDTOALI(){
         ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
         i++;
     }
-    console.log('$ths: ',ths);
+    //console.log('$ths: ',ths);
 
     i = 0;
     let trs = '';
