@@ -94,7 +94,6 @@ async function handleButtonClick(_this, button, copiedText){
                 update new RebateProgram(Id = REBATE_PROGRAMM_ID, p66_Rebate_Program_Status__c = 'Yes-Pending', p66_Ship_To_Image_Completion_Date__c = null);
                 delete [Select Id, Name From RebateProgramMemberPayout Where Period.RebateProgramId =:REBATE_PROGRAMM_ID];
                 delete [Select Id, Name, StartDate, EndDate From RebateProgramPayoutPeriod Where RebateProgramId =:REBATE_PROGRAMM_ID];
-                update new RebateProgram(Id = REBATE_PROGRAMM_ID, p66_Rebate_Program_Status__c = 'Active');
             `;
             executeAnonymousHandle(_this, code);
         }
