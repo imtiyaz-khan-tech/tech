@@ -292,6 +292,7 @@ body {
     height: 100% !important;
     width: 100% !important;
     border: 1px ridge rgba(202, 202, 202, 0.57) !important;
+    font-family: monospace !important;
     /* box-shadow: -1px -1px 8px 3px rgba(202, 202, 202, 0.57) !important; */
 }
 .thead_1{
