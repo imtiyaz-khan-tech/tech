@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="flowslist.css">
+    <link type="image/x-icon" rel="shortcut icon" href="/tech/salesforce-quick-access/images/icon128.png">
+    <title>Flows List</title>
+</head>
+
+<body>
+    <script type="text/javascript" src="jquery_min.js"></script>
+    <script type="text/javascript" src="font_awesome_js.js"></script>
+    <script type="text/javascript" src="flowslist.js"></script>
+    <div class="d_outer">
+        <div class="d_top_down d_top">
+            <div class="top_c">
+                <div class="dropdown_container">
+                    <input class="inp inp_label" placeholder="Search Label" data-field="MasterLabel"/>
+                </div>
+                <div class="dropdown_container">
+                    <input class="inp inp_apiname" placeholder="Search ApiName" data-field="FullName"/>
+                </div>
+                <div class="dropdown_container">
+                    <input class="inp inp_lastmodifiedby" placeholder="Last ModifiedBy" data-field="LastModifiedBy"/>
+                </div>
+                <div class="dropdown_container">
+                    <input class="inp inp_createdby" placeholder="Created By" data-field="CreatedBy"/>
+                </div>
+                <!-- <div class="top_userinfo_dv">
+                    <select class="cta select top_select no_filters">
+                        <option value="No Filter" selected>No Filter</option>
+                        <option value="Active Only">Active Only</option>
+                        <option value="Inactive Only">Inactive Only</option>
+                        <option value="No Invalid Email">No Invalid Email</option>
+                        <option value="With Invalid Email">With Invalid Email</option>
+                        <option value="With Profile">With Profile</option>
+                        <option value="Without Profile">Without Profile</option>
+                        <option value="With Role">With Role</option>
+                        <option value="Without Role">Without Role</option>
+                    </select>
+                </div> -->
+                <div class="dropdown_container">
+                    <input class="inp inp_id" placeholder="Find By Id" data-field="Id"/>
+                </div>
+                <!-- <div class="top_fetchlog_dv">
+                    <button class="cta btn top_getrecords_btn">Get Records</button>
+                </div> -->
+            </div>
+        </div>
+        <div class="d_top_down d_down">
+            <div class="down_c">
+                <table class="table_1">
+                    <thead class="thead_1">
+                        <tr class="thead_1_tr">
+                            <th class="th_1 th_1_1">
+                                Id
+                            </th>
+                            <th class="th_1 th_1_2">
+                                Label
+                            </th>
+                            <th class="th_1 th_1_3">
+                                ApiName
+                            </th>
+                            <th class="th_1 th_1_4">
+                                ModifiedDate
+                            </th>
+                            <th class="th_1 th_1_5">
+                                ModifiedBy
+                            </th>
+                            <th class="th_1 th_1_6">
+                                CreatedDate
+                            </th>
+                            <th class="th_1 th_1_6">
+                                CreatedBy
+                            </th>
+                            <th class="th_1 th_1_6">
+                                Version
+                            </th>
+                            <th class="th_1 th_1_6">
+                                
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbody_1">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="snackbar-container">
+        <div class="snackbar">Copied.</div>
+    </div>
+    <div class="spinner-div">
+        <img src="/tech/salesforce-quick-access/images/loadercircleteal.svg"/>
+    </div>
+</body>
+</html>
