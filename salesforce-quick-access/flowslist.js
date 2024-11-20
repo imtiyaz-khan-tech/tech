@@ -5,7 +5,6 @@ let flowRecords = [];
 let flowRecordsAll = [];
 let flowIdApiNameMap;
 $(document).ready(function () {
-    $(".spinner-div").hide();
     let url = new URL(window.location.href);
     console.log('$url: ', url);
     baseUrl = url.searchParams.get('baseUrl');
@@ -138,6 +137,7 @@ function getRecord(flowId){
             document.title = `Flows - [ ${flowRecords.length} / ${processCount} ]`;
             if(flowRecords.length == processCount){
                 document.title = `Flows - [ ${flowRecords.length} ]`;
+                $(".spinner-div").hide();
             }
         }
     }).catch(error => {
