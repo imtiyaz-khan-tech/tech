@@ -4,6 +4,7 @@ let sessionId = null;
 let flowRecords = [];
 let flowRecordsAll = [];
 let flowIdApiNameMap;
+let mapApiNameFlowDefinitionId;
 $(document).ready(function () {
     let url = new URL(window.location.href);
     console.log('$url: ', url);
@@ -12,7 +13,36 @@ $(document).ready(function () {
     sessionId = url.searchParams.get('sessionId');
     console.log('$sessionId: ', sessionId);
     getFlows();
+    getFlowDefinitions();
 });
+
+function getFlowDefinitions(){
+    mapApiNameFlowDefinitionId = new Map();
+    let query = `SELECT Id, DeveloperName FROM FlowDefinition`;
+    const endpoint = `${baseUrl}/services/data/v59.0/tooling/query?q=${encodeURIComponent(query)}`;
+    fetch(endpoint, {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + sessionId,
+        },
+    }).then(response => response.json()).then(result => {
+        // console.log('$FD_RESULT: ', result);
+        if (result && result[0] && result[0].message) {
+            // $('.snackbar').text(result[0].message);
+        } else {
+            let records = JSON.parse(JSON.stringify(result.records));
+            console.log('$fd_records: ', records);
+            let i = 0;
+            while(i < records.length){
+                let item = records[i];
+                mapApiNameFlowDefinitionId.set(item.DeveloperName, item.Id);
+                i++;
+            }
+        }
+    }).catch(error => {
+        console.error('Error:', error);
+    });
+}
 
 function getFlows(){
     let query = 'SELECT Id,MasterLabel,VersionNumber,Status,LastModifiedDate,CreatedDate,CreatedBy.Name,LastModifiedBy.Name FROM Flow Where Status = \'Active\' ORDER BY LastModifiedDate DESC';
@@ -180,6 +210,18 @@ $(document).on('click', '.open-icon', function (e){
         }).catch(error => {
             console.error('Error:--', error);
         });
+    }
+});
+
+$(document).on('contextmenu', '.open-icon', function (e){
+    e.preventDefault();
+    let recordID = $(this).attr('data-recId');
+    console.log('$recordID: ',recordID);
+    let flowDefinitionId = mapApiNameFlowDefinitionId.get(flowIdApiNameMap.get(recordID));
+    console.log('$flowDefinitionId: ',flowDefinitionId);
+    if(flowDefinitionId){
+        let url = `${baseUrl}/lightning/setup/Flows/page?address=/${flowDefinitionId}`;
+        window.open(url);
     }
 });
 
