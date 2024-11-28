@@ -476,6 +476,36 @@ async function handleButtonClick(_this, button, copiedText){
         }catch(error){
             generateSuccessAndFailedTable({ isError: true, name: error.name, message: error.message, stack: error.stack });
         }
+    }else if(button == 'Create Job Fullbox'){
+        // let id = 'a1jO800000ZjgLVIAZ';
+        if(idCheck(copiedText) && copiedText.startsWith('a1j')){
+            let code = `
+                Map<String, String> sessionMap = TokenGenerator.getSessionMap('WIPRO');
+                System.debug(sessionMap);
+                for(Integer i = 0 ; i <= 59; i++){
+                    String index = String.valueOf(i);
+                    index = index.length() == 1 ? '0'+index : index;
+                    String croneExpr = '0 '+ i +' * * * ?';
+                    System.schedule('Contract Generation Info ' + i, croneExpr, new CallApiScheduler(sessionMap.get('sessionId'),sessionMap.get('baseUrl'),'${copiedText}'));
+                }
+            `;
+            executeAnonymousHandle(_this, code);
+        }
+    }else if(button == 'Create Job Ring4'){
+        // let id = 'a1jO800000ZjgLVIAZ';
+        if(idCheck(copiedText) && copiedText.startsWith('a1j')){
+            let code = `
+                Map<String, String> sessionMap = TokenGenerator.getSessionMap('RING4');
+                System.debug(sessionMap);
+                for(Integer i = 0 ; i <= 59; i++){
+                    String index = String.valueOf(i);
+                    index = index.length() == 1 ? '0'+index : index;
+                    String croneExpr = '0 '+ i +' * * * ?';
+                    System.schedule('Contract Generation Info ' + i, croneExpr, new CallApiScheduler(sessionMap.get('sessionId'),sessionMap.get('baseUrl'),'${copiedText}'));
+                }
+            `;
+            executeAnonymousHandle(_this, code);
+        }
     }
 }
 
