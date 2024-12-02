@@ -48,8 +48,8 @@ $(document).on('click', '.btn', function(e) {
     } else if (btn == 'Concat Columns') {
         let columsArray = $('.txt_area').val().split('\n');
         concatColumns(columsArray, $(this));
-    } else if (btn == 'Format Date') {
-        formateDateColumn($('.inp_formatted_date').val());
+    } else if (btn == 'Filter') {
+        filterRows();
     } else if (btn == 'download-top') {
         var wb = XLSX.utils.table_to_book(document.getElementById("table_top_id"));
         XLSX.writeFile(wb, "SheetJSTable.xlsx");
@@ -3899,6 +3899,14 @@ $(document).on('click', '.t_x_th,.b_x_th,.t_x_td,.b_x_td', function (e){
         $('.txt_area').val('');
     }
 });
+$(document).on('dblclick', '.t_x_td,.b_x_td', function (e){
+    let text = $(this).text().trim();
+    console.log('$text: ',text);
+    copyToCLipboard(text);
+    $('.t_x_th,.b_x_th,.t_x_td,.b_x_td').css('color','#313131');
+    $(this).css('color','#9f26c7');
+    $('.inp_col').val(text);
+ });
 
 function fillShipToAndSoldTo(){
     console.log('$legacyAccountKeyAndSfIDMap:' , legacyAccountKeyAndSfIDMap);
@@ -4214,4 +4222,48 @@ function fillIDTOALI(){
 function clearInputs(){
     $('.inp_col').val('');
     $('.txt_area').val('');
+}
+
+function filterRows(){
+    let inpFilterValue = $('.inp_col').val();
+    let columsArray = $('.txt_area').val().split('\n');
+    let columName = columsArray[0];
+
+    let columns = Object.keys(excelJson_top[0]);
+    let i = 0;
+    let ths = '';
+    while (i < columns.length) {
+        let col = columns[i];
+        ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
+        i++;
+    }
+
+    i = 0;
+    let trs = '';
+    while(i < excelJson_top.length){
+        let item = excelJson_top[i];
+        if(item[columName] == inpFilterValue){
+            let j = 0;
+            let tds = '';
+            while(j < columns.length){
+                tds += `<td class="b_x_td">${getIdelValue(item[columns[j]])}</td>`;
+                j++;
+            }
+            trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+        }
+        i++;
+    }
+    let table = `
+        <table class="b_x_table" id="table_bottom_id">
+            <thead class="b_x_thead">
+                <tr  class="b_x_tr b_x_th_tr">
+                    ${ths}
+                </tr>
+            </thead>
+            <tbody class="b_x_body">
+                ${trs}
+            </tbody>
+        </table>
+    `;
+    $('.cleftdvs_bottom').html(table);   
 }
