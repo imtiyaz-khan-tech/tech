@@ -10,12 +10,14 @@ let excelJson_bottom = null;
 $(document).ready(function() {
     console.clear();
     // $('.txt_area').val('__Id\np66_Ship_To_Account__c');
-    /* let data =``;
+    /*
+    let data =``;
     navigator.clipboard.writeText(data).then(function() {
         pasteExcel1();
      }, function(err) {
         console.error('error copying');
-     }); */
+     });
+    */
 });
 
 $(document).on('click', '.btn', function(e) {
@@ -3637,7 +3639,86 @@ function copyToCLipboard_TimeOut(value, _this, label, time, copied) {
     `;
     $('.cleftdvs_bottom').html(table);
 }
- function highlightDuplicates(){
+function highlightDuplicates(){
+
+    let inpColor = $('.inp_col').val();
+    let columsArray = $('.txt_area').val().split('\n');
+    let columName = columsArray[0];
+
+    let colorsMap = new Map();
+    let i = 0;
+    while(i < excelJson_top.length){
+        let item = excelJson_top[i];
+        if(!colorsMap.has(item[columName]))
+            colorsMap.set(item[columName], '#'+(Math.random().toString(16)+'00000').slice(2,8));
+        i++;
+    }
+
+    let columns = Object.keys(excelJson_top[0]);
+    // console.log('$columns: ',columns);
+    i = 0;
+    let ths = '';
+    while (i < columns.length) {
+        let col = columns[i];
+        ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
+        i++;
+    }
+    //console.log('$ths: ',ths);
+    i = 0;
+    let trs = '';
+    while(i < excelJson_top.length){
+        let item = excelJson_top[i];
+
+        let concated = item[columName];
+
+        let f = 0;
+        let highlight = false;
+        while(f < excelJson_top.length){
+            let item_f = excelJson_top[f];
+            
+            if(f != i){
+                let concated_f = item_f[columName];
+                if(concated == concated_f && !highlight){
+                    highlight = true;
+                }
+            }
+
+            f++;
+        }
+
+        let j = 0;
+        let tds = '';
+        while(j < columns.length){
+            let col = columns[j];
+            let style = ``;
+            if(highlight){
+                let color = colorsMap.get(item[columName]);
+                if(inpColor){
+                    color = inpColor;
+                }
+                style = `style="background-color:${color}"`;
+            }
+            tds += `<td class="b_x_td" ${style}>${getIdelValue(item[col])}</td>`;
+            j++;
+        }
+        trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+        i++;
+    }
+    let table = `
+        <table class="b_x_table" id="table_bottom_id">
+            <thead class="b_x_thead">
+                <tr  class="b_x_tr b_x_th_tr">
+                    ${ths}
+                </tr>
+            </thead>
+            <tbody class="b_x_body">
+                ${trs}
+            </tbody>
+        </table>
+    `;
+    $('.cleftdvs_bottom').html(table);
+}
+ function highlightDuplicates_Deprecated(){
     let colorsMap = new Map();
     let i = 0;
     while(i < excelJson_top.length){
