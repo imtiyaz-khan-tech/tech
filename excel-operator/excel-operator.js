@@ -3906,6 +3906,16 @@ $(document).on('dblclick', '.t_x_td,.b_x_td', function (e){
     $('.t_x_th,.b_x_th,.t_x_td,.b_x_td').css('color','#313131');
     $(this).css('color','#9f26c7');
     $('.inp_col').val(text);
+    if(!isCtrlPressed){
+        filterRows();
+    }
+ });
+ $(document).on('dblclick', '.inp_col', function (e){
+    navigator.clipboard.readText().then(text => {
+       $(this).val(text);
+    }).catch(err => {
+       console.error(err);
+    });
  });
 
 function fillShipToAndSoldTo(){
@@ -4226,10 +4236,13 @@ function clearInputs(){
 
 function filterRows(){
     let inpFilterValue = $('.inp_col').val();
-    let columsArray = $('.txt_area').val().split('\n');
+    let columsArray = $('.txt_area').val().split('\n').filter(Boolean);
     let columName = columsArray[0];
 
     let columns = Object.keys(excelJson_top[0]);
+    if(columsArray.length > 1){
+        columns = [...columsArray];
+    }
     let i = 0;
     let ths = '';
     while (i < columns.length) {
