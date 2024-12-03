@@ -3639,6 +3639,13 @@ function copyToCLipboard_TimeOut(value, _this, label, time, copied) {
     `;
     $('.cleftdvs_bottom').html(table);
 }
+$(document).on('mouseover', '.b_x_td[data-dup="true"]', function (e){
+    let color = $(this).data('color');
+    if(color){
+        $(this).attr('title',`duplicates=(${colorAndCountMap.get(color)})`);
+    }
+ });
+let colorAndCountMap = new Map();
 function highlightDuplicates(){
 
     let inpColor = $('.inp_col').val();
@@ -3666,6 +3673,7 @@ function highlightDuplicates(){
     //console.log('$ths: ',ths);
     i = 0;
     let trs = '';
+
     while(i < excelJson_top.length){
         let item = excelJson_top[i];
 
@@ -3680,6 +3688,10 @@ function highlightDuplicates(){
                 let concated_f = item_f[columName];
                 if(concated == concated_f && !highlight){
                     highlight = true;
+                    if(!colorAndCountMap.has(colorsMap.get(item_f[columName]))){
+                        colorAndCountMap.set(colorsMap.get(item_f[columName]), 0);
+                    }
+                    colorAndCountMap.set(colorsMap.get(item_f[columName]), colorAndCountMap.get(colorsMap.get(item_f[columName])) + 1);
                 }
             }
 
@@ -3691,14 +3703,19 @@ function highlightDuplicates(){
         while(j < columns.length){
             let col = columns[j];
             let style = ``;
+            let dup = ``;
+            let data_color = ``;
             if(highlight){
                 let color = colorsMap.get(item[columName]);
                 if(inpColor){
                     color = inpColor;
+                }else{
+                    data_color = `data-color="${color}"`;
                 }
+                dup = `data-dup=true`;
                 style = `style="background-color:${color}"`;
             }
-            tds += `<td class="b_x_td" ${style}>${getIdelValue(item[col])}</td>`;
+            tds += `<td class="b_x_td" ${style} ${data_color} ${dup}>${getIdelValue(item[col])}</td>`;
             j++;
         }
         trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
