@@ -3935,6 +3935,11 @@ $(document).on('dblclick', '.t_x_td,.b_x_td', function (e){
     });
  });
 
+ $(document).on('contextmenu', '.inp_col', function (e){
+    e.preventDefault();
+    $(this).val('');
+ });
+
 function fillShipToAndSoldTo(){
     console.log('$legacyAccountKeyAndSfIDMap:' , legacyAccountKeyAndSfIDMap);
     let columns = Object.keys(excelJson_top[0]);
