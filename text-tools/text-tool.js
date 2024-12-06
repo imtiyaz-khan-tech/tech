@@ -353,16 +353,74 @@ $(document).on('click', '.btn', function(e) {
         let txt1 = txt_1();
         let replace_before_value = inp('replace_before_value');
         let replace_before_with_value = inp('replace_before_with_value');
+        let replace_before_position_value = parseInt(inp('replace_before_position_value'));
+
         if(replace_before_value){
-            txt_2(txt1.trim().split('\n').map(l => replaceBeforeChar(l.trim(), replace_before_value, replace_before_with_value)).join('\n'));
+            if(replace_before_position_value == 1){
+                let txt1 = txt_1();
+                txt_2(txt1.trim().split('\n').map(l => replaceBeforeChar(l.trim(), replace_before_value, replace_before_with_value)).join('\n'));
+                afterActions();
+            }else{
+                let i = 0;
+                let newTxtArray = [];
+                let txtArray = txt1.trim().split('\n');
+                while(i < txtArray.length){
+                    let item = txtArray[i];
+                    let itemSplit = item.split(replace_before_value);
+                    if(itemSplit.length <= replace_before_position_value && replace_before_position_value > 0){
+                        newTxtArray.push(item);
+                    }else if(itemSplit.length > replace_before_position_value && replace_before_position_value > 0){
+                        item = item.replace(itemSplit[replace_before_position_value - 1], replace_before_with_value);
+                        newTxtArray.push(item);
+                    }else{
+                        let indxAbs = Math.abs(replace_before_position_value);
+                        if(itemSplit[indxAbs]){
+                            newTxtArray.push(itemSplit[indxAbs]);
+                        }else{
+                            newTxtArray.push(item);
+                        }
+                    }
+
+                    i++;
+                }
+                console.log('$newTxtArray: ',newTxtArray);
+                txt_2(newTxtArray.join('\n'));
+            }
+            
         }
         afterActions();
     }else if (btn == 'Replace After') {
         let txt1 = txt_1();
         let replace_after_value = inp('replace_after_value');
         let replace_after_with_value = inp('replace_after_with_value');
+        let replace_after_position_value = parseInt(inp('replace_after_position_value'));
+
         if(replace_after_value){
-            txt_2(txt1.trim().split('\n').map(l => replaceAfterChar(l.trim(), replace_after_value, replace_after_with_value)).join('\n'));
+            let i = 0;
+            let newTxtArray = [];
+            let txtArray = txt1.trim().split('\n');
+            while(i < txtArray.length){
+                let item = txtArray[i];
+                let itemSplit = item.split(replace_after_value);
+                if(itemSplit.length <= replace_after_position_value && replace_after_position_value > 0){
+                    newTxtArray.push(item);
+                }else if(itemSplit.length > replace_after_position_value && replace_after_position_value > 0){
+                    item = item.replace(itemSplit[replace_after_position_value], replace_after_with_value);
+                    newTxtArray.push(item);
+                }else{
+                    let indxAbs = Math.abs(replace_after_position_value);
+                    if(itemSplit[indxAbs]){
+                        newTxtArray.push(itemSplit[indxAbs]);
+                    }else{
+                        newTxtArray.push(item);
+                    }
+                }
+
+                i++;
+            }
+            console.log('$newTxtArray: ',newTxtArray);
+            txt_2(newTxtArray.join('\n'));
+            
         }
         afterActions();
     }else if (btn == 'Create Json Map') {
