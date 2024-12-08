@@ -423,6 +423,44 @@ $(document).on('click', '.btn', function(e) {
             
         }
         afterActions();
+    }else if (btn == 'Shift') {
+        let txt1 = txt_1();
+        let m_position = inp('m_position');
+        let m_seperator = inp('m_seperator');
+        let m_move_position = parseInt(inp('m_move_position'));
+
+        console.log('$m_position: ',m_position);
+        console.log('$m_seperator: ',m_seperator);
+        console.log('$m_move_position: ',m_move_position);
+
+        if(m_seperator){
+            let i = 0;
+            let newTxtArray = [];
+            let txtArray = txt1.trim().split('\n');
+            while(i < txtArray.length){
+                let item = txtArray[i];
+                let itemSplit = item.split(m_seperator);
+                console.log('$itemSplit: ',itemSplit);
+
+                let c = 0;
+                let splt = [];
+                while(c < itemSplit.length){
+                    
+                    if( c != (m_position - 1)){
+                        splt.push(itemSplit[c]);
+                    }
+
+                    c++;
+                }
+                splt.splice((m_move_position - 1), 0, itemSplit[m_position - 1]);
+                newTxtArray.push(splt.join(m_seperator));
+                i++;
+            }
+            console.log('$newTxtArray: ',newTxtArray);
+            txt_2(newTxtArray.join('\n'));
+            
+        }
+        afterActions();
     }else if (btn == 'Create Json Map') {
         let txt1 = txt_1();
         let key_field = inp('key_field');
