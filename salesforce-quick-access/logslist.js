@@ -209,8 +209,27 @@ function showToast() {
 $(document).on('contextmenu', '.record-id', function (e){
     let text = $(this).text().trim();
     e.preventDefault();
+    $('.record-id').css('color','rgb(42, 40, 40)');
+    $(this).css('color','#b800b8');
     openRecordDetail(text);
 });
+
+$(document).on('click', '.record-id', function (e){
+   let text = $(this).text().trim();
+   console.log('$text-Rec ID: ',text);
+   $('.record-id').css('color','rgb(42, 40, 40)');
+   $(this).css('color','rgb(248 0 0)');
+   openRawLog(text);
+});
+
+function openRawLog(recordID){
+    const userKeyRegExp = /[a-zA-Z0-9]{15}|[a-zA-Z0-9]{18}/;
+    const valid = userKeyRegExp.test(recordID);
+    if (valid) {
+        recordID = 'logRecodId=' + recordID + '&';
+        openMaximized('rawlog.html?' + recordID + 'baseUrl=' + baseUrl + '&sessionId=' + sessionId);
+    }
+}
 
 
 function openRecordDetail(recordID){
