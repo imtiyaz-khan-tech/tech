@@ -47,8 +47,17 @@ $(document).on('click', '.top_createlog_btn', function (e) {
     fetch(baseUrl + '/services/data/v59.0/tooling/query/?q=SELECT+Id,DeveloperName+FROM+DebugLevel', requestOptions).then(response => response.json()).then(result => {
         console.log('$API: ', result);
         let debugLevelId;
+
+        let traceFlagName = 'SFDC_DevConsole';
+        if(baseUrl == 'https://phillips66enterprise--wipro.sandbox.my.salesforce.com'){
+            traceFlagName = 'SFDC_DevConsole_Best';
+        }else if(baseUrl == 'https://phillips66enterprise--ring4.sandbox.my.salesforce.com'){
+            traceFlagName = 'SFDC_DevConsole_Finest';
+        }
+        console.log('$traceFlagName: ',traceFlagName);
+
         result.records.forEach(val => {
-            if (val.DeveloperName == 'SFDC_DevConsole') {
+            if (val.DeveloperName == traceFlagName) {
                 debugLevelId = val.Id;
                 return;
             }
