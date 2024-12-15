@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="rawlog.css">
+    <title>Raw Log</title>
+</head>
+
+<body>
+    <script type="text/javascript" src="jquery_min.js"></script>
+    <script type="text/javascript" src="font_awesome_js.js"></script>
+    <script type="text/javascript" src="rawlog.js"></script>
+    <script type="text/javascript" src="jsforce.js"></script>
+    <div class="c">
+        <textarea class="txt_area"></textarea>
+        <!-- <div class="txt_area" contenteditable="true"></div> -->
+    </div>
+    <div class="spinner-div">
+        <img src="/images/loadercircleteal.svg"/>
+    </div>
+    <div class="bottom-dv">
+        <table class="b_table">
+            <tr class="b_tr">
+                <td class="b_td">
+                    <input class="inp inp_1"/>
+                </td>
+                <td class="b_td">
+                    <input class="inp inp_2"/>
+                </td>
+                <td class="b_td">
+                    <input class="inp inp_3"/>
+                </td>
+                <td class="b_td">
+                    <input class="inp inp_4"/>
+                </td>
+                <td class="b_td">
+                    <select class="filters">
+                        <option class="option">--None--</option>
+                        <option class="option">--Clear--</option>
+                        <option class="option">Op:</option>
+                        <option class="option">Op:Insert</option>
+                        <option class="option">Op:Update</option>
+                        <option class="option">Op:Upsert</option>
+                        <option class="option">FlowAssignment</option>
+                        <option class="option">FlowRecordCreate</option>
+                        <option class="option">FlowRecordUpdate</option>
+                        <option class="option">FLOW_ELEMENT_BEGIN</option>
+                        <option class="option">VARIABLE_ASSIGNMENT</option>
+                        <option class="option">VARIABLE_SCOPE_BEGIN</option>
+                        <option class="option">FLOW_BULK_ELEMENT_BEGIN</option>
+                        <option class="option">FLOW_BULK_ELEMENT_END</option>
+                        <option class="option">FLOW_CREATE_INTERVIEW_BEGIN</option>
+                        <option class="option">FLOW_CREATE_INTERVIEW_END</option>
+                        <option class="option">|DEBUG|</option>
+                        <option class="option">|USER_DEBUG|</option>
+                        <option class="option">FATAL_ERROR</option>
+                        <option class="option">FLOW_ELEMENT_ERROR</option>
+                        <option class="option">METHOD_ENTRY</option>
+                        <option class="option">METHOD_EXIT</option>
+                        <option class="option">CODE_UNIT_STARTED</option>
+                        <option class="option">CODE_UNIT_FINISHED</option>
+                        <option class="option">SOQL_EXECUTE_BEGIN</option>
+                        <option class="option">DML_BEGIN</option>
+                    </select>
+                </td>
+                <td class="b_td">
+                    <button class="btn btn_filter">Filter</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
