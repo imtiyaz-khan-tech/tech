@@ -227,7 +227,8 @@ function openRawLog(recordID){
     const valid = userKeyRegExp.test(recordID);
     if (valid) {
         recordID = 'logRecodId=' + recordID + '&';
-        openMaximized('rawlog.html?' + recordID + 'baseUrl=' + baseUrl + '&sessionId=' + sessionId);
+        let url = 'https://imtiyaz-khan-tech.github.io/tech/salesforce-quick-access/rawlog.html?' + recordID + 'baseUrl=' + baseUrl + '&sessionId=' + sessionId
+        window.location.open(url, '_blank');
     }
 }
 
@@ -237,7 +238,8 @@ function openRecordDetail(recordID){
     const valid = userKeyRegExp.test(recordID);
     if (valid) {
         recordID = 'logRecodId=' + recordID + '&';
-        window.location.href = 'https://imtiyaz-khan-tech.github.io/tech/salesforce-quick-access/recentlogs?' + recordID + 'baseUrl=' + baseUrl + '&sessionId=' + sessionId;
+        let url = 'https://imtiyaz-khan-tech.github.io/tech/salesforce-quick-access/recentlogs?' + recordID + 'baseUrl=' + baseUrl + '&sessionId=' + sessionId;
+        window.location.open(url, '_blank');
     }
 }
 
