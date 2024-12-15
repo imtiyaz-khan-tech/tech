@@ -325,7 +325,7 @@ body {
     border-right: 2px solid whitesmoke !important;
     /* border-top: 1px solid whitesmoke; */
     /* border-bottom: 1px solid whitesmoke; */
-    color: rgb(42, 40, 40);
+    color: rgb(42, 40, 40) !important;
     max-width: 100px !important;
     /* overflow: hidden; */
     overflow: auto;
