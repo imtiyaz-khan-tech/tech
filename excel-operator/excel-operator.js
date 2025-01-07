@@ -158,8 +158,44 @@ $(document).on('click', '.btn', function(e) {
         fillDataAO();
     } else if (btn == 'Fill Columns-AO') {
         fillColumnsAO();
+    } else if (btn == 'Get Common Values') {
+        let columsArray = $('.txt_area').val().split('\n');
+        getCommonValues(columsArray);
     }
 });
+
+function getCommonValues(columsArray){
+    columsArray = columsArray.filter(Boolean);
+    if(columsArray.length == 2){
+        let column1 = columsArray.at(0);
+        let column2 = columsArray.at(1);
+        console.log('$column1: ',column1);
+        console.log('$column2: ',column2);
+        
+        console.log('$excelJson_top: ',excelJson_top);
+        console.log('$excelJson_bottom: ',excelJson_bottom);
+
+        let i = 0;
+        let commonValuesArray = [];
+        while(i < excelJson_top.length){
+            let item = excelJson_top[i];
+
+            let j = 0;
+            while(j < excelJson_bottom.length){
+                let itemJ = excelJson_bottom[j];
+
+                if(item[column1].trim() == itemJ[column2].trim()){
+                    commonValuesArray.push(item[column1].trim());
+                }
+
+                j++;
+            }
+
+            i++;
+        }
+        $('.txt_area').val(commonValuesArray.filter(Boolean).join('\n'));
+    }
+}
 
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
