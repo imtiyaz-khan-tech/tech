@@ -509,6 +509,20 @@ $(document).on('click', '.btn', function(e) {
             let mapString = "const "+map_name+" = new Map([\n"+obbStrArray.join(',\n')+"\n]);";
             txt_2(mapString);
         }
+    }else if (btn == 'Field Permissions') {
+        let txt1 = txt_1();
+        console.log('$txt1: ',txt1);
+        txt1 = txt1.trim().split('\n').filter(Boolean);
+        console.log('$txt1: ',txt1);
+        let codeXml = ``
+        txt1.forEach(val => {
+            if(val.includes('<field>')){
+                codeXml += `<fieldPermissions>\n\t<editable>true</editable>\n\t${val}\n\t<readable>true</readable>\n</fieldPermissions>\n`;
+            }else{
+                codeXml += `<fieldPermissions>\n\t<editable>true</editable>\n\t<field>${val}</field>\n\t<readable>true</readable>\n</fieldPermissions>\n`;
+            }
+        });
+        txt_2(codeXml.trim());
     }
 });
 
