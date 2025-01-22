@@ -523,6 +523,50 @@ $(document).on('click', '.btn', function(e) {
             }
         });
         txt_2(codeXml.trim());
+    }else if (btn == 'Remove Lines') {
+        let txt1 = txt_1();
+        console.log('$txt1: ',txt1);
+        txt1 = txt1.split('\n');
+        console.log('$txt1: ',txt1);
+
+        let remove_starts = inp('remove_starts');
+        console.log('$remove_starts: ',remove_starts);
+        let remove_ends = inp('remove_ends');
+        console.log('$remove_ends: ',remove_ends);
+        let remove_contains = inp('remove_contains');
+        console.log('$remove_contains: ',remove_contains);
+
+        let filterdLine = [];
+        let i = 0;
+        while(i < txt1.length){
+            let line = txt1[i];
+            let include = true;
+
+            if(remove_starts){
+                if(line.startsWith(remove_starts)){
+                    include = false;
+                }
+            }
+
+            if(remove_ends){
+                if(line.endsWith(remove_ends)){
+                    include = false;
+                }
+            }
+
+            if(remove_contains){
+                if(line.includes(remove_contains)){
+                    include = false;
+                }
+            }
+
+            if(include){
+                filterdLine.push(line);
+            }
+
+            i++;
+        }
+        txt_2(filterdLine.join('\n'));
     }
 });
 
