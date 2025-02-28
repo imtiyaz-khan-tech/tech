@@ -567,6 +567,26 @@ $(document).on('click', '.btn', function(e) {
             i++;
         }
         txt_2(filterdLine.join('\n'));
+    }else if (btn == 'Get Contains') {
+
+        let contains_value = inp('contains_value');
+        console.log('$contains_value: ',contains_value);
+
+        if(contains_value){
+            let txt1 = txt_1();
+            txt1 = txt1.split('\n');
+
+            let lines = [];
+            let i = 0;
+            while(i < txt1.length){
+                if(txt1[i].includes(contains_value)){
+                    lines.push(txt1[i]);
+                }
+
+                i++;
+            }
+            txt_2(lines.join('\n'));
+        }
     }
 });
 
