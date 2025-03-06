@@ -587,6 +587,52 @@ $(document).on('click', '.btn', function(e) {
             }
             txt_2(lines.join('\n'));
         }
+    }else if (btn == 'Remove After') {
+
+        let seperator_contains_value = inp('seperator_contains_value');
+        console.log('$seperator_contains_value: ',seperator_contains_value);
+
+        if(seperator_contains_value){
+            let txt1 = txt_1();
+            txt1 = txt1.split('\n');
+
+            let lines = [];
+            let i = 0;
+            while(i < txt1.length){
+                if(txt1[i].includes(seperator_contains_value)){
+                    let splitted = txt1[i].split(seperator_contains_value);
+                    lines.push(splitted[0]);
+                }else{
+                    lines.push(txt1[i]);
+                }
+
+                i++;
+            }
+            txt_2(lines.join('\n'));
+        }
+    }else if (btn == 'Remove Before') {
+
+        let seperator_contains_value = inp('seperator_contains_value');
+        console.log('$seperator_contains_value: ',seperator_contains_value);
+
+        if(seperator_contains_value){
+            let txt1 = txt_1();
+            txt1 = txt1.split('\n');
+
+            let lines = [];
+            let i = 0;
+            while(i < txt1.length){
+                if(txt1[i].includes(seperator_contains_value)){
+                    let splitted = txt1[i].split(seperator_contains_value);
+                    lines.push(splitted[splitted.length - 1]);
+                }else{
+                    lines.push(txt1[i]);
+                }
+
+                i++;
+            }
+            txt_2(lines.join('\n'));
+        }
     }
 });
 
