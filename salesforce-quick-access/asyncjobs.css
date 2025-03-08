@@ -1,5 +1,6 @@
 body {
     overflow: hidden;
+    font-family: monospace !important;
 }
 
 .d_outer {
@@ -74,7 +75,7 @@ body {
     border-radius: 5px !important;
     outline: none !important;
     text-align: center !important;
-    color: #383846;
+    color: #383846 !important;
 }
 
 .d_down_textarea {
