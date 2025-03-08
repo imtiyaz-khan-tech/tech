@@ -338,9 +338,13 @@ function createUserLog(){
         console.log('$debugLevelId: ', debugLevelId);
 
         if (debugLevelId) {
-            conn.identity().then(res => {
+            fetch(baseUrl + "/services/data/v59.0/", {method: 'GET', headers: {"Authorization": "Bearer " + sessionId }, redirect: 'follow' }).then(response => response.json()).then(res => {
                 console.log('$res: ',res);
-                let userId = res.user_id;
+                let identity = res.identity;
+                console.log('$identity: ', identity);
+                identity = identity.substring(identity.lastIndexOf('/') + 1);
+                console.log('$identity: ', identity);
+                let userId = identity;
                 console.log('$userId: ', userId);
                 const userKeyRegExp = /[a-zA-Z0-9]{15}|[a-zA-Z0-9]{18}/;
                 const valid = userKeyRegExp.test(userId);
@@ -436,6 +440,7 @@ function createUserLog(){
                         console.log('$API: error', error);
                     });
                 }
+
             }).catch(err => {
                 console.log('$err: ',err);
             });
