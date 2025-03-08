@@ -3,9 +3,8 @@ let baseUrl;
 let logData;
 let sessionId;
 let recordsAll;
-let whereClause;
-let totalCount = 0;
 let recordsCurrent;
+let intervalVariable;
 $(document).ready(function () {
     let url = new URL(window.location.href);
     console.log('$url: ', url);
@@ -22,13 +21,30 @@ async function initialize(){
     conn = await getConnection(baseUrl, sessionId);
     console.log('$conn: ',conn);
     //Fetch Records
-    whereClause = 'Where CreatedDate = LAST_N_DAYS:30';
     fetchRecords();
-    getTotalJobsCount();
-    // fetchRecords('');
+    startTimerCounter();
+}
+function startTimerCounter(){
+    setInterval( () => {
+        $('.timer').text(getConvertedTime());
+    }, 1000);
 }
 
-function getTotalJobsCount(title){
+$(document).on('click', '.auto_refresh', function (e){
+    let icon = $(this).find('.auto_refresh_icon');
+    if(icon.hasClass('fast-spin')){
+        icon.removeClass('fast-spin');
+        clearInterval(intervalVariable);
+    }else{
+        icon.addClass('fast-spin');
+        intervalVariable = setInterval( () => {
+            if(isFetched)
+                fetchRecords();
+        }, 1000);
+    }
+});
+
+/* function getTotalJobsCount(title){
     let q = 'SELECT COUNT() FROM AsyncApexJob';
     conn.query(q).then(res => {
         console.log('$total_jobs-: ',res);
@@ -36,7 +52,7 @@ function getTotalJobsCount(title){
     }).catch( error => {
         console.error('$total_jobs_error: ',error);
     });
-}
+} */
 
 async function getConnection(baseUrl, sessionId){
     let conn = new jsforce.Connection({
@@ -46,72 +62,80 @@ async function getConnection(baseUrl, sessionId){
    });
    return conn;
  }
- $(document).on('change', '.job_filter', function (e){
-    let val = $(this).val().trim();
-    console.log('val: ',val);
-    showSpinner();
-    if(val == '1 Hour'){
-        let date = new Date();
-        date.setMinutes(date.getMinutes() - 60);
-        let isoDate = date.toISOString();
-        console.log('$isoDate: ',isoDate);
-        whereClause = `Where CreatedDate >= ${isoDate}`;
-        fetchRecords();
-    }else if(val == 'Today'){
-        whereClause = 'Where CreatedDate = Today';
-        fetchRecords();
-    }else if(val == 'Yesterday'){
-        whereClause = 'Where CreatedDate = Yesterday';
-        fetchRecords();
-    }else if(val == 'This Week'){
-        whereClause = 'Where CreatedDate = THIS_WEEK';
-        fetchRecords();
-    }else if(val == 'This Month'){
-        whereClause = 'Where CreatedDate = THIS_MONTH';
-        fetchRecords();
-    }else if(val == 'Last 30 Days'){
-        whereClause = 'Where CreatedDate = LAST_N_DAYS:30';
-        fetchRecords();
-    }else if(val == '24 Hours'){
-        let date = new Date();
-        date.setHours(date.getHours() - 24);
-        let isoDate = date.toISOString();
-        console.log('$isoDate: ',isoDate);
-        whereClause = `Where CreatedDate >= ${isoDate}`;
-        fetchRecords();
-    }
- });
+
  $(document).on('click', '.refresh_btn', function (e){
     // window.location.reload();
     $('.refresh_btn_icon').addClass('fast-spin');
     showSpinner();
     fetchRecords();
- });
-function fetchRecords() {
+});
+let isFetched = false;
+async function fetchRecords() {
     let fields_array = [
         'Id', 'CreatedDate', 'CreatedBy.Name', 'JobType', 'ApexClass.Name', 'Status', 'JobItemsProcessed', 'TotalJobItems', 
         'NumberOfErrors', 'CompletedDate', 'MethodName'
     ];
+    //Where Status IN ('Queued','Processing','Preparing','Holding')
+    let q = `SELECT ${fields_array.join(',')} FROM AsyncApexJob Where (ApexClass.Name = 'p66_ContractAmendmentBatch' OR ((JobType = 'Future' OR JobType = 'Queueable') And ApexClass.Name != 'ICM_ServiceBusAPICallClass')) And JobType != 'BatchApexWorker' And CreatedDate = Today Order By CreatedDate DESC`; q += ' LIMIT 6';
+    isFetched = false;
+    let asyncApexJobs = await conn.query(q);
+    console.log('$asyncApexJobs: ',asyncApexJobs);
+    recordsAll = [...asyncApexJobs.records];
+    recordsCurrent = [...asyncApexJobs.records];
 
-    let q = `SELECT ${fields_array.join(',')} FROM AsyncApexJob ${whereClause} Order By CreatedDate DESC`; q += ' LIMIT 100';
-    console.log('$q: ',q);
-    conn.query(q).then(res => {
-        console.log('$res: ',res);
-        totalCount = res.totalSize;
-        console.log('$totalCount: ',totalCount);
-        console.log('$FetchedCount: ', res.records.length);
-        console.log('$Records: ', res.records);
-        recordsAll = [...res.records];
-        console.log('$recordsAll: ',recordsAll);
-        recordsCurrent = [...res.records];
-        console.log('$recordsCurrent: ',recordsCurrent);
-        generateTable();
-        generateJobOptions();
-        hideSpinner();
-    }).catch( error => {
-        console.error('$error: ',error);
-        hideSpinner();
+    // let p66_Async_Job_Details = await conn.query(`SELECT Id, Name, p66_Async_Job_Name__c, p66_Record_ID__c, p66_Object_Name__c, p66_Status__c, p66_Error_Message__c, CreatedDate, LastModifiedDate, CreatedBy.Name FROM p66_Async_Job_Details__c Where CreatedBy.Name = 'Salesforce COE' OR CreatedBy.Name = 'Imtiyaj Khan' Order By CreatedDate DESC LIMIT 7`);
+    let p66_Async_Job_Details = await conn.query(`SELECT Id, Name, p66_Async_Job_Name__c, p66_Record_ID__c, p66_Object_Name__c, p66_Status__c, p66_Error_Message__c, CreatedDate, LastModifiedDate, CreatedBy.Name FROM p66_Async_Job_Details__c  Order By CreatedDate DESC LIMIT 10`);
+    console.log('$p66_Async_Job_Details: ',p66_Async_Job_Details);
+    let asyncJobs = [];
+    p66_Async_Job_Details.records.forEach(rec => {
+        let adj = {...rec};
+        delete adj.attributes;
+        adj.JobType = adj.p66_Async_Job_Name__c;
+        adj.ApexClass = {Name: adj.p66_Object_Name__c};
+        adj.Status = adj.p66_Status__c;
+        adj.MethodName = adj.p66_Record_ID__c;
+        adj.CompletedDate = adj.LastModifiedDate;
+        asyncJobs.push(adj);
     });
+    recordsCurrent = [...asyncJobs, ...recordsCurrent];
+
+    
+    let date = new Date();
+    date.setMinutes(date.getMinutes() - 15);
+    let createdDate = date.toISOString();
+   
+    // let p66_Exceptions = await conn.query(`Select Id, p66_Record_ID__c, p66_Object__c, p66_Operation__c, p66_Exception_Details__c, p66_Class_Name__c, LastModifiedDate, CreatedDate, CreatedBy.Name From p66_Exception__c Where CreatedDate >= ${createdDate} Order By CreatedDate DESC LIMIT 1`);
+    let p66_Exceptions = await conn.query(`Select Id, p66_Record_ID__c, p66_Object__c, p66_Operation__c, p66_Exception_Details__c, p66_Class_Name__c, LastModifiedDate, CreatedDate, CreatedBy.Name From p66_Exception__c Order By CreatedDate DESC LIMIT 1`);
+    console.log('$p66_Exceptions: ',p66_Exceptions);
+    if(p66_Exceptions.records.length){
+        let errorRecord = {...p66_Exceptions.records[0]};
+        delete errorRecord.attributes;
+        errorRecord.JobType = 'Exception';
+        errorRecord.Status = errorRecord.p66_Record_ID__c ?? '';
+        errorRecord.CompletedDate = errorRecord.LastModifiedDate;
+        errorRecord.MethodName = errorRecord.p66_Object__c ?? '';
+        errorRecord.ApexClass = errorRecord.p66_Class_Name__c ?? '';
+        recordsCurrent.unshift(errorRecord);
+    }
+
+    let cronTriggers = await conn.query(`SELECT Id, CreatedDate, CreatedBy.Name, CronJobDetail.Name, CronJobDetailId, State, StartTime, NextFireTime, EndTime FROM CronTrigger Where CronJobDetail.Name Like '%Create/Amend/Renew Contract Scheduler%' Order By NextFireTime ASC LIMIT 1`);
+    console.log('$cronTriggers: ',cronTriggers);
+    let scheduledRec = {...cronTriggers.records[0]};
+    delete scheduledRec.attributes;
+    scheduledRec.JobType = scheduledRec.CronJobDetail.Name;
+    scheduledRec.Status = scheduledRec.State;
+    scheduledRec.CompletedDate = scheduledRec.NextFireTime;
+    scheduledRec.MethodName = 'BATCH';
+    scheduledRec.ApexClass = {Name: 'p66_ContractAmendmentBatch'};
+    recordsCurrent.unshift(scheduledRec);
+    generateTable();
+    isFetched = true;
+    document.title = `Async Apex Jobs - ${getConvertedTime()}`;
+    hideSpinner();
+}
+function getConvertedTime(){
+    let date_time = Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata',hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(new Date());
+    return date_time.toUpperCase();
 }
 
 function generateTable() {
@@ -120,6 +144,25 @@ function generateTable() {
 
         let currentAndTotalJobItems = rec.Status == 'Completed' 
                                       && rec.TotalJobItems == 0 ? '' : `${rec.JobItemsProcessed} / ${rec.TotalJobItems}`;
+        let isScheduledRec = false;
+        if(rec.JobType.includes('Contract Scheduler')){
+            currentAndTotalJobItems = 'Next Time Frame &rarr;';
+            isScheduledRec = true;
+        }
+
+        let isAdjRec = false;
+        if(rec?.ApexClass?.Name != 'p66_ContractAmendmentBatch'){
+            currentAndTotalJobItems = rec.p66_Error_Message__c ?? '';
+            isAdjRec = true;
+        }
+
+        let isException = false;
+        let exceptionTitle = '';
+        if(rec?.JobType == 'Exception'){
+            exceptionTitle = rec.p66_Exception_Details__c ?? '';
+            currentAndTotalJobItems = rec.p66_Operation__c ?? '';
+            isException = true;
+        }
 
         let tdTags = `<td class="td_1 record-id" title="${rec.Id}">${rec.Id}</td>`;
         tdTags += `<td class="td_1" title="${rec.JobType}">${rec.JobType}</td>`;
@@ -128,7 +171,7 @@ function generateTable() {
         tdTags += `<td class="td_1" title="${rec?.ApexClass?.Name ? rec?.ApexClass?.Name : ''}">${rec?.ApexClass?.Name ? rec?.ApexClass?.Name : ''}</td>`;
         tdTags += `<td class="td_1" title="${rec.MethodName ? rec.MethodName : ''}">${rec.MethodName ? rec.MethodName : ''}</td>`;
         tdTags += `<td class="td_1" title="${rec.Status}">${rec.Status}</td>`;
-        tdTags += `<td class="td_1" title="${currentAndTotalJobItems}">${currentAndTotalJobItems}</td>`;
+        tdTags += `<td class="td_1" title="${exceptionTitle ?? currentAndTotalJobItems}">${currentAndTotalJobItems}</td>`;
         tdTags += `<td class="td_1" title="${rec.CompletedDate ? getConvertedDateTime(rec.CompletedDate) : ''}">${rec.CompletedDate ? getConvertedDateTime(rec.CompletedDate) : ''}</td>`;
         // tdTags += `<td class="td_1"><i class="refresh_job fa fa-arrow-circle-o-up fa-2x" aria-hidden="true" data-recId="${rec.Id}"></i></td>`;
         // tdTags += `<td class="td_1"><i class="refresh_job fa fa-refresh" aria-hidden="true"></i></td>`;
@@ -142,11 +185,24 @@ function generateTable() {
         }else{
             status_class = 'completed_job';
         }
+
+        if(isScheduledRec){
+            status_class = 'scheduled_rec';
+        }
+
+        if(isAdjRec){
+            status_class = 'adj_recs';
+        }
+        if(isAdjRec && rec.Status == 'Pending'){
+            status_class = 'pending_adj';
+        }
+
+        if(isException){
+            status_class = 'exception_class';
+        }
         
         trTags += `<tr class="tr_${rec.Id} ${status_class}">${tdTags}</tr>`; //Processing
     });
-    // document.title = `Showing - [ ${recordsCurrent.length} ] Async Apex Jobs`;
-    $('.showing_jobs').text(`Showing [ ${recordsCurrent.length} ]`);
     $('.tbody_1').html(trTags);
 }
 $(document).on('click', '.refresh_job', function (e){
@@ -235,8 +291,38 @@ function formatBytes(bytes) {
 }
 
 $(document).on('click', '.td_1', function (e) {
-    copyToCLipboard($(this).text().trim(), true);
+    let copiedText = $(this).text().trim();
+    copyToCLipboard(copiedText, true);
 });
+
+$(document).on('contextmenu', '.td_1', function (e){
+    let text = $(this).text().trim();
+    const userKeyRegExp = /[a-zA-Z0-9]{15}|[a-zA-Z0-9]{18}/;
+    const valid = userKeyRegExp.test(text);
+    if (valid && (text.length == 15 || text.length == 18) && !text.includes(' ')) {
+        e.preventDefault();
+        openRecordDetail(text);
+    }
+});
+
+function openRecordDetail(recordID){
+    const userKeyRegExp = /[a-zA-Z0-9]{15}|[a-zA-Z0-9]{18}/;
+    const valid = userKeyRegExp.test(recordID);
+    if (valid) {
+        recordID = 'recordID=' + recordID + '&';
+        openMaximized('record.html?' + recordID + 'baseUrl=' + baseUrl + '&sessionId=' + sessionId);
+    }
+}
+/* $(document).on('contextmenu', '.td_1', function (e){
+    e.preventDefault();
+    openRecordDetail($(this).text().trim());
+}); */
+
+/* $(document).on('contextmenu', '.record-id', function (e){
+    let text = $(this).text().trim();
+    e.preventDefault();
+    openRecordDetail(text);
+}); */
 
 function checkResponse(apiResponse){
     if(apiResponse.isError){
@@ -271,22 +357,6 @@ function showToast() {
     }
 }
 
-$(document).on('contextmenu', '.record-id', function (e){
-    let text = $(this).text().trim();
-    e.preventDefault();
-    openRecordDetail(text);
-});
-
-
-function openRecordDetail(recordID){
-    const userKeyRegExp = /[a-zA-Z0-9]{15}|[a-zA-Z0-9]{18}/;
-    const valid = userKeyRegExp.test(recordID);
-    if (valid) {
-        recordID = 'recordID=' + recordID + '&';
-        openMaximized('record.html?' + recordID + 'baseUrl=' + baseUrl + '&sessionId=' + sessionId);
-    }
-}
-
 function copyToCLipboard(value, showTst) {
     if(value){
         let text = value;
@@ -311,24 +381,3 @@ function openMaximized(url) {
         });
     }
 }
-
-// Bottom button Starts
-$(document).on('click', '.plus-icon', function (e){
-    var icon = $(this);
-    if (icon.hasClass('rotate_45')) {
-        icon.removeClass('rotate_45').addClass('rotate_0');
-        $('.ul_dv').hide(100);
-        icon.css('color','#cacaca');
-    } else {
-        icon.removeClass('rotate_0').addClass('rotate_45');
-        $('.ul_dv').show(100);
-        icon.css('color','cadetblue');
-    }
-});
-$(document).on('click', '.page_name', function (e){
-   let page = $(this).data('page');
-   console.log('$page: ',page);
-   let uri = `baseUrl=${baseUrl}&sessionId=${sessionId}`;
-   window.location.href = `https://imtiyaz-khan-tech.github.io/tech/salesforce-quick-access/${page}?${uri}`
-});
-// Bottom button Finish

@@ -27,20 +27,21 @@
                 </div>
                 <div class="top_userinfo_dv">
                     <select class="cta select top_select job_filter">
+                        <option value="-" selected>-</option>
                         <option value="1 Hour">1 Hour</option>
                         <option value="Today">Today</option>
                         <option value="24 Hours">24 Hours</option>
                         <option value="Yesterday">Yesterday</option>
                         <option value="This Week">This Week</option>
                         <option value="This Month">This Month</option>
-                        <option value="Last 30 Days" selected>Last 30 Days</option>
+                        <option value="Last 30 Days">Last 30 Days</option>
                     </select>
                 </div>
                 <div class="dropdown_container">
-                    <Button class="cta select top_select showing_jobs" disabled style="cursor: default  !important;border-radius: 0px !important;color:#6f8e74 !important">Showing [ 0 ]</Button>
+                    <Button class="cta select top_select timer" disabled style="cursor: default  !important;border-radius: 0px !important;color:#6f8e74 !important">00:00:00 PM</Button>
                 </div>
                 <div class="top_userinfo_dv">
-                    <Button class="cta select top_select total_jobs" disabled style="cursor: default !important;border-radius: 0px !important;color:#9b9b9b !important">Total Jobs [ 0 ]</Button>
+                    <Button class="cta select top_select auto_refresh">Auto Refresh<i class="auto_refresh_icon fa fa-refresh fa-small" aria-hidden="true"></i></Button>
                 </div>
             </div>
         </div>
@@ -92,22 +93,7 @@
         <div class="snackbar">Copied.</div>
     </div>
     <div class="spinner-div">
-        <img src="/tech/salesforce-quick-access/images/loadercircleteal.svg" />
+        <img src="/images/loadercircleteal.svg" />
     </div>
-    <!-- Bottom button Starts -->
-    <div class="bottom_menu_div">
-        <div class="ul_dv noselect_items hide_menu">
-            <div class="li page_name" data-page="record">Record</div>
-            <div class="li page_name" data-page="objects">Objects</div>
-            <div class="li page_name" data-page="metadata">Metadata</div>
-            <div class="li page_name" data-page="logslist">Logs List</div>
-            <div class="li page_name" data-page="debuglogs">Debug Logs</div>
-            <div class="li page_name" data-page="asyncjobs">Async Jobs</div>
-            <div class="li page_name" data-page="recentlogs">Recent Logs</div>
-            <div class="li page_name" data-page="quicktasks">Quick Tasks</div>
-        </div>
-        <i class="plus-icon fa fa-plus fa-lg"></i>
-     </div>
-    <!-- Bottom button Finish -->
 </body>
 </html>
