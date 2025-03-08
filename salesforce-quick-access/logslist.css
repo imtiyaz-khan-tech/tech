@@ -1173,6 +1173,8 @@ body {
     justify-content: center;
     padding-top: 100px;
     cursor: default !important;
+    font-family: system-ui;
+    font-size: 12px;
 }
 .table_popup_box{
     background: white !important;
