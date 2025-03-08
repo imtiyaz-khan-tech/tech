@@ -228,7 +228,8 @@ function openRawLog(recordID){
     const valid = userKeyRegExp.test(recordID);
     if (valid) {
         recordID = 'logRecodId=' + recordID + '&';
-        openMaximized('rawlog.html?' + recordID + 'baseUrl=' + baseUrl + '&sessionId=' + sessionId);
+        let url = 'https://imtiyaz-khan-tech.github.io/tech/salesforce-quick-access/rawlog.html?' + recordID + 'baseUrl=' + baseUrl + '&sessionId=' + sessionId
+        window.open(url, '_blank');
     }
 }
 
@@ -238,7 +239,8 @@ function openRecordDetail(recordID){
     const valid = userKeyRegExp.test(recordID);
     if (valid) {
         recordID = 'logRecodId=' + recordID + '&';
-        openMaximized('recentlogs.html?' + recordID + 'baseUrl=' + baseUrl + '&sessionId=' + sessionId);
+        let url = 'https://imtiyaz-khan-tech.github.io/tech/salesforce-quick-access/recentlogs?' + recordID + 'baseUrl=' + baseUrl + '&sessionId=' + sessionId;
+        window.open(url, '_blank');
     }
 }
 
@@ -336,13 +338,9 @@ function createUserLog(){
         console.log('$debugLevelId: ', debugLevelId);
 
         if (debugLevelId) {
-            fetch(baseUrl + "/services/data/v59.0/", {method: 'GET', headers: {"Authorization": "Bearer " + sessionId }, redirect: 'follow' }).then(response => response.json()).then(res => {
+            conn.identity().then(res => {
                 console.log('$res: ',res);
-                let identity = res.identity;
-                console.log('$identity: ', identity);
-                identity = identity.substring(identity.lastIndexOf('/') + 1);
-                console.log('$identity: ', identity);
-                let userId = identity;
+                let userId = res.user_id;
                 console.log('$userId: ', userId);
                 const userKeyRegExp = /[a-zA-Z0-9]{15}|[a-zA-Z0-9]{18}/;
                 const valid = userKeyRegExp.test(userId);
@@ -438,7 +436,6 @@ function createUserLog(){
                         console.log('$API: error', error);
                     });
                 }
-
             }).catch(err => {
                 console.log('$err: ',err);
             });
