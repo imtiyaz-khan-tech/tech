@@ -22,10 +22,13 @@
                     <!-- <input class="dropdown_inp dropdown_inp_names" placeholder="Search"/> -->
                     <Button class="cta select top_select refresh_btn"><i class="refresh_btn_icon fa fa-refresh fa-lg fast-spin" aria-hidden="true"></i></Button>
                 </div>
-                <div class="top_userinfo_dv">
+                <!-- <div class="top_userinfo_dv">
                     <select class="cta select top_select user_options">
                         <option value="All Users" selected>All Users</option>
                     </select>
+                </div> -->
+                <div class="top_userinfo_dv">
+                    <Button class="cta select top_select delete_all_btn">Delete All</Button>
                 </div>
                 <div class="top_userinfo_dv">
                     <select class="cta select top_select log_filter">
@@ -39,11 +42,20 @@
                         <option value="Long Running Last">Long Running Last</option>
                     </select>
                 </div>
+                <div class="top_userinfo_dv">
+                    <Button class="cta select top_select create_log_btn">Create Log</Button>
+                </div>
                 <div class="dropdown_container">
-                    <input class="dropdown_inp delete_input" placeholder="Delete Count" type="number"/>
+                    <input class="dropdown_inp delete_input" placeholder="Count" type="number"/>
                 </div>
                 <div class="top_userinfo_dv">
                     <Button class="cta select top_select delete_btn">Delete</Button>
+                </div>
+                <div class="dropdown_container">
+                    <input class="dropdown_inp search_input" placeholder="Search"/>
+                </div>
+                <div class="top_userinfo_dv">
+                    <Button class="cta select top_select search_btn"><span class="search_btn_text">Exeption </span><i class="hide exception_icon fa fa-refresh fa-small fast-spin" aria-hidden="true"></i></Button>
                 </div>
                 
                 <!-- <div class="top_fetchlog_dv">
@@ -56,6 +68,9 @@
                 <table class="table_1">
                     <thead class="thead_1">
                         <tr class="thead_1_tr">
+                            <th class="th_1 th_1_1">
+                                
+                            </th>
                             <th class="th_1 th_1_1">
                                 Id
                             </th>
@@ -130,20 +145,35 @@
         </div>
     </div>
     <!-- ERROR MODAL ENDS -->
-     <!-- Bottom button Starts -->
-     <div class="bottom_menu_div">
-        <div class="ul_dv noselect_items hide_menu">
-            <div class="li page_name" data-page="record">Record</div>
-            <div class="li page_name" data-page="objects">Objects</div>
-            <div class="li page_name" data-page="metadata">Metadata</div>
-            <div class="li page_name" data-page="logslist">Logs List</div>
-            <div class="li page_name" data-page="debuglogs">Debug Logs</div>
-            <div class="li page_name" data-page="asyncjobs">Async Jobs</div>
-            <div class="li page_name" data-page="recentlogs">Recent Logs</div>
-            <div class="li page_name" data-page="quicktasks">Quick Tasks</div>
+    <div class="floating_button_div">
+        <button class="floating_btn">FLAGS</button>
+    </div>
+     <!-- Table Popup Starts -->
+    <div class="table_popup hide">
+        <div class="table_popup_box">
+            <div class="table_popup_box_heading_div">
+                
+            </div>
+            <div class="table_popup_box_middle_div">
+                <table class="table_2">
+                    <thead class="thead_2">
+                        <tr class="thead_2_tr">
+                            
+                        </tr>
+                    </thead>
+                    <tbody class="tbody_2">
+                        
+                    </tbody>
+                </table>
+            </div>
+            <div class="table_popup_box_bottom_div">
+                
+            </div>
+            <div class="table_popup_close_div">
+                <i class="table-close-icon fa fa-times fa-lg" aria-hidden="true"></i>
+            </div>
         </div>
-        <i class="plus-icon fa fa-plus fa-lg"></i>
-     </div>
-    <!-- Bottom button Finish -->
+    </div>
+    <!-- Table Popup Ends -->
 </body>
 </html>
