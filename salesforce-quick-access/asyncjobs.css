@@ -1184,3 +1184,61 @@ body {
 .exception_class{
     background-color: #f99992;
 }
+/* Bottom button Starts */
+.bottom_menu_div{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}
+.noselect_items{
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    -khtml-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+}
+.plus-icon{
+    color: cadetblue;
+    padding: 5px 6px;
+    cursor: pointer;
+}
+.ul_dv{
+    background-color: cadetblue;
+    margin-left: 22px;
+    transition: left 0.5s ease;
+    padding: 1px 10px;
+    border-radius: 10px 10px 0px 0px;
+}
+.li{
+    border-bottom: 1px solid #c3c3c3;
+    font-family: monospace;
+    font-size: 10px;
+    cursor: pointer;
+    padding: 2px;
+    color: white;
+    font-weight: 400;
+}
+.li:hover{
+    color: #eeeec6;
+}
+
+.plus-icon {
+    color: #cacaca;
+    padding: 5px 6px;
+    cursor: pointer;
+    background-color: transparent;
+    font-size: 14px !important;
+    transition: transform 0.2s ease;
+}
+
+.rotate_0 {
+    transform: rotate(0deg);
+}
+.rotate_45 {
+    transform: rotate(45deg);
+}
+.hide_menu{
+    display: none;
+}
+/* </div>Bottom button Finish */
