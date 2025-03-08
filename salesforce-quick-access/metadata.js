@@ -40,6 +40,7 @@ $(document).ready(function () {
     hideSpinner();
     createSelectOptions();
     fetchMetadatRecords();
+    $('.inp-1').focus();
 });
 
 function setSessionText() {
@@ -275,6 +276,83 @@ $(document).on('contextmenu', '.CopyDuoBtn', function (e) {
         copyToCLipboard(value);
     } else if (metadataName == 'RemoteSiteSetting') {
         copyToCLipboard(fileName);
+    }
+});
+
+$(document).on('click', '.ApiNameBtn', async function (e) {
+    let recordId = $(this).attr('data-id');
+    let fileName = $(this).attr('data-name');
+    let value = $(this).attr('data-value');
+    console.log('$recordId: ', recordId);
+    console.log('$fileName: ', fileName);
+    console.log('$value: ', value);
+    if (metadataName == 'Flow') {
+        let query = `SELECT+Id,MasterLabel,FullName+FROM+Flow+Where+Id+=+'${encodeURIComponent(recordId)}'+And+Status+=+'Active'+Limit+1`;
+        const response = await fetchRecord(query, true);
+        console.log('$response:', response);
+        if(response.errorCode){
+            window.alert('Something went wrong!');
+        }else{
+            let records = response.records;
+            let record = records[0];
+            console.log('$record: ',record);
+            navigator.clipboard.writeText(record.FullName).then(function() {
+                console.log('copied : ' + record.FullName);
+                $('.snackbar').text(record.FullName);
+                showToast();
+             }, function(err) {
+                console.error(err);
+                console.log('error copying: ' + record.FullName);
+                window.alert('error copying: ' + record.FullName);
+             });
+        }
+    }
+});
+
+async function fetchRecord(query, isTooling) {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer " + sessionId);
+
+    var requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow'
+    };
+    
+    try{
+        const response = await fetch(baseUrl + `/services/data/v60.0/${isTooling ? 'tooling/' : ''}query?q=`+query, requestOptions);
+        if(!response.ok) {
+            return { isError: true, name: response.status, message: response.statusText, stack: response.type };
+        }
+        const result = await response.json();
+        return result;
+    }catch(error){
+        return { isError: true, name: error.name, message: error.message, stack: error.stack };
+    }
+}
+
+$(document).on('contextmenu', '.OpenBtn', function (e){
+    e.preventDefault();
+    let recordId = $(this).attr('data-id');
+    let fileName = $(this).attr('data-name');
+    let value = $(this).attr('data-value');
+    console.log('$recordId: ', recordId);
+    console.log('$fileName: ', fileName);
+    console.log('$value: ', value);
+    if (metadataName == 'Flow') {
+        const endpoint = `${baseUrl}/services/data/v60.0/tooling/query/?q=SELECT+Id,DeveloperName+FROM+FlowDefinition+Where+ActiveVersionId+=+'${recordId}'`;
+        fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + sessionId,
+            },
+        }).then(response => response.json()).then(result => {
+            console.log('$result: ', result);
+            let record = result.records.at(0);
+            window.open(`${baseUrl}/lightning/setup/Flows/page?address=/${record.Id}`);
+        }).catch(error => {
+            console.error('Error:', error);
+        });
     }
 });
 
@@ -577,7 +655,15 @@ function generateTable() {
         let btn3Name = 'Download';
         let btn3Class = 'DownloadBtn';
 
-        if (metadataName == 'Flow' || metadataName == 'Profile' || metadataName == 'CustomObject' || metadataName == 'CustomField' || metadataName == 'ConnectedApplication' || metadataName == 'PermissionSet' || metadataName == 'AuraDefinitionBundle') {
+        if (metadataName == 'Flow') {
+            btn1Name = 'Name';
+            btn1Class = 'ApiNameBtn';
+            btn2Name = 'Label';
+            btn2Class = 'CopyBtn';
+            btn3Name = 'Open';
+            btn3Class = 'OpenBtn';
+        }
+        if (metadataName == 'Profile' || metadataName == 'CustomObject' || metadataName == 'CustomField' || metadataName == 'ConnectedApplication' || metadataName == 'PermissionSet' || metadataName == 'AuraDefinitionBundle') {
             btn1Name = 'Cancel';
             btn1Class = 'CancelBtn';
             btn2Name = 'Copy';
@@ -585,6 +671,7 @@ function generateTable() {
             btn3Name = 'Open';
             btn3Class = 'OpenBtn';
         }
+        
         if (metadataName == 'CustomLabel') {
             btn1Name = 'Open';
             btn1Class = 'OpenBtn';
