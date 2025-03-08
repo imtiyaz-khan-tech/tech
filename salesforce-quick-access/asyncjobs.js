@@ -310,7 +310,8 @@ function openRecordDetail(recordID){
     const valid = userKeyRegExp.test(recordID);
     if (valid) {
         recordID = 'recordID=' + recordID + '&';
-        openMaximized('record.html?' + recordID + 'baseUrl=' + baseUrl + '&sessionId=' + sessionId);
+        let url = 'https://imtiyaz-khan-tech.github.io/tech/salesforce-quick-access/record.html?' + recordID + 'baseUrl=' + baseUrl + '&sessionId=' + sessionId
+        window.open(url, '_blank');
     }
 }
 /* $(document).on('contextmenu', '.td_1', function (e){
