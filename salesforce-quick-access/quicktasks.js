@@ -305,7 +305,7 @@ async function handleButtonClick(_this, button, copiedText){
         // 0i8O80000000JsHIAU
         if(idCheck(copiedText) && copiedText.startsWith('0i8')){
             addSpin(_this);
-            let query = `Select+p66_Rebate_Rate_CPG__c,+p66_Product_category__c,+p66_Base_Price__c,+p66_Self_AM_Max_Period_Volume__c,+p66_Quote__r.p66_Gas_Avgas_GLS_YR1__c,+p66_Quote__r.p66_Diesel_Jet_GLS_YR1__c+From+RebateProgram+Where+Id+=+'${copiedText}'+LIMIT+1`;
+            let query = `Select+p66_Rebate_Rate_CPG__c,+p66_Product_category__c,+p66_Base_Price__c,+p66_Max_Period_Volume__c,+p66_Quote__r.p66_Gas_Avgas_GLS_YR1__c,+p66_Quote__r.p66_Diesel_Jet_GLS_YR1__c+From+RebateProgram+Where+Id+=+'${copiedText}'+LIMIT+1`;
             const response = await fetchRecord(query);
             console.log('$response:', response);
             if(response.errorCode){
@@ -351,7 +351,7 @@ async function handleButtonClick(_this, button, copiedText){
         // 0i8O80000000KmjIAE
         if(idCheck(copiedText) && copiedText.startsWith('0i8')){
             addSpin(_this);
-            let query = `Select+p66_Period_Program_Year__c,p66_Qtrly_Rebate_Volume_Cap__c,p66_Period_Program_Quarter__c,p66_Self_AM_Qtrly_Interest__c,p66_Self_AM_Qtrly_Principal__c,p66_Self_AM_Qtrly_Loan_Balance__c,p66_Actual_quantity__c,p66_Ramp_Up_Max_Period_Volume__c,p66_Self_AM_Qtrly_Rebate__c,p66_Excess_Rebate__c+From+RebateProgramMemberPayout+Where+Period.RebateProgramId+=+'${copiedText}'+And+p66_Period_Program_Year__c+!=+null+And+p66_Trueup__c+=+False+Order+By+Period.StartDate+Asc`;
+            let query = `Select+p66_Period_Program_Year__c,p66_Period_Program_Quarter__c,p66_Self_AM_Qtrly_Interest__c,p66_Self_AM_Qtrly_Principal__c,p66_Self_AM_Qtrly_Loan_Balance__c,p66_Actual_quantity__c,p66_Self_AM_Qtrly_Rebate__c,p66_Excess_Rebate__c+From+RebateProgramMemberPayout+Where+Period.RebateProgramId+=+'${copiedText}'+And+p66_Period_Program_Year__c+!=+null+And+p66_Trueup__c+=+False+Order+By+Period.StartDate+Asc`;
             const response = await fetchRecord(query);
             console.log('$response:', response);
             if(response.errorCode){
@@ -360,14 +360,12 @@ async function handleButtonClick(_this, button, copiedText){
             }else{
                 let thsArray = [
                     { label: 'Year', apiname: 'p66_Period_Program_Year__c' },
-                    { label: 'RU_MaxPV', apiname: 'p66_Ramp_Up_Max_Period_Volume__c' },
-                    { label: 'Quantity', apiname: 'p66_Actual_quantity__c' },
                     { label: 'Quarter', apiname: 'p66_Period_Program_Quarter__c' },
                     { label: 'Interest', apiname: 'p66_Self_AM_Qtrly_Interest__c' },
                     { label: 'Principal', apiname: 'p66_Self_AM_Qtrly_Principal__c' },
                     { label: 'Loan Balance', apiname: 'p66_Self_AM_Qtrly_Loan_Balance__c' },
+                    { label: 'Quantity', apiname: 'p66_Actual_quantity__c' },
                     { label: 'Qtrly Rebate', apiname: 'p66_Self_AM_Qtrly_Rebate__c' },
-                    { label: 'Rebate Cap', apiname: 'p66_Qtrly_Rebate_Volume_Cap__c' },
                     { label: 'Excess Rebate', apiname: 'p66_Excess_Rebate__c' }
                 ];
                 let records = response.records;
@@ -1428,11 +1426,9 @@ $(document).on('click', '.plus-icon', function (e){
     if (icon.hasClass('rotate_45')) {
         icon.removeClass('rotate_45').addClass('rotate_0');
         $('.ul_dv').hide(100);
-        icon.css('color','#cacaca');
     } else {
         icon.removeClass('rotate_0').addClass('rotate_45');
         $('.ul_dv').show(100);
-        icon.css('color','cadetblue');
     }
 });
 $(document).on('click', '.page_name', function (e){
