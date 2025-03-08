@@ -6,6 +6,7 @@ body {
     display: grid;
     grid-row-gap: 5px;
     grid-template-rows: 5vh 93vh;
+    font-family: system-ui;
 }
 
 .d_top_down {
