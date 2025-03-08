@@ -1,5 +1,6 @@
 body{
-    font-family: monospace !important;
+    font-family: system-ui;
+    font-size: 12px;
 }
 body::-webkit-scrollbar {
     height: 2px !important;
