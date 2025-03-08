@@ -118,10 +118,10 @@ async function getRecordDetailById(sObjectName, recId) {
     }
 }
 $(document).on('click', '.sObjectToApex', function (e) {
-    onsObjectToApexClick(false);
+    onsObjectToApexClick();
     $('.eye_icon').removeClass("fa-square-o").addClass("fa-minus-square-o");
 });
-
+let showParents = false;
 $(document).on('click', '.eye_icon', function (e) {
     toggleEyeButton(true);
 });
@@ -129,15 +129,79 @@ function toggleEyeButton(performAction) {
     let icon = $('.eye_icon');
     if (icon.hasClass("fa-minus-square-o")) {
         icon.removeClass("fa-minus-square-o").addClass("fa-square-o");
+        showParents = true;
+        icon.attr('title','Hide Parents');
         if (performAction)
-            onsObjectToApexClick(true);
+            onsObjectToApexClick();
     } else if (icon.hasClass("fa-square-o")) {
         icon.removeClass("fa-square-o").addClass("fa-minus-square-o");
+        showParents = false;
+        icon.attr('title','Show Parents');
         if (performAction)
-            onsObjectToApexClick(false);
+            onsObjectToApexClick();
     }
 }
-async function onsObjectToApexClick(showParents) {
+let showFormulas = false;
+$(document).on('click', '.eye_icon_2', function (e) {
+    toggleEyeButton_2(true);
+});
+function toggleEyeButton_2(performAction) {
+    let icon = $('.eye_icon_2');
+    if (icon.hasClass("fa-minus-square-o")) {
+        icon.removeClass("fa-minus-square-o").addClass("fa-square-o");
+        showFormulas = true;
+        icon.attr('title','Hide Formulas');
+        if (performAction)
+            onsObjectToApexClick();
+    } else if (icon.hasClass("fa-square-o")) {
+        icon.removeClass("fa-square-o").addClass("fa-minus-square-o");
+        showFormulas = false;
+        icon.attr('title','Show Formulas');
+        if (performAction)
+            onsObjectToApexClick();
+    }
+}
+let showHideAllFields = false;
+$(document).on('click', '.eye_icon_3', function (e) {
+    toggleEyeButton_3(true);
+});
+function toggleEyeButton_3(performAction) {
+    let icon = $('.eye_icon_3');
+    if (icon.hasClass("fa-minus-square-o")) {
+        icon.removeClass("fa-minus-square-o").addClass("fa-square-o");
+        showHideAllFields = true;
+        icon.attr('title','Hide All Fields');
+        if (performAction)
+            onsObjectToApexClick();
+    } else if (icon.hasClass("fa-square-o")) {
+        icon.removeClass("fa-square-o").addClass("fa-minus-square-o");
+        showHideAllFields = false;
+        icon.attr('title','Show All Fields');
+        if (performAction)
+            onsObjectToApexClick();
+    }
+}
+let showFieldTypes = false;
+$(document).on('click', '.eye_icon_4', function (e) {
+    toggleEyeButton_4(true);
+});
+function toggleEyeButton_4(performAction) {
+    let icon = $('.eye_icon_4');
+    if (icon.hasClass("fa-minus-square-o")) {
+        icon.removeClass("fa-minus-square-o").addClass("fa-square-o");
+        showFieldTypes = true;
+        icon.attr('title','Hide Field Types');
+        if (performAction)
+            onsObjectToApexClick();
+    } else if (icon.hasClass("fa-square-o")) {
+        icon.removeClass("fa-square-o").addClass("fa-minus-square-o");
+        showFieldTypes = false;
+        icon.attr('title','Show Field Types');
+        if (performAction)
+            onsObjectToApexClick();
+    }
+}
+async function onsObjectToApexClick() {
     console.log('$objectName: ', objectName);
     console.log('$originalRecord: ', originalRecord);
     console.log('$recordsData: ', recordsData);
@@ -219,45 +283,75 @@ function getJSONToApex(objectDescribed, recordData, sObjectName, parentIDAndName
     if (recordData) {
         if (objectDescribed) {
             let objName = sObjectName.replace(/__c/g, "").toLowerCase();
-            let sToApexData = sObjectName + ' ' + objName + 'Obj = new ' + sObjectName + '(\n\t';
+            let sToApexData = sObjectName + ' record1 = new ' + sObjectName + '(\n\t';
             let isFirstElement = true;
+            let excludeFields = ['IsDeleted', 'CreatedDate', 'CreatedById', 'LastModifiedDate', 'LastModifiedById', 'SystemModstamp', 'OwnerId', 'LastViewedDate', 'LastReferencedDate'];
             objectDescribed.fields.forEach((element) => {
-                //if ((!element.nillable && !element.defaultedOnCreate && element.updateable && element.createable) || (element.updateable && element.name !== "OwnerId")) {
+                // if ((!element.nillable && !element.defaultedOnCreate && element.updateable && element.createable) || (element.updateable && element.name !== "OwnerId")) {
+                /* if(!element.name.startsWith('SBQQ__')){
+                    return;
+                } */
+                if(showHideAllFields){
+                    excludeFields = [];
+                }
+                let fieldType = '';
+                if(showFieldTypes){
+                    if(element.cascadeDelete && element.type == 'reference'){
+                        fieldType = `[Type-MasterDetail-${element.referenceTo[0]}]: `;
+                    }else if(element.type == 'reference'){
+                        fieldType = `[Type-Lookup-${element.referenceTo[0]}]: `;
+                    }else{
+                        fieldType = `[Type-${element.type}]: `;
+                    }
+                }
+                // let onlyFields = ['Id', 'Name','p66_Quote_Line__c','p66_Subscription__c','p66_Quote__c', 'p66_Child_Contract__c'];
+                if (!excludeFields.includes(element.name)/*  && onlyFields.includes(element.name) */) {
+                    let commentLine = element.updateable ? '' : (element.cascadeDelete && element.type == 'reference' ? '' : '//');
+                    let calculatedFormula = element.updateable ? '' : (element.calculatedFormula ? `\n\t/*-${element.calculatedFormula}*///` : '');
+                    if(!showFormulas)
+                        calculatedFormula = '';
                     if (recordData.hasOwnProperty(element.name) && (recordData[element.name] || recordData[element.name] == 0)) {
                         if (isFirstElement) {
                             if (typeof recordData[element.name] == 'string') {
                                 if (parentIDAndNameMap && parentIDAndNameMap.get(recordData[element.name])) {
-                                    sToApexData += `${element.name} = ${parentIDAndNameMap.get(recordData[element.name])}.Id`;
+                                    sToApexData += `${fieldType}${element.name} = ${parentIDAndNameMap.get(recordData[element.name])}.Id`;
                                 } else {
-                                    sToApexData += `${element.name} = '${recordData[element.name].replace(/'/g, "\\'").replace(/’/g, "\\'")}'`;
+                                    sToApexData += `${commentLine}${fieldType}${element.name} = '${recordData[element.name].replace(/'/g, "\\'").replace(/’/g, "\\'")}${calculatedFormula}'`;
                                 }
                             } else {
                                 if (parentIDAndNameMap && parentIDAndNameMap.get(recordData[element.name])) {
-                                    sToApexData += `${element.name} = ${parentIDAndNameMap.get(recordData[element.name])}.Id`;
+                                    sToApexData += `${fieldType}${element.name} = ${parentIDAndNameMap.get(recordData[element.name])}.Id`;
                                 } else {
-                                    sToApexData += `${element.name} = ${recordData[element.name]}`;
+                                    sToApexData += `${commentLine}${fieldType}${element.name} = ${recordData[element.name]}${calculatedFormula}`;
                                 }
                             }
                             isFirstElement = false;
                         } else {
-                            if (typeof recordData[element.name] == 'string') {
-                                if (parentIDAndNameMap && parentIDAndNameMap.get(recordData[element.name])) {
-                                    sToApexData += `,\n\t${element.name} = ${parentIDAndNameMap.get(recordData[element.name])}.Id`;
+                            if(element.type == 'date'){
+                                sToApexData += `,\n\t${commentLine}${fieldType}${element.name} = Date.valueOf('${recordData[element.name].replace(/'/g, "\\'").replace(/’/g, "\\'")}')${calculatedFormula}`;
+                            }else if(element.type == 'datetime'){
+                                sToApexData += `,\n\t${commentLine}${fieldType}${element.name} = DateTime.valueOf('${recordData[element.name].replace(/'/g, "\\'").replace(/’/g, "\\'").replace('T',' ')}')${calculatedFormula}`;
+                            }else{
+                                if (typeof recordData[element.name] == 'string') {
+                                    if (parentIDAndNameMap && parentIDAndNameMap.get(recordData[element.name])) {
+                                        sToApexData += `,\n\t${commentLine}${fieldType}${element.name} = ${parentIDAndNameMap.get(recordData[element.name])}.Id${calculatedFormula}`;
+                                    } else {
+                                        sToApexData += `,\n\t${commentLine}${fieldType}${element.name} = '${recordData[element.name].replace(/'/g, "\\'").replace(/’/g, "\\'")}${calculatedFormula}'`;
+                                    }
                                 } else {
-                                    sToApexData += `,\n\t${element.name} = '${recordData[element.name].replace(/'/g, "\\'").replace(/’/g, "\\'")}'`;
-                                }
-                            } else {
-                                if (parentIDAndNameMap && parentIDAndNameMap.get(recordData[element.name])) {
-                                    sToApexData += `,\n\t${element.name} = ${parentIDAndNameMap.get(recordData[element.name])}.Id`;
-                                } else {
-                                    sToApexData += `,\n\t${element.name} = ${recordData[element.name]}`;
+                                    if (parentIDAndNameMap && parentIDAndNameMap.get(recordData[element.name])) {
+                                        sToApexData += `,\n\t${commentLine}${fieldType}${element.name} = ${parentIDAndNameMap.get(recordData[element.name])}.Id${calculatedFormula}`;
+                                    } else {
+                                        sToApexData += `,\n\t${commentLine}${fieldType}${element.name} = ${recordData[element.name]}${calculatedFormula}`;
+                                    }
                                 }
                             }
                         }
                     }
-                //}
+                }
             });
-            sToApexData += ');\n insert ' + objName + 'Obj;';
+            sToApexData += '\n);\ninsert record1;';
+            sToApexData += `\nSystem.debug('record1-ID: ' + record1.Id);`
             return sToApexData;
         }
     }
@@ -522,7 +616,9 @@ $(document).on('contextmenu', '.value', function (e) {
     const userKeyRegExp = /[a-zA-Z0-9]{15}|[a-zA-Z0-9]{18}/;
     const valid = userKeyRegExp.test(text);
     if (valid) {
+        copyToCLipboard($('.inp-search-1').val());
         $('.inp-search-1').val(text);
+        $('.inp-search-2').val('Name');
         fetchRecodDetails(text);
     }
 });
@@ -847,24 +943,3 @@ function showSpinner2() {
 function hideSpinner2() {
     hideDiv('spinner-div-2');
 }
-
-// Bottom button Starts
-$(document).on('click', '.plus-icon', function (e){
-    var icon = $(this);
-    if (icon.hasClass('rotate_45')) {
-        icon.removeClass('rotate_45').addClass('rotate_0');
-        $('.ul_dv').hide(100);
-        icon.css('color','#cacaca');
-    } else {
-        icon.removeClass('rotate_0').addClass('rotate_45');
-        $('.ul_dv').show(100);
-        icon.css('color','cadetblue');
-    }
-});
-$(document).on('click', '.page_name', function (e){
-   let page = $(this).data('page');
-   console.log('$page: ',page);
-   let uri = `baseUrl=${baseUrl}&sessionId=${sessionId}`;
-   window.location.href = `https://imtiyaz-khan-tech.github.io/tech/salesforce-quick-access/${page}?${uri}`
-});
-// Bottom button Finish
