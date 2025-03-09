@@ -1245,14 +1245,14 @@ body {
     cursor: pointer !important;
 }
 
-.table_1{
+.table_1-NO{
     height: 100% !important;
     width: 100% !important;
     border: 1px ridge rgba(202, 202, 202, 0.57) !important;
     box-shadow: -1px -1px 8px 3px rgba(202, 202, 202, 0.57) !important;
     border-collapse: collapse;
 }
-.thead_1{
+.thead_1-NO{
     border-bottom: 2px solid rgb(229, 226, 226) !important;
 }
 .th_1{
