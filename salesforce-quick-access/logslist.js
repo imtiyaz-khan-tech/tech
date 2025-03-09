@@ -296,14 +296,12 @@ $(document).on('click', '.delete_all_btn', function (e){
 $(document).on('keydown', '.search_input', function (event){
     let charCode = (event.which) ? event.which : event.keyCode;
     if(charCode == 13) {
-        handleSearch();
+        // handleSearch();
+        $('.create_log_btn').click();
     }
  });
 $(document).on('click', '.search_btn', async function (e){
     handleSearch();
-});
-$(document).on('click', '.create_log_btn', async function (e){
-    createUserLog();
 });
 
 function createUserLog(){
@@ -936,12 +934,14 @@ $(document).on('click', '.btn-renew-trace-flag', function (e){
         console.log('$response: ', response);
         if (response.ok) {
             $(this).css('color','#36b150');
+            $('.floating_btn').click();
         }else{
             $(this).css('color','#f64545');
         }
     }).then(data => {
         console.log('$data: ', data);
         $(this).css('color','#36b150');
+        $('.floating_btn').click();
     }).catch(error => {
         console.error('Error:', error);
         $(this).css('color','#f64545');
@@ -971,17 +971,19 @@ $(document).on('click', '.btn-delete-trace-flag', function (e){
              $(this).css('color','#f64545');
         }else{
              $(this).css('color','#36b150');
+             $('.floating_btn').click();
         }
     }).catch(error => {
         console.log('$API: error', error);
         $(this).css('color','#36b150');
+        $('.floating_btn').click();
         /* if(error && error == 'SyntaxError: Unexpected end of JSON input'){
              $(this).css('color','#36b150');
         }else{
              _this.css('color','#f64545');
         } */
     });
- });
+});
 //Table Popup Ends
 // Bottom button Starts
 $(document).on('click', '.plus-icon', function (e){
@@ -1001,3 +1003,254 @@ $(document).on('click', '.page_name', function (e){
    window.location.href = `https://imtiyaz-khan-tech.github.io/tech/salesforce-quick-access/${page}?${uri}`
 });
 // Bottom button Finish
+
+/* Users Table Popup Starts */
+$(document).on('click', '.users_table_close_icon', function (e){
+    close_Users_table_close_icon();
+});
+function close_Users_table_close_icon(){
+    $('.d_outer').removeClass('users_table_blur');
+    $('.users_table_popup').addClass('users_table_hide');
+}
+let usersAndDebugLevelMap;
+$(document).on('change', '.users_table_select_options', function (e){
+   let debugLevel = $(this).val();
+   console.log('$debugLevel: ',debugLevel);
+   let userId = $(this).data('id');
+   console.log('$userId: ',userId);
+   usersAndDebugLevelMap.set(userId, debugLevel);
+   console.log('$usersAndDebugLevelMap: ',usersAndDebugLevelMap);
+});
+$(document).on('click', '.create_log_btn', async function (e){
+
+    let search_input = $('.search_input').val().trim();
+    if(!search_input){
+        createUserLog();
+    }else if(search_input.length >= 3){
+        $('.d_outer').addClass('users_table_blur');
+        $('.users_table_popup').removeClass('users_table_hide');
+        let debugLevelsResponse = await fetchDebugLevels();
+        console.log('$debugLevelsResponse: ',debugLevelsResponse);
+
+        let options = '';
+        let defaultLogLebelId;
+        debugLevelsResponse?.records.forEach(d => {
+            if(d.DeveloperName == 'SFDC_DevConsole'){
+                options += `<option value="${d.Id}" selected>${d.DeveloperName}</option>`;
+                defaultLogLebelId = d.Id;
+            }else{
+                options += `<option value="${d.Id}">${d.DeveloperName}</option>`;
+            }
+        });
+        console.log('$defaultLogLebelId: ',defaultLogLebelId);
+        let response = await fetchUsersRecords(search_input);
+        console.log('$response: ',response);
+        usersAndDebugLevelMap = new Map();
+        let records = response.records.map(rec => {
+            return {
+                Id: rec.Id,
+                Name: rec.Name,
+                Email: rec.Email,
+                Username: rec.Username,
+                IsActive: rec.IsActive,
+                Profile: rec?.Profile?.Name,
+                DebugLevel: `
+                    <select class="users_table_select_options" data-id="${rec.Id}">${options}</select>
+                `,
+                Button: `
+                    <button class="users_table_btn-action users_table_btn-create-log" data-id="${rec.Id}">Create Log</button>
+                `
+            };
+        });
+        console.log('$records: ',records);
+        let thsArray = [
+            { label: 'Name', apiname: 'Name' },
+            { label: 'Email', apiname: 'Email' },
+            { label: 'Username', apiname: 'Username' },
+            { label: 'Is Active', apiname: 'IsActive' },
+            { label: 'Profile', apiname: 'Profile' },
+            { label: 'Debug Level', apiname: 'DebugLevel' },
+            { label: '', apiname: 'Button' },
+        ];
+        console.log('$thsArray: ',thsArray);
+        let ths = `
+            <th class="users_table_th">
+                
+            </th>
+        `;
+
+        thsArray.forEach(val => {
+            ths += `
+                <th class="users_table_th">
+                    ${val.label}
+                </th>
+            `;
+        });
+        
+        let trs = '';
+        records.forEach((rec, indx) => {
+            let tds = `
+                <td class="users_table_td users_table_td_gray">
+                    ${indx + 1}
+                </td>
+            `;
+            thsArray.forEach(th => {
+                tds += `
+                    <td class="users_table_td">
+                        ${getParsedValue(rec[th.apiname])}
+                    </td>
+                `;
+            });
+            let rowStyle = '';
+            if(rec?.rowColor){
+                rowStyle = `style="background-color: ${rec?.rowColor};"`;
+            }
+            trs += `
+                <tr class="users_table_tbody_tr" ${rowStyle}>${tds}</tr>
+            `;
+            usersAndDebugLevelMap.set(rec.Id, defaultLogLebelId);
+        });
+        $('.users_table_th_tr').html(ths);
+        $('.users_table_tbody').html(trs);
+        console.log('$usersAndDebugLevelMap: ',usersAndDebugLevelMap);
+    }
+});
+async function fetchUsersRecords(search_input){
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer " + sessionId);
+    let query = `SELECT+Id,Name,Email,Username,IsActive,Profile.Name+FROM+User+Where+Name+Like%27%25${search_input}%25%27+limit+100`;
+    var requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow'
+    };
+    
+    try{
+        const response = await fetch(baseUrl + `/services/data/v60.0/query?q=`+query, requestOptions);
+        if(!response.ok) {
+            return { isError: true, name: response.status, message: response.statusText, stack: response.type };
+        }
+        const result = await response.json();
+        return result;
+    }catch(error){
+        return { isError: true, name: error.name, message: error.message, stack: error.stack };
+    }
+}
+async function fetchDebugLevels(){
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer " + sessionId);
+    var requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow'
+    };
+    
+    try{
+        const response = await fetch(baseUrl + `/services/data/v60.0/tooling/query?q=SELECT+Id,DeveloperName+FROM+DebugLevel`, requestOptions);
+        if(!response.ok) {
+            return { isError: true, name: response.status, message: response.statusText, stack: response.type };
+        }
+        const result = await response.json();
+        return result;
+    }catch(error){
+        return { isError: true, name: error.name, message: error.message, stack: error.stack };
+    }
+}
+/* Users Table Popup Ends */
+$(document).on('click', '.users_table_btn-create-log', function (e){
+    e.stopPropagation();
+    let _this = $(this);
+    let recordId = _this.data('id');
+    console.log('$recordId: ',recordId);
+    createUserLogById(recordId, usersAndDebugLevelMap.get(recordId));
+});
+function createUserLogById(userId, debugLevelId){
+    console.log('$userId: ',userId);
+    console.log('$debugLevelId: ',debugLevelId);
+    
+    let qryENp = `/services/data/v59.0/tooling/query/?q=SELECT+Id,TracedEntityId,StartDate,ExpirationDate,DebugLevelId,LogType+FROM+TraceFlag+Where+TracedEntityId+=+'${userId}'+And+DebugLevelId+='${debugLevelId}'+Order+By+LastModifiedDate+DESC+LIMIT+1`;
+    fetch(baseUrl + qryENp, {method: 'GET', headers: {"Authorization": "Bearer " + sessionId }, redirect: 'follow' }).then(response => response.json()).then(result => {
+        console.log('$API: ', result);
+        if(result?.records?.length){
+            let record = result.records.at(0);
+            console.log('$record: ',record);
+            
+            let currentTime = new Date();
+            let startDateTime = currentTime.toISOString().slice(0, 19) + 'Z';
+            console.log('$startDateTime: ', startDateTime);
+
+            let oneDayAhead = new Date(currentTime);
+            oneDayAhead.setDate(oneDayAhead.getDate() + 1);
+            let endDateTime = oneDayAhead.toISOString().slice(0, 19) + 'Z';
+            console.log('$endDateTime: ', endDateTime);
+            
+            fetch(`${baseUrl}/services/data/v59.0/tooling/sobjects/TraceFlag/${record.Id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + sessionId,
+                },
+                body: JSON.stringify({StartDate: startDateTime, ExpirationDate: endDateTime }),
+            }).then(response => {
+                console.log('$response: ', response);
+                if (response.ok) {
+                    $('.snackbar').text('Success! updated user flag.');
+                    showToast();
+                    close_Users_table_close_icon();
+                }
+            }).then(data => {
+                console.log('$data: ', data);
+            }).catch(error => {
+                console.error('Error:', error);
+            });
+        }else{
+            let currentTime = new Date();
+            let startDateTime = currentTime.toISOString().slice(0, 19) + 'Z';
+            console.log('$startDateTime: ', startDateTime);
+
+            let oneDayAhead = new Date(currentTime);
+            oneDayAhead.setDate(oneDayAhead.getDate() + 1);
+            let endDateTime = oneDayAhead.toISOString().slice(0, 19) + 'Z';
+            console.log('$endDateTime: ', endDateTime);
+
+            var requestBody = {
+                TracedEntityId: userId,
+                LogType: 'DEVELOPER_LOG',
+                StartDate: startDateTime,
+                ExpirationDate: endDateTime,
+                debugLevelId: debugLevelId
+            };
+
+            var _requestOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + sessionId
+                },
+                body: JSON.stringify(requestBody)
+            };
+
+            fetch(baseUrl + '/services/data/v59.0/tooling/sobjects/TraceFlag', _requestOptions).then(response => response.json()).then(result => {
+                console.log('$response: ', result);
+                if (result && result[0] && result[0]?.message) {
+                    let errorMessage = result[0]?.message;
+                    console.log('$errorMessage: ', errorMessage);
+                    $('.snackbar').text(errorMessage);
+                    showToast();
+                } else {
+                    console.log('$success_response: ', result);
+                    if (result.success) {
+                        console.log('Checkpoint success');
+                        $('.snackbar').text('Success! created user flag.');
+                        showToast();
+                        close_Users_table_close_icon();
+                    }
+                }
+            }).catch(error => {
+                console.log('$getObjects: error', error);
+            });
+        }
+    }).catch(error => {
+        console.log('$API: error', error);
+    });
+}
