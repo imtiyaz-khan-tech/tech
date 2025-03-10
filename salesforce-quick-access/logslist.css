@@ -1178,7 +1178,7 @@ body {
     background: white !important;
     display: grid;
     grid-template-columns: auto;
-    max-width: 95%;
+    max-width: 95%; 
     max-height: 500px;
     text-align: center;
     padding: 5px;
@@ -1190,8 +1190,8 @@ body {
     padding-top: 10px;
     opacity: 1;
     position: relative;
-    font-family: system-ui;
-    font-size: 11px;
+    font-family: system-ui; 
+    font-size: 11px; 
 }
 .table_popup_box_heading_div{
     font-size: 25px;
