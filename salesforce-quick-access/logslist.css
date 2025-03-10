@@ -1171,10 +1171,8 @@ body {
     top: 0;
     display: flex;
     justify-content: center;
-    padding-top: 45px;
+    padding-top: 100px;
     cursor: default !important;
-    font-family: system-ui;
-    font-size: 12px;
 }
 .table_popup_box{
     background: white !important;
@@ -1388,14 +1386,12 @@ body {
     justify-content: center;
     padding-top: 45px;
     cursor: default;
-    font-family: system-ui;
-    font-size: 12px;
 }
 .users_table_popup_box{
     background: white;
     display: grid;
     grid-template-columns: auto;
-    width: 80%;
+    max-width: 95%;
     max-height: 500px;
     text-align: center;
     padding: 5px;
@@ -1407,6 +1403,8 @@ body {
     padding-top: 10px;
     opacity: 1;
     position: relative;
+    font-family: system-ui;
+    font-size: 11px;
 }
 .users_table_popup_box_heading_div{
     font-size: 25px;
@@ -1476,6 +1474,7 @@ body {
     font-size: 13px;
     color: rgb(61, 57, 57);
     text-transform: uppercase;
+    white-space: nowrap;
     border-left: 1px solid whitesmoke;
 }
 
@@ -1484,6 +1483,7 @@ body {
     text-align: center;
     border-bottom: 1px solid whitesmoke;
     border-left: 1px solid whitesmoke;
+    white-space: nowrap;
 }
 .users_table_td_gray{
     color: #9f9a9a;
