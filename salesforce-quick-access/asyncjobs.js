@@ -200,6 +200,10 @@ function generateTable() {
         if(isException){
             status_class = 'exception_class';
         }
+
+        if(rec?.Status == 'Processing'){
+            status_class = 'future_processing';
+        }
         
         trTags += `<tr class="tr_${rec.Id} ${status_class}">${tdTags}</tr>`; //Processing
     });
