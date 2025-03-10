@@ -80,7 +80,13 @@ body {
     text-align: center !important;
     color: #383846 !important;
 }
+.cta:hover{
+    background-color: rgb(246, 244, 244) !important;
 
+}
+.cta:active{
+    transform: translateY(2px);
+  }
 .d_down_textarea {
     font-size: 12px;
 }
