@@ -29,14 +29,16 @@ function startTimerCounter(){
         $('.timer').text(getConvertedTime());
     }, 1000);
 }
-
+let isAutoRefreshRunning = false;
 $(document).on('click', '.auto_refresh', function (e){
     let icon = $(this).find('.auto_refresh_icon');
     if(icon.hasClass('fast-spin')){
         icon.removeClass('fast-spin');
         clearInterval(intervalVariable);
+        isAutoRefreshRunning = false;
     }else{
         icon.addClass('fast-spin');
+        isAutoRefreshRunning = true;
         intervalVariable = setInterval( () => {
             if(isFetched)
                 fetchRecords();
@@ -346,7 +348,8 @@ function showSpinner() {
 
 function hideSpinner() {
     $(".spinner-div").hide();
-    $('.refresh_btn_icon').removeClass('fast-spin');
+    if(!isAutoRefreshRunning)
+        $('.refresh_btn_icon').removeClass('fast-spin');
 }
 
 let timeout;

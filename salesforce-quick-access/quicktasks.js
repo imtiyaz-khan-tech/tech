@@ -231,7 +231,7 @@ async function handleButtonClick(_this, button, copiedText){
         }
     }else if(button == 'Copy Actual Volume Gal - Qtr : 1'){
         addSpin(_this);
-        let query = `Select+Id,+p66_Month_Number__c,+p66_Actual_Volume_GAL__c,+p66_Contract_Month__c,+p66_Contract_Volume_Summary__r.p66_Year__c,+p66_Contract_Volume_Summary__r.p66_Ship_To__c+From+p66_Actual_Volume__c+Where+p66_Contract_Volume_Summary__c+IN+(SELECT+Id+FROM+p66_Contract_Volume_Summary__c+Where+p66_Ship_To__c+=+'0014x000011uV1HAAU'+AND+p66_Year__c+=+'2024'+And+p66_Product__c+=+'Gas')+And+p66_Month_Number__c+IN+(1,2,3)+Order+By+p66_Month_Number__c+Asc`;
+        let query = `Select+Id,+p66_Month_Number__c,+p66_Actual_Volume_GAL__c,+p66_Contract_Month__c,+p66_Contract_Volume_Summary__r.p66_Year__c,+p66_Contract_Volume_Summary__r.p66_Ship_To__c+From+p66_Actual_Volume__c+Where+p66_Contract_Volume_Summary__c+IN+(SELECT+Id+FROM+p66_Contract_Volume_Summary__c+Where+p66_Ship_To__c+=+'0014x000011uV1HAAU'+AND+p66_Year__c+=+'2025'+And+p66_Product__c+=+'Gas')+And+p66_Month_Number__c+IN+(1,2,3)+Order+By+p66_Month_Number__c+Asc`;
         const response = await fetchRecord(query);
         console.log('$response:', response);
         if(response.errorCode){
@@ -249,7 +249,7 @@ async function handleButtonClick(_this, button, copiedText){
         }
     }else if(button == 'Copy Actual Volume Gal - Qtr : 2'){
         addSpin(_this);
-        let query = `Select+Id,+p66_Month_Number__c,+p66_Actual_Volume_GAL__c,+p66_Contract_Month__c,+p66_Contract_Volume_Summary__r.p66_Year__c,+p66_Contract_Volume_Summary__r.p66_Ship_To__c+From+p66_Actual_Volume__c+Where+p66_Contract_Volume_Summary__c+IN+(SELECT+Id+FROM+p66_Contract_Volume_Summary__c+Where+p66_Ship_To__c+=+'0014x000011uV1HAAU'+AND+p66_Year__c+=+'2024'+And+p66_Product__c+=+'Gas')+And+p66_Month_Number__c+IN+(4,5,6)+Order+By+p66_Month_Number__c+Asc`;
+        let query = `Select+Id,+p66_Month_Number__c,+p66_Actual_Volume_GAL__c,+p66_Contract_Month__c,+p66_Contract_Volume_Summary__r.p66_Year__c,+p66_Contract_Volume_Summary__r.p66_Ship_To__c+From+p66_Actual_Volume__c+Where+p66_Contract_Volume_Summary__c+IN+(SELECT+Id+FROM+p66_Contract_Volume_Summary__c+Where+p66_Ship_To__c+=+'0014x000011uV1HAAU'+AND+p66_Year__c+=+'2025'+And+p66_Product__c+=+'Gas')+And+p66_Month_Number__c+IN+(4,5,6)+Order+By+p66_Month_Number__c+Asc`;
         const response = await fetchRecord(query);
         console.log('$response:', response);
         if(response.errorCode){
@@ -267,7 +267,7 @@ async function handleButtonClick(_this, button, copiedText){
         }
     }else if(button == 'Copy Actual Volume Gal - Qtr : 3'){
         addSpin(_this);
-        let query = `Select+Id,+p66_Month_Number__c,+p66_Actual_Volume_GAL__c,+p66_Contract_Month__c,+p66_Contract_Volume_Summary__r.p66_Year__c,+p66_Contract_Volume_Summary__r.p66_Ship_To__c+From+p66_Actual_Volume__c+Where+p66_Contract_Volume_Summary__c+IN+(SELECT+Id+FROM+p66_Contract_Volume_Summary__c+Where+p66_Ship_To__c+=+'0014x000011uV1HAAU'+AND+p66_Year__c+=+'2024'+And+p66_Product__c+=+'Gas')+And+p66_Month_Number__c+IN+(7,8,9)+Order+By+p66_Month_Number__c+Asc`;
+        let query = `Select+Id,+p66_Month_Number__c,+p66_Actual_Volume_GAL__c,+p66_Contract_Month__c,+p66_Contract_Volume_Summary__r.p66_Year__c,+p66_Contract_Volume_Summary__r.p66_Ship_To__c+From+p66_Actual_Volume__c+Where+p66_Contract_Volume_Summary__c+IN+(SELECT+Id+FROM+p66_Contract_Volume_Summary__c+Where+p66_Ship_To__c+=+'0014x000011uV1HAAU'+AND+p66_Year__c+=+'2025'+And+p66_Product__c+=+'Gas')+And+p66_Month_Number__c+IN+(7,8,9)+Order+By+p66_Month_Number__c+Asc`;
         const response = await fetchRecord(query);
         console.log('$response:', response);
         if(response.errorCode){
@@ -285,7 +285,7 @@ async function handleButtonClick(_this, button, copiedText){
         }
     }else if(button == 'Copy Actual Volume Gal - Qtr : 4'){
         addSpin(_this);
-        let query = `Select+Id,+p66_Month_Number__c,+p66_Actual_Volume_GAL__c,+p66_Contract_Month__c,+p66_Contract_Volume_Summary__r.p66_Year__c,+p66_Contract_Volume_Summary__r.p66_Ship_To__c+From+p66_Actual_Volume__c+Where+p66_Contract_Volume_Summary__c+IN+(SELECT+Id+FROM+p66_Contract_Volume_Summary__c+Where+p66_Ship_To__c+=+'0014x000011uV1HAAU'+AND+p66_Year__c+=+'2024'+And+p66_Product__c+=+'Gas')+And+p66_Month_Number__c+IN+(10,11,12)+Order+By+p66_Month_Number__c+Asc`;
+        let query = `Select+Id,+p66_Month_Number__c,+p66_Actual_Volume_GAL__c,+p66_Contract_Month__c,+p66_Contract_Volume_Summary__r.p66_Year__c,+p66_Contract_Volume_Summary__r.p66_Ship_To__c+From+p66_Actual_Volume__c+Where+p66_Contract_Volume_Summary__c+IN+(SELECT+Id+FROM+p66_Contract_Volume_Summary__c+Where+p66_Ship_To__c+=+'0014x000011uV1HAAU'+AND+p66_Year__c+=+'2025'+And+p66_Product__c+=+'Gas')+And+p66_Month_Number__c+IN+(10,11,12)+Order+By+p66_Month_Number__c+Asc`;
         const response = await fetchRecord(query);
         console.log('$response:', response);
         if(response.errorCode){
@@ -305,7 +305,7 @@ async function handleButtonClick(_this, button, copiedText){
         // 0i8O80000000JsHIAU
         if(idCheck(copiedText) && copiedText.startsWith('0i8')){
             addSpin(_this);
-            let query = `Select+p66_Rebate_Rate_CPG__c,+p66_Product_category__c,+p66_Base_Price__c,+p66_Max_Period_Volume__c,+p66_Quote__r.p66_Gas_Avgas_GLS_YR1__c,+p66_Quote__r.p66_Diesel_Jet_GLS_YR1__c+From+RebateProgram+Where+Id+=+'${copiedText}'+LIMIT+1`;
+            let query = `Select+p66_Rebate_Rate_CPG__c,p66_Product_category__c,p66_Base_Price__c,p66_Self_AM_Max_Period_Volume__c,p66_Quote__r.p66_Gas_Avgas_GLS_YR1__c,p66_Quote__r.p66_Diesel_Jet_GLS_YR1__c+From+RebateProgram+Where+Id+=+'${copiedText}'+LIMIT+1`;
             const response = await fetchRecord(query);
             console.log('$response:', response);
             if(response.errorCode){
@@ -351,7 +351,7 @@ async function handleButtonClick(_this, button, copiedText){
         // 0i8O80000000KmjIAE
         if(idCheck(copiedText) && copiedText.startsWith('0i8')){
             addSpin(_this);
-            let query = `Select+p66_Period_Program_Year__c,p66_Period_Program_Quarter__c,p66_Self_AM_Qtrly_Interest__c,p66_Self_AM_Qtrly_Principal__c,p66_Self_AM_Qtrly_Loan_Balance__c,p66_Actual_quantity__c,p66_Self_AM_Qtrly_Rebate__c,p66_Excess_Rebate__c+From+RebateProgramMemberPayout+Where+Period.RebateProgramId+=+'${copiedText}'+And+p66_Period_Program_Year__c+!=+null+And+p66_Trueup__c+=+False+Order+By+Period.StartDate+Asc`;
+            let query = `Select+p66_Period_Program_Year__c,p66_Period_Program_Quarter__c,p66_Self_AM_Qtrly_Interest__c,p66_Self_AM_Qtrly_Principal__c,p66_Self_AM_Qtrly_Loan_Balance__c,p66_Actual_quantity__c,p66_Self_AM_Qtrly_Rebate__c,p66_Excess_Rebate__c,p66_Invoice_Payment_Amount__c,p66_Ramp_Up_Max_Period_Volume__c+From+RebateProgramMemberPayout+Where+Period.RebateProgramId+=+'${copiedText}'+And+p66_Period_Program_Year__c+!=+null+And+p66_Trueup__c+=+False+Order+By+Period.StartDate+Asc`;
             const response = await fetchRecord(query);
             console.log('$response:', response);
             if(response.errorCode){
@@ -366,7 +366,9 @@ async function handleButtonClick(_this, button, copiedText){
                     { label: 'Loan Balance', apiname: 'p66_Self_AM_Qtrly_Loan_Balance__c' },
                     { label: 'Quantity', apiname: 'p66_Actual_quantity__c' },
                     { label: 'Qtrly Rebate', apiname: 'p66_Self_AM_Qtrly_Rebate__c' },
-                    { label: 'Excess Rebate', apiname: 'p66_Excess_Rebate__c' }
+                    { label: 'Excess Rebate', apiname: 'p66_Excess_Rebate__c' },
+                    { label: 'Invoice Amount', apiname: 'p66_Invoice_Payment_Amount__c' },
+                    { label: 'RampUp Max', apiname: 'p66_Ramp_Up_Max_Period_Volume__c' }
                 ];
                 let records = response.records;
                 console.log('$records: ',records);
