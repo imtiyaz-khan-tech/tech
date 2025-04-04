@@ -161,9 +161,72 @@ $(document).on('click', '.btn', function(e) {
     } else if (btn == 'Get Common Values') {
         let columsArray = $('.txt_area').val().split('\n');
         getCommonValues(columsArray);
+    } else if (btn == 'Show Related') {
+        let columsArray = $('.txt_area').val().split('\n');
+        showRelated(columsArray);
     }
 });
+function showRelated(columns){
+    columns = columns.filter(Boolean);
+    columns = ['p66_Rebate_Program__c','p66_Rebate_Program_Member_Payout__c'];
+    if(columns.length == 2){
+        let mapDataColor = new Map();
 
+        let i = 0;
+        while(i < excelJson_top.length){
+            let item = excelJson_top[i];
+
+            if(!mapDataColor.has(item.p66_Rebate_Program__c)){
+                mapDataColor.set(item.p66_Rebate_Program__c, '#'+(Math.random().toString(16)+'00000').slice(2,8));
+            }
+
+            i++;
+        }
+        console.log('$mapDataColor: ',mapDataColor);
+
+        i = 0;
+        let trs = '';
+        let ths = '';
+        while (i < columns.length) {
+            let col = columns[i];
+            ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
+            i++;
+        }
+        i = 0;
+        while(i < excelJson_top.length){
+            let item = excelJson_top[i];
+            let j = 0;
+            let tds = '';
+            while(j < columns.length){
+                let col = columns[j];
+                if(col == 'p66_Rebate_Program__c'){
+                    let style = `style="background-color:${mapDataColor.get(item['p66_Rebate_Program__c'])}"`;
+                    tds += `<td class="b_x_td" ${style}>${item['p66_Rebate_Program__c']}</td>`;
+                }else if(col == 'p66_Rebate_Program_Member_Payout__c'){
+                    let style = `style="background-color:${mapDataColor.get(item['p66_Rebate_Program__c'])}"`;
+                    tds += `<td class="b_x_td" ${style}>${item['p66_Rebate_Program_Member_Payout__c']}</td>`;
+                }
+                j++;
+            }
+            trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+            i++;
+        }
+        let table = `
+            <table class="b_x_table" id="table_bottom_id">
+                <thead class="b_x_thead">
+                    <tr  class="b_x_tr b_x_th_tr">
+                        ${ths}
+                    </tr>
+                </thead>
+                <tbody class="b_x_body">
+                    ${trs}
+                </tbody>
+            </table>
+        `;
+        $('.cleftdvs_bottom').html(table);
+    }
+    
+}
 function getCommonValues(columsArray){
     columsArray = columsArray.filter(Boolean);
     if(columsArray.length == 2){
