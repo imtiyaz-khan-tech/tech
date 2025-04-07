@@ -168,16 +168,18 @@ $(document).on('click', '.btn', function(e) {
 });
 function showRelated(columns){
     columns = columns.filter(Boolean);
-    columns = ['p66_Rebate_Program__c','p66_Rebate_Program_Member_Payout__c'];
+    // columns = ['p66_Rebate_Program__c','p66_Rebate_Program_Member_Payout__c'];
     if(columns.length == 2){
+        let col1 = columns[0];
+        let col2 = columns[1];
         let mapDataColor = new Map();
 
         let i = 0;
         while(i < excelJson_top.length){
             let item = excelJson_top[i];
 
-            if(!mapDataColor.has(item.p66_Rebate_Program__c)){
-                mapDataColor.set(item.p66_Rebate_Program__c, '#'+(Math.random().toString(16)+'00000').slice(2,8));
+            if(!mapDataColor.has(item[col1])){
+                mapDataColor.set(item[col1], '#'+(Math.random().toString(16)+'00000').slice(2,8));
             }
 
             i++;
@@ -199,12 +201,12 @@ function showRelated(columns){
             let tds = '';
             while(j < columns.length){
                 let col = columns[j];
-                if(col == 'p66_Rebate_Program__c'){
-                    let style = `style="background-color:${mapDataColor.get(item['p66_Rebate_Program__c'])}"`;
-                    tds += `<td class="b_x_td" ${style}>${item['p66_Rebate_Program__c']}</td>`;
+                if(col == col1){
+                    let style = `style="background-color:${mapDataColor.get(item[col1])}"`;
+                    tds += `<td class="b_x_td" ${style}>${item[col1]}</td>`;
                 }else if(col == 'p66_Rebate_Program_Member_Payout__c'){
-                    let style = `style="background-color:${mapDataColor.get(item['p66_Rebate_Program__c'])}"`;
-                    tds += `<td class="b_x_td" ${style}>${item['p66_Rebate_Program_Member_Payout__c']}</td>`;
+                    let style = `style="background-color:${mapDataColor.get(item[col1])}"`;
+                    tds += `<td class="b_x_td" ${style}>${item[col2]}</td>`;
                 }
                 j++;
             }
