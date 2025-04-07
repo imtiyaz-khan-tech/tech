@@ -231,3 +231,9 @@
 .list_dv:hover .border-right_2 {
     width: 50%;
 }
+.tool-tip{
+    position: absolute;
+    right: 3px;
+    top: -2px;
+    cursor: default;
+}
