@@ -633,6 +633,40 @@ $(document).on('click', '.btn', function(e) {
             }
             txt_2(lines.join('\n'));
         }
+    }else if (btn == 'Sort List Asc') {
+        let txt1 = txt_1();
+        txt1 = txt1.trim().split('\n').map(l => l.trim()).filter(Boolean);
+
+        let lines = [];
+        for(v of txt1){
+            lines.push({v,l: v.length});
+        }
+        console.log('$lines: ',lines);
+        lines = lines.sort(function(a, b){return a.l - b.l}).map(v => v.v);
+        console.log('$lines: ',lines);
+        txt_2(lines.join('\n'));
+    }else if (btn == 'Sort List Desc') {
+        let txt1 = txt_1();
+        txt1 = txt1.trim().split('\n').map(l => l.trim()).filter(Boolean);
+
+        let lines = [];
+        for(v of txt1){
+            lines.push({v,l: v.length});
+        }
+        console.log('$lines: ',lines);
+        lines = lines.sort(function(a, b){return b.l - a.l}).map(v => v.v);
+        console.log('$lines: ',lines);
+        txt_2(lines.join('\n'));
+    }else if (btn == 'Sort Alpha. Asc') {
+        let txt1 = txt_1();
+        txt1 = txt1.trim().split('\n').map(l => l.trim()).filter(Boolean);
+        txt1.sort();
+        txt_2(txt1.join('\n'));
+    }else if (btn == 'Sort Alpha. Desc') {
+        let txt1 = txt_1();
+        txt1 = txt1.trim().split('\n').map(l => l.trim()).filter(Boolean);
+        txt1.sort((a, b) => b.localeCompare(a));
+        txt_2(txt1.join('\n'));
     }
 });
 

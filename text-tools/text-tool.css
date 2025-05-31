@@ -3,6 +3,7 @@
     display: grid;
     grid-column-gap: 25px;
     grid-template-columns: 1fr 1fr;
+    overflow: hidden;
 }
 
 .left {
@@ -13,12 +14,17 @@
 }
 
 .txt {
-    height: 100%;
     width: 100%;
     padding: 10px;
     resize: none;
     outline: none;
     border: 1.6px solid #d3dbf9;
+}
+.txt_1{
+    height: 100%;
+}
+.txt_2{
+    height: 93%;
 }
 
 .txt::-webkit-scrollbar {
@@ -39,10 +45,29 @@
 .txt::-webkit-scrollbar-thumb:hover {
     background-color: #b1aeae;
 }
+.right::-webkit-scrollbar {
+    height: 2px;
+    width: 10px;
+}
+
+.right::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}
+
+.right::-webkit-scrollbar-thumb {
+    background-color: rgb(234, 234, 234);
+    border-radius: 0px;
+    cursor: default;
+}
+
+.right::-webkit-scrollbar-thumb:hover {
+    background-color: #b1aeae;
+}
 
 .right {
     border: 1px solid whitesmoke;
     padding: 3px;
+    overflow: auto;
 }
 
 .table {
