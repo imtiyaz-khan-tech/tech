@@ -164,8 +164,30 @@ $(document).on('click', '.btn', function(e) {
     } else if (btn == 'Show Related') {
         let columsArray = $('.txt_area').val().split('\n');
         showRelated(columsArray);
+    } else if (btn == 'Get Sum') {
+        let columsArray = $('.txt_area').val().split('\n');
+        getSum(columsArray);
     }
 });
+
+function getSum(columns){
+    columns = columns.filter(Boolean);
+    console.log('$columns: ',columns);
+    if(columns.length){
+        let i = 0;
+        let sum = 0;
+        let col = columns.at(0);
+        while(i < excelJson_top.length){
+            let item = excelJson_top[i];
+            sum += item[col] ?? 0;
+            i++;
+        }
+        console.log('$sum: ',sum);
+        $('.inp_col').val(sum);
+    }
+}
+
+
 function showRelated(columns){
     columns = columns.filter(Boolean);
     // columns = ['p66_Rebate_Program__c','p66_Rebate_Program_Member_Payout__c'];
