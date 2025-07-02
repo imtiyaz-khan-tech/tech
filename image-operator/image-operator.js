@@ -8,7 +8,7 @@ $(document).ready(function () {
 
 $(document).on('click', '.btn_add_image', function (e) {
     $('.c').append(`<div class="image-container resizable-draggable">
-        <img src="/tech/image-operator/_icon.png" alt="Image" class="img">
+        <img src="/tech/image-operator/icon.png" alt="Image" class="img">
     </div>`);
     makeDraggableAndResizable();
 });
