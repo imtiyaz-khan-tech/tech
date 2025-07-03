@@ -667,8 +667,111 @@ $(document).on('click', '.btn', function(e) {
         txt1 = txt1.trim().split('\n').map(l => l.trim()).filter(Boolean);
         txt1.sort((a, b) => b.localeCompare(a));
         txt_2(txt1.join('\n'));
+    }else if (btn == 'Replace Locations') {
+        // let txt1 = txt_1();
+        replaceLocationsX();
+        replaceLocationsY();
+        // txt1 = txt1.trim().split('\n').map(l => l.trim()).filter(Boolean);
+        // txt1.sort((a, b) => b.localeCompare(a));
+        // txt_2(txt1.join('\n'));
     }
 });
+
+function replaceLocationsX(){
+    let txt1 = txt_1();
+    txt1 = txt1.replace(/<locationX>.*?<\/locationX>/g, '<locationX>0000</locationX>');
+    txt_1(txt1);
+    let txt2 = txt_2();
+    txt2 = txt2.replace(/<locationX>.*?<\/locationX>/g, '<locationX>0000</locationX>');
+    txt_2(txt2);
+    /* const startTag = '<locationX>';
+    const endTag = '</locationX>';
+    const regex = new RegExp(`${startTag}(.*?)${endTag}`, 'g');
+    const matches_text_1 = txt1.match(regex);
+    console.log('$matches_text_1: ',matches_text_1);
+
+    let i = 0;
+    while(i < matches_text_1.length){
+        let match = matches_text_1[i];
+        txt1 = txt1.replace(match, `${startTag}000000${endTag}`);
+        i++;
+    }
+    txt_1(txt1);
+
+    let txt2 = txt_2();
+    const matches_text_2 = txt2.match(regex);
+    console.log('$matches_text_2: ',matches_text_2);
+
+    i = 0;
+    while(i < matches_text_2.length){
+        let match = matches_text_2[i];
+        txt2 = txt2.replace(match, `${startTag}000000${endTag}`);
+        i++;
+    }
+    txt_2(txt2); */
+
+
+
+    /* if(matches_text_1.length == matches_text_2.length){
+        console.log('Matched');
+        let i = 0;
+        while(i < matches_text_1.length){
+            let match1 = matches_text_1[i];
+            let match2 = matches_text_2[i];
+
+            txt2 = txt2.replace(match2, `${startTag}000000${endTag}`);
+
+            i++;
+        }
+        txt_2(txt2);
+    }else{
+        console.log(`Lengths Not Matching - ${matches_text_1.length} And ${matches_text_2.length}`);
+    } */
+
+    /* let i = 0;
+    while(i < matches.length){
+        let item = matches[i];
+        console.log('$item: ',item);
+        i++;
+    }
+    const outputArray = matches.map(match => match.replace(startTag, '').replace(endTag, ''));
+    txt_2(outputArray.join('\n')); */
+}
+
+function replaceLocationsY(){
+    let txt1 = txt_1();
+    txt1 = txt1.replace(/<locationY>.*?<\/locationY>/g, '<locationY>1111</locationY>');
+    txt_1(txt1);
+    let txt2 = txt_2();
+    txt2 = txt2.replace(/<locationY>.*?<\/locationY>/g, '<locationY>1111</locationY>');
+    txt_2(txt2);
+    /* let txt1 = txt_1();
+    const startTag = '<locationY>';
+    const endTag = '</locationY>';
+    const regex = new RegExp(`${startTag}(.*?)${endTag}`, 'g');
+    const matches_text_1 = txt1.match(regex);
+    console.log('$matches_text_1: ',matches_text_1);
+
+    let i = 0;
+    while(i < matches_text_1.length){
+        let match = matches_text_1[i];
+        txt1 = txt1.replace(match, `${startTag}111111${endTag}`);
+        i++;
+    }
+    txt_1(txt1);
+
+    let txt2 = txt_2();
+    const matches_text_2 = txt2.match(regex);
+    console.log('$matches_text_2: ',matches_text_2);
+
+    i = 0;
+    while(i < matches_text_2.length){
+        let match = matches_text_2[i];
+        txt2 = txt2.replace(match, `${startTag}111111${endTag}`);
+        i++;
+    }
+    txt_2(txt2); */
+}
 
 $(document).on('keypress', '.skip_row_count', function (e){
     if (e.which < 48 || e.which > 57) {
