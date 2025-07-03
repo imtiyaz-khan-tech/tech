@@ -19,8 +19,30 @@ function makeDraggableAndResizable(){
         handles: 'n, e, s, w, ne, se, sw, nw'
     });
 }
-
-$(document).on('click', '.image-container', async function (e) {
+$(document).on('contextmenu', '.image-container', function (e){
+   e.preventDefault();
+   let base64data = $(this).find('.img').prop('src');
+   console.log('$base64data: ',base64data);
+   let dateString = new Date().toLocaleString();
+    console.log('$dateString: ',dateString);
+    let key = `IMG: ${dateString}`;
+    localStorage.setItem(key, base64data);
+    let imglist = localStorage.getItem('imglist') ?? [];
+    console.log('$imglist-local: ',imglist);
+    if(imglist.length){
+        imglist = JSON.parse(imglist);
+        imglist.unshift(key);
+        localStorage.setItem('imglist', JSON.stringify(imglist));
+        console.log('$imglist: ',imglist);
+    }else{
+        imglist.unshift(key);
+        localStorage.setItem('imglist', JSON.stringify(imglist));
+        console.log('$imglist-new: ',imglist);
+    }
+    handleImageList(false);
+    showToast(key);
+});
+$(document).on('dblclick', '.image-container', async function (e) {
     console.log('Checkpoint clicked');
     let _this = $(this);
     const data = await navigator.clipboard.read();
@@ -34,7 +56,7 @@ $(document).on('click', '.image-container', async function (e) {
             var base64data = reader.result;
             console.log('Image base64data: ', base64data);
             _this.find('.img').prop('src', base64data);
-            let dateString = new Date().toLocaleString();
+            /* let dateString = new Date().toLocaleString();
             console.log('$dateString: ',dateString);
             let key = `IMG: ${dateString}`;
             localStorage.setItem(key, base64data);
@@ -50,10 +72,10 @@ $(document).on('click', '.image-container', async function (e) {
                 localStorage.setItem('imglist', JSON.stringify(imglist));
                 console.log('$imglist-new: ',imglist);
             }
-            handleImageList(false);
+            handleImageList(false); */
         }
     } else {
-        showToast();
+        showToast('Clipboard Data Is Not Image.');
         console.log('Clipboard Data Is Not Image');
     }
 });
@@ -75,13 +97,14 @@ function handleImageList(setImage){
 }
 
 
-function showToast() {
+function showToast(message) {
     if (!timeout) {
         timeout = true;
         $('.snackbar').addClass('show');
+        $('.snackbar').text(message);
         setTimeout(function () {
             $('.snackbar').removeClass('show');
-            timeout = false;
+            timeout = false; 
         }, 2000);
     }
 }
