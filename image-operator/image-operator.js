@@ -122,6 +122,7 @@ $(document).on('click', '.plus-icon', function (e){
         $('.ul_dv').hide(100);
     } else {
         icon.removeClass('rotate_0').addClass('rotate_45');
+        
         $('.ul_dv').show(100);
     }
 });
