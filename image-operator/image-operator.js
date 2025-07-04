@@ -84,6 +84,10 @@ function handleImageList(setImage){
     let imglist = localStorage.getItem('imglist');
     if(imglist){
         imglist = JSON.parse(imglist);
+
+        if(imglist.length == 1)
+            $('.bottom_menu_div').show();
+
         let i = 0;
         let li = '';
         while(i < imglist.length){
@@ -93,6 +97,8 @@ function handleImageList(setImage){
         $('.ul_dv').html(li);
         if(setImage)
             $('.img').prop('src', localStorage.getItem(imglist[0]));
+    }else{
+        $('.bottom_menu_div').hide();
     }
 }
 
@@ -119,6 +125,28 @@ $(document).on('click', '.plus-icon', function (e){
         $('.ul_dv').show(100);
     }
 });
+
+$(document).on('contextmenu', '.li', function (e){
+   e.preventDefault();
+   let key = $(this).data('key');
+   console.log('$key: ',key);
+   let imglist = localStorage.getItem('imglist');
+    console.log('$imglist-local: ',imglist);
+    imglist = JSON.parse(imglist);
+    imglist = imglist.filter(element => {
+        return element != key;
+    });
+    localStorage.removeItem(key);
+    if(imglist.length){
+        localStorage.setItem('imglist', JSON.stringify(imglist));
+
+    }else{
+        localStorage.removeItem('imglist');
+    }
+    console.log('$imglist: ',imglist);
+    handleImageList(false);
+});
+
 $(document).on('click', '.li', function (e){
    let key = $(this).data('key');
    console.log('$key: ',key);
