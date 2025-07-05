@@ -4,7 +4,8 @@ let image_base64 = '';
 $(document).ready(function () {
 
     var myHeaders = new Headers();
-    myHeaders.append("x-rapidapi-key", "f978f4d86fmshb8750e59a506ba8p1e8334jsn8ec4aca50c93");
+    myHeaders.append("x-rapidapi-key", "184006b1bdmsh4501251d96e9da5p14b599jsn00737e7f0378");//Acc1
+    // myHeaders.append("x-rapidapi-key", "f978f4d86fmshb8750e59a506ba8p1e8334jsn8ec4aca50c93");//Acc2
     myHeaders.append("x-rapidapi-host", "instagram-social-api.p.rapidapi.com");
     
     var requestOptions = {
@@ -52,7 +53,8 @@ $(document).on('dblclick', '.username', function (e){
    console.log('$username: ',username);
 
    var myHeaders = new Headers();
-    myHeaders.append("x-rapidapi-key", "f978f4d86fmshb8750e59a506ba8p1e8334jsn8ec4aca50c93");
+    myHeaders.append("x-rapidapi-key", "184006b1bdmsh4501251d96e9da5p14b599jsn00737e7f0378");//Acc1
+    // myHeaders.append("x-rapidapi-key", "f978f4d86fmshb8750e59a506ba8p1e8334jsn8ec4aca50c93");//Acc2
     myHeaders.append("x-rapidapi-host", "instagram-social-api.p.rapidapi.com");
     
     var requestOptions = {
