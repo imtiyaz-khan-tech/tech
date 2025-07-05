@@ -1,0 +1,116 @@
+.c{
+    /* display: grid;
+    grid-column-gap: 5px !important;
+    grid-row-gap: 200px !important;
+    grid-template-columns: 1fr 1fr 1fr !important; */
+}
+.snackbar {
+    visibility: hidden;
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 16px;
+    font-family: sans-serif;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 40px;
+    font-size: 17px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.snackbar.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+
+    to {
+        bottom: 40px;
+        opacity: 1;
+    }
+}
+
+@keyframes fadein {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+
+    to {
+        bottom: 40px;
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fadeout {
+    from {
+        bottom: 40px;
+        opacity: 1;
+    }
+
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
+}
+
+@keyframes fadeout {
+    from {
+        bottom: 40px;
+        opacity: 1;
+    }
+
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
+}
+
+.mt_table{
+    width: 100%;
+}
+.mt_td{
+    border: 1px ridge rgba(202, 202, 202, 0.57) !important;
+    box-shadow: -1px -1px 8px 3px rgb(241 241 241 / 57%) !important;
+    border-radius: 5px !important;
+    padding: 5px;
+    cursor: pointer !important;
+}
+.m_table{
+    width: 100%;
+}
+.m_th{
+    border-bottom: 1px ridge rgba(145, 144, 144, 0.57) !important;
+    box-shadow: -1px -1px 8px 3px rgb(241 241 241 / 57%) !important;
+    padding: 5px;
+    text-align: center;
+    color: #707070;
+    font-weight: 600;
+    position: sticky !important;
+    top: -5px !important;
+    z-index: 0 !important;
+    background-color: white;
+    /* position: absolute; */
+
+}
+.m_td{
+    border-bottom: 1px ridge rgba(202, 202, 202, 0.57) !important;
+    padding: 5px;
+    text-align: center;
+    font-family: monospace;
+}
