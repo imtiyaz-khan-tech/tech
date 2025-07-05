@@ -126,3 +126,10 @@
     background-color: whitesmoke;
     opacity: 0.5;
 }
+.inp{
+    outline: none !important;
+    text-align: center;
+    border: none;
+    color: #707070;
+    font-weight: 600;
+}
