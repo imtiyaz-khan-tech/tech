@@ -136,3 +136,19 @@
 .private{
     min-width: 50px;
 }
+.fixed-div{
+    position: fixed;
+    bottom: 5px;
+    right: 5px;
+}
+.btn-fixed{
+    border: 1px solid lightgray !important;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer !important;
+    background-color: white;
+    color: #aca8a8;
+}
+.btn-fixed:active{
+  transform: translateY(2px);
+}
