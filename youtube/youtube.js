@@ -2096,8 +2096,8 @@ $(document).on('click', '.btn_get_video', function (e){
         fetch("https://yt-api.p.rapidapi.com/dl?id=" + videoId, requestOptions).then(response => response.json()).then(result => {
             console.log('$API: ', result);
             $(".spinner-div").hide();
-            if(result.message){
-                showToast(result.message);
+            if(result.error){
+                showToast(result.error);
             }else{
                 yTResponse = result;
                 let thumbnail = yTResponse.thumbnail.reduce((max, img) => img.width > max.width ? img : max);
