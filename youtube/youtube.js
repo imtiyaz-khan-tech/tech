@@ -2173,6 +2173,16 @@ $(document).on('click', '.btn_get_video', function (e){
    }
 });
 
+$(document).on('input', '.inp_video_id', function (e){
+   let val = $(this).val().trim();
+   if(val.includes('?si')){
+        console.log('val: ',val);
+        val = val.substring(val.lastIndexOf('/') + 1, val.indexOf('?si'));
+        console.log('$val: ',val);
+        $(this).val(val);
+   }
+});
+
 $(document).on('click', '.btn_download', function (e){
    let url = $(this).data('url');
    console.log('$url: ',url);
