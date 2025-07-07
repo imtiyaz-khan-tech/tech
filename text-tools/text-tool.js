@@ -7,6 +7,10 @@ $(document).ready(function() {
         handle: '.small_popup_1_box_heading_div'
     });
 
+    if(localStorage.getItem('txt_1')){
+        txt_1(localStorage.getItem('txt_1'));
+    }
+
     /* $('.txt_1').val(`10-AZ-2020
 01-AZ-2021
 04-AZ-2021
@@ -139,8 +143,13 @@ $(document).on('click', '.btn', function(e) {
         txt_2(txt1.filter(Boolean).join('\n'));
         txt_1(txt1.filter(Boolean).join('\n'));
     }else if (btn == 'Update') {
-        if(txt_2())
-            updateToTop();
+        if(e.ctrlKey){
+            localStorage.setItem('txt_1', txt_1());
+        }else{
+            console.log('No CTRL');
+            if(txt_2())
+                updateToTop();
+        }
     }else if (btn == 'Clear') {
         clear();
     }else if (btn == 'Split Excel') {
@@ -818,6 +827,7 @@ function clear(){
 function blank(){
     txt_1('');
     txt_2('');
+    localStorage.removeItem('txt_1');
     $('.inp:not(.skip_row_count)').val('');
 }
 
