@@ -167,8 +167,86 @@ $(document).on('click', '.btn', function(e) {
     } else if (btn == 'Get Sum') {
         let columsArray = $('.txt_area').val().split('\n');
         getSum(columsArray);
+    } else if (btn == 'Remove Duplicates') {
+        let columsArray = $('.txt_area').val().split('\n');
+        removeDuplicates(columsArray);
     }
 });
+
+function removeDuplicates(columnsArray){
+    columnsArray = columnsArray.filter(Boolean);
+    console.log('$columnsArray: ',columnsArray);
+    let columns = Object.keys(excelJson_top.at(0));
+    console.log('$columns: ',columns);
+    if(columnsArray.length && columnsArray.length <= 2){
+        let columnOne = columnsArray.at(0);
+        let columnTwo = columnsArray.at(1);
+        let rowsMap = new Map();
+
+        let i = 0;
+        while(i < excelJson_top.length){
+            let item = excelJson_top[i];
+
+            let itemValue;
+            if(columnOne && columnTwo){
+                itemValue = item[columnOne] + item[columnTwo];
+                itemValue = itemValue.trim().toLowerCase();
+            }else{
+                itemValue = item[columnOne].trim().toLowerCase();
+            }
+
+            if(!rowsMap.has(itemValue)){
+                rowsMap.set(itemValue, item);
+            }else{
+                console.log('Has Already: ' + itemValue);
+                console.log('%c$dup-:', 'color: red;', itemValue);
+            }
+
+            i++;
+        }
+        console.log('$rowsMap: ',rowsMap);
+
+        i = 0;
+        let trs = '';
+        let ths = '';
+        
+        while (i < columns.length) {
+            let col = columns[i];
+            ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
+            i++;
+        }
+        i = 0;
+
+        let uniqueRows = Array.from(rowsMap.values());
+        console.log('$uniqueRows: ',uniqueRows);
+
+        while(i < uniqueRows.length){
+            let item = uniqueRows[i];
+            let j = 0;
+            let tds = '';
+            while(j < columns.length){
+                let col = columns[j];
+                tds += `<td class="b_x_td">${item[col]}</td>`;
+                j++;
+            }
+            trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+            i++;
+        }
+        let table = `
+            <table class="b_x_table" id="table_bottom_id">
+                <thead class="b_x_thead">
+                    <tr  class="b_x_tr b_x_th_tr">
+                        ${ths}
+                    </tr>
+                </thead>
+                <tbody class="b_x_body">
+                    ${trs}
+                </tbody>
+            </table>
+        `;
+        $('.cleftdvs_bottom').html(table);
+    }
+}
 
 function getSum(columns){
     columns = columns.filter(Boolean);
