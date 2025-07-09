@@ -220,6 +220,8 @@ function removeDuplicates(columnsArray){
         let uniqueRows = Array.from(rowsMap.values());
         console.log('$uniqueRows: ',uniqueRows);
 
+        $('.inp_col').val(`${uniqueRows.length} / ${excelJson_top.length}`);
+
         while(i < uniqueRows.length){
             let item = uniqueRows[i];
             let j = 0;
