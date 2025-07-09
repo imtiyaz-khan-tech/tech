@@ -183,6 +183,14 @@ function getContains(columsArray){
     console.log('$columns: ',columns);
     let filterValue = $('.inp_col').val().trim().toLowerCase();
     console.log('$filterValue: ', filterValue);
+    let filterArray;
+    if(filterValue.includes('|')){
+        filterArray = filterValue.split('|').filter(Boolean).map(v => v.trim().toLowerCase());
+        console.log('$filterArray: ',filterArray);
+    }
+
+    console.log('$filterArray: ',filterArray);
+
     let filterColum = columsArray.at(0);
     console.log('$filterColum: ',filterColum);
 
@@ -203,29 +211,40 @@ function getContains(columsArray){
         while(i < excelJson_top.length){
             let item = excelJson_top[i];
             let addRow = false;
-
             if(filterValue == 'null' && !item[filterColum]){
                 addRow = true;
                 filteredRowsCount ++;
             }else if(filterValue == '!null' && item[filterColum]){
                 addRow = true;
                 filteredRowsCount ++;
-            }else if(item[filterColum] && item[filterColum].trim().toLowerCase().includes(filterValue)){
+            }else if(!filterArray && item[filterColum] && item[filterColum].trim().toLowerCase().includes(filterValue)){
                 addRow = true;
                 filteredRowsCount ++;
-            }
-
-
-            let j = 0;
-            let tds = '';
-            while(j < columns.length){
-                let col = columns[j];
-                if(addRow){
-                    tds += `<td class="b_x_td">${getIdelValue(item[col])}</td>`;
+            }else if(filterArray && item[filterColum]){
+                let matched = false;
+                filterArray.forEach(f => {
+                    if(!matched && item[filterColum].trim().toLowerCase().includes(f)){
+                        matched = true;
+                    }
+                });
+                if(matched){
+                    addRow = true;
+                    filteredRowsCount ++;
                 }
-                j++;
+
             }
-            trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+
+            if(addRow){
+                let j = 0;
+                let tds = '';
+                while(j < columns.length){
+                    let col = columns[j];
+                    tds += `<td class="b_x_td">${getIdelValue(item[col])}</td>`;
+                    j++;
+                }
+                trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+            }
+
             i++;
         }
         $('.inp_col').val(`${filteredRowsCount} / ${excelJson_top.length}`);
