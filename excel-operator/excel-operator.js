@@ -170,8 +170,80 @@ $(document).on('click', '.btn', function(e) {
     } else if (btn == 'Remove Duplicates') {
         let columsArray = $('.txt_area').val().split('\n');
         removeDuplicates(columsArray);
+    } else if (btn == 'Get Contains') {
+        let columsArray = $('.txt_area').val().split('\n');
+        getContains(columsArray);
     }
 });
+
+function getContains(columsArray){
+    columsArray = columsArray.filter(Boolean);
+    console.log('$columsArray: ',columsArray);
+    let columns = Object.keys(excelJson_top.at(0));
+    console.log('$columns: ',columns);
+    let filterValue = $('.inp_col').val().trim().toLowerCase();
+    console.log('$filterValue: ', filterValue);
+    let filterColum = columsArray.at(0);
+    console.log('$filterColum: ',filterColum);
+
+    if(filterValue && filterColum){
+
+        let i = 0;
+        let trs = '';
+        let ths = '';
+        
+        while (i < columns.length) {
+            let col = columns[i];
+            ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
+            i++;
+        }
+
+        i = 0;
+        let filteredRowsCount = 0;
+        while(i < excelJson_top.length){
+            let item = excelJson_top[i];
+            let addRow = false;
+
+            if(filterValue == 'null' && !item[filterColum]){
+                addRow = true;
+                filteredRowsCount ++;
+            }else if(filterValue == '!null' && item[filterColum]){
+                addRow = true;
+                filteredRowsCount ++;
+            }else if(item[filterColum] && item[filterColum].trim().toLowerCase().includes(filterValue)){
+                addRow = true;
+                filteredRowsCount ++;
+            }
+
+
+            let j = 0;
+            let tds = '';
+            while(j < columns.length){
+                let col = columns[j];
+                if(addRow){
+                    tds += `<td class="b_x_td">${getIdelValue(item[col])}</td>`;
+                }
+                j++;
+            }
+            trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+            i++;
+        }
+        $('.inp_col').val(`${filteredRowsCount} / ${excelJson_top.length}`);
+        let table = `
+            <table class="b_x_table" id="table_bottom_id">
+                <thead class="b_x_thead">
+                    <tr  class="b_x_tr b_x_th_tr">
+                        ${ths}
+                    </tr>
+                </thead>
+                <tbody class="b_x_body">
+                    ${trs}
+                </tbody>
+            </table>
+        `;
+        $('.cleftdvs_bottom').html(table);
+    }
+}
 
 function removeDuplicates(columnsArray){
     columnsArray = columnsArray.filter(Boolean);
@@ -187,12 +259,19 @@ function removeDuplicates(columnsArray){
         while(i < excelJson_top.length){
             let item = excelJson_top[i];
 
-            let itemValue;
+            let itemValue = '';
             if(columnOne && columnTwo){
                 itemValue = item[columnOne] + item[columnTwo];
-                itemValue = itemValue.trim().toLowerCase();
+                console.log('$itemValue: ',itemValue);
+                if(itemValue)
+                    itemValue = itemValue.trim().toLowerCase();
             }else{
-                itemValue = item[columnOne].trim().toLowerCase();
+                if(item[columnOne]){
+                    itemValue = item[columnOne].trim().toLowerCase();
+                }else{
+                    itemValue = `null_${i}`;
+                }
+                console.log('$itemValue: ',itemValue);
             }
 
             if(!rowsMap.has(itemValue)){
