@@ -173,8 +173,58 @@ $(document).on('click', '.btn', function(e) {
     } else if (btn == 'Get Contains') {
         let columsArray = $('.txt_area').val().split('\n');
         getContains(columsArray);
+    } else if (btn == 'Json To Excel') {
+        jsonToExcel();
     }
 });
+
+function jsonToExcel(){
+    let jsonText = $('.txt_area').val();
+    console.log('$jsonText: ',jsonText);
+
+    excelJson_top = JSON.parse(jsonText);
+
+    console.log('$excelJson_top: ',excelJson_top);
+
+    let columns = Object.keys(excelJson_top[0]);
+    // console.log('$columns: ',columns);
+    let i = 0;
+    let ths = '';
+    while (i < columns.length) {
+        let col = columns[i];
+        ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
+        i++;
+    }
+    //console.log('$ths: ',ths);
+
+    i = 0;
+    let trs = '';
+    while(i < excelJson_top.length){
+        let item = excelJson_top[i];
+        let j = 0;
+        let tds = '';
+        while(j < columns.length){
+            let col = columns[j];
+            tds += `<td class="b_x_td">${getIdelValue(item[col])}</td>`;
+            j++;
+        }
+        trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+        i++;
+    }
+    let table = `
+        <table class="b_x_table" id="table_bottom_id">
+            <thead class="b_x_thead">
+                <tr  class="b_x_tr b_x_th_tr">
+                    ${ths}
+                </tr>
+            </thead>
+            <tbody class="b_x_body">
+                ${trs}
+            </tbody>
+        </table>
+    `;
+    $('.cleftdvs_top').html(table);
+}
 
 function getContains(columsArray){
     columsArray = columsArray.filter(Boolean);
