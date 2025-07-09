@@ -683,8 +683,40 @@ $(document).on('click', '.btn', function(e) {
         // txt1 = txt1.trim().split('\n').map(l => l.trim()).filter(Boolean);
         // txt1.sort((a, b) => b.localeCompare(a));
         // txt_2(txt1.join('\n'));
+    }else if (btn == 'Get File') {
+        getFile();
     }
 });
+
+function getFile(){
+    let base64 = txt_1();
+    console.log('$base64: ',base64);
+    let file_name = $('.file_name').val();
+    console.log('$file_name: ',file_name);
+
+    const byteCharacters = atob(base64);
+    const byteArrays = new Uint8Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+        byteArrays[i] = byteCharacters.charCodeAt(i);
+    }
+
+    const blob = new Blob([byteArrays], { type: 'application/octet-stream' });
+
+    saveAs(blob, file_name);
+
+    //Another Way
+    /* const byteCharacters = atob(base64);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++){
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const fileUrl = URL.createObjectURL(new Blob([byteArray], { type: "application/octet-stream" }));
+    const link = document.createElement('a');
+    link.href = fileUrl;
+    link.download = file_name;
+    link.click(); */
+}
 
 function replaceLocationsX(){
     let txt1 = txt_1();
