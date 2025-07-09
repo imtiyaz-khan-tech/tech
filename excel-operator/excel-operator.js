@@ -11,22 +11,12 @@ $(document).ready(function() {
     console.clear();
     // $('.txt_area').val('__Id\np66_Ship_To_Account__c');
     
-    let data =`A	B	C	D	E	F
-xv	a	b	c	d	e
-cv	d	g	j	k	k
-cc	d	ff	d	f	d
-XV	f	b	g	g	f
-xx	f	v	g	g	g
-cc	g	ff	k	g	g
-gg	g	h	n	b	j
-xV	s	b	c	v	b
-XV	w	b	h	j	j
-`;
+    /* let data =``;
     navigator.clipboard.writeText(data).then(function() {
         pasteExcel1();
      }, function(err) {
         console.error('error copying');
-     });
+     }); */
    
 });
 
