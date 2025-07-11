@@ -685,8 +685,96 @@ $(document).on('click', '.btn', function(e) {
         // txt_2(txt1.join('\n'));
     }else if (btn == 'Get File') {
         getFile();
+    }else if (btn == 'Get Package XML') {
+        getPackageXML();
     }
 });
+
+function getPackageXML(){
+    let deployRequestResponse = txt_1();
+    let res = JSON.parse(deployRequestResponse);
+
+    console.log('$res: ',res);
+      const groupedComponents = {};
+      const metadataObjectsMap = {};
+
+      let components = ("allComponentMessages" in res.deployResult.details) ? res.deployResult.details.allComponentMessages : res.deployResult.details.componentSuccesses;
+      console.log('$components: ',components);
+
+      components.sort((a, b) => a.componentType < b.componentType ? -1 : a.componentType > b.componentType ? 1 : a.fullName < b.fullName ? -1 : a.fullName > b.fullName ? 1 : 0);
+      console.log('$components-2: ',components);
+      components.forEach(({componentType, fullName, fileName, problemType}) => {
+        if (componentType && fullName && problemType != "Warning") {
+          componentType = fileName.startsWith("settings") ? "Settings" : componentType;
+
+          if (!groupedComponents[componentType]) {
+            groupedComponents[componentType] = new Set();
+          }
+          groupedComponents[componentType].add(fullName);
+
+          if (!metadataObjectsMap[componentType]) {
+            metadataObjectsMap[componentType] = {
+              xmlName: componentType,
+              selected: true,
+              expanded: true,
+              childXmlNames: []
+            };
+          }
+          metadataObjectsMap[componentType].childXmlNames.push({
+            parent: metadataObjectsMap[componentType],
+            fullName,
+            selected: true
+          });
+        }
+      });
+      let metadataObjects = Object.values(metadataObjectsMap).map(metadataObject => {
+        metadataObject.childXmlNames.sort((a, b) => a.fullName < b.fullName ? -1 : a.fullName > b.fullName ? 1 : 0);
+        return {
+          ...metadataObject
+        };
+      });
+      console.log('$metadataObjects: ',metadataObjects);
+      generatePackageXml(metadataObjects);
+}
+
+function generatePackageXml(components) {
+    console.log('$components: ',components);
+    const groupedComponents = {};
+
+    components.forEach((parent) => {
+      parent.childXmlNames = parent.childXmlNames.length > 0 && parent.childXmlNames.filter(child => child.selected).length > 0 ? parent.childXmlNames : [{fullName: "*", selected: true}];
+      if (parent.xmlName) {
+        if (!groupedComponents[parent.xmlName]) {
+          groupedComponents[parent.xmlName] = new Set();
+        }
+        parent.childXmlNames.forEach((child) => {
+          if (child.childXmlNames && child.childXmlNames.length > 0){
+            child.childXmlNames?.forEach((grandchild) => {
+              if (grandchild.selected) {
+                groupedComponents[parent.xmlName].add(grandchild.fullName);
+              }
+            });
+          } else if (child.selected || child.fullName === "*") {
+            groupedComponents[parent.xmlName].add(child.fullName);
+          }
+        });
+      }
+    });
+    let packageXml = "<Package xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n";
+    console.log('$groupedComponents: ',groupedComponents);
+    Object.entries(groupedComponents).forEach(([type, members]) => {
+      packageXml += "    <types>\n";
+      [...members].sort().forEach(member => {
+        packageXml += `        <members>${member}</members>\n`;
+      });
+      packageXml += `        <name>${type}</name>\n`;
+      packageXml += "    </types>\n";
+    });
+    packageXml += `    <version>61.0</version>\n`;
+    packageXml += "</Package>";
+    console.log(packageXml);
+    txt_2(packageXml);
+  }
 
 function getFile(){
     let base64 = txt_1();
