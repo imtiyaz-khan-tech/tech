@@ -47,7 +47,7 @@ $(document).on('click', '.btn', function(e) {
         let columsArray = $('.txt_area').val().split('\n');
         excludeColumns(columsArray);
     } else if (btn == 'Copy Columns') {
-        let columsArray = $('.txt_area').val().split('\n');
+        let columsArray = $('.txt_area').val().split('\n').filter(Boolean);
         copyColumns(columsArray, $(this));
     } else if (btn == 'Concat Columns') {
         let columsArray = $('.txt_area').val().split('\n');
@@ -62,24 +62,37 @@ $(document).on('click', '.btn', function(e) {
         XLSX.writeFile(wb, "SheetJSTable.xlsx");
     }else if (btn == 'Copy Top') {
         let html = $('.cleftdvs_top').html();
-        // html = html.replace(/(<td\b[^>]*?)\s*style="[^"]*"/g, '$1');
-        const blob = new Blob([html], { type: "text/html" });
-        navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
-        let label = $(this).text();
-        $(this).text('Copied.');
-        setTimeout( () => {
-            $(this).text(label);
-        }, 1000);
+        console.log('$html: ',html);
+        /* const blob = new Blob([html], { type: "text/html" });
+        navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);*/
+        let _this = $(this);
+        let label = _this.text(); 
+        navigator.clipboard.writeText(html).then(function() {
+            console.log('copied : ' + html);
+            _this.text('Copied.');
+            setTimeout( () => {
+                _this.text(label);
+            }, 1000);
+        }, function(err) {
+            console.error('error copying: ', err);
+        });
+
     } else if (btn == 'Copy Bottom') {
         let html = $('.cleftdvs_bottom').html();
-        // html = html.replace(/(<td\b[^>]*?)\s*style="[^"]*"/g, '$1');
-        const blob = new Blob([html], { type: "text/html" });
-        navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
-        let label = $(this).text();
-        $(this).text('Copied.');
-        setTimeout( () => {
-            $(this).text(label);
-        }, 1000);
+        console.log('$html: ',html);
+        /* const blob = new Blob([html], { type: "text/html" });
+        navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);*/
+        let _this = $(this);
+        let label = _this.text(); 
+        navigator.clipboard.writeText(html).then(function() {
+            console.log('copied : ' + html);
+            _this.text('Copied.');
+            setTimeout( () => {
+                _this.text(label);
+            }, 1000);
+        }, function(err) {
+            console.error('error copying: ', err);
+        });
     } else if (btn == 'Copy Formatted') {
         /* let html = $('.cleftdvs_bottom').html();
         copyToCLipboard_TimeOut(html, $(this), $(this).text().trim(), 1000, 'Copied.'); */
@@ -295,13 +308,13 @@ function notContains(columsArray){
                 addRow = true;
                 filteredRowsCount ++;
             }else if(filterArray && item[filterColum]){
-                let matched = false;
+                let dontSkip = true;
                 filterArray.forEach(f => {
-                    if(!matched && item[filterColum].trim().toLowerCase().includes(f) == false){
-                        matched = true;
+                    if(dontSkip && item[filterColum].trim().toLowerCase().includes(f) == true){
+                        dontSkip = false;
                     }
                 });
-                if(matched){
+                if(dontSkip){
                     addRow = true;
                     filteredRowsCount ++;
                 }
@@ -3576,13 +3589,17 @@ a4G60000000LFxcEAG	a1160000007ZkH7AAK	a1432000002o0TSAAY	218960	a4i0e000002SUH7A
 function clearTop(){
     $('.cleftdvs_top').html(`<button class="btn pst_btn" data-btn="Paste Excel - 1">Paste Excel</button>`);
     // $('.txt_area').val('');
+    excelJson_top = null;
 }
 
 function clearBottom(){
     $('.cleftdvs_bottom').html(`<button class="btn pst_btn" data-btn="Paste Excel - 2">Paste Excel</button>`);
+    excelJson_bottom = null;
 }
 function blankAll(){
+    excelJson_top = null;
     $('.txt_area').val('');
+    excelJson_bottom = null;
     $('.inp_formatted_date').val('');
     localStorage.removeItem('excelJson_top');
     $('.cleftdvs_top').html(`<button class="btn pst_btn" data-btn="Paste Excel - 1">Paste Excel</button>`);
@@ -3915,14 +3932,25 @@ function copyColumns(columsArray, _this){
         copyToCLipboard_TimeOut(copyData, _this, _this.text().trim(), 1000, 'Copied.');
     }else{
 
-        $('#table_bottom_id .b_x_th').each(function() {
+        /* const headers = Object.keys(excelJson_top[0]);
+        console.log('$headers: ',headers);
+        const rows = excelJson_top.map(obj => headers.map(h => obj[h]).join('\t'));
+        console.log('$rows: ',rows);
+        const result = [headers.join('\t'), ...rows].join('\n');
+        console.log(result);
+        copyToCLipboard_TimeOut(result, _this, _this.text().trim(), 1000, 'Copied.'); */
+
+        let thId = excelJson_bottom ? 'b_x_th' : 't_x_th';
+        let tableId = excelJson_bottom ? 'table_bottom_id' : 'table_top_id';
+        
+        $( `#${tableId} .${thId}`).each(function() {
             console.log($(this).text());
             columsArray.push(getIdelValue($(this).text().trim()));
         });
 
         console.log('$columsArray: ',columsArray);
 
-        const table = document.getElementById('table_bottom_id');
+        const table = document.getElementById(tableId);
         const workbook = XLSX.utils.table_to_book(table, {sheet: "Sheet1"});
         const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets["Sheet1"]);
         console.log('$jsonData: ',jsonData);

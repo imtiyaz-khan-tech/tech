@@ -81,6 +81,35 @@
     height: fit-content;
 }
 
+.cdv_right{
+    height: 98%;
+    overflow: auto;
+}
+.cdv_right::-webkit-scrollbar {
+    height: 2px;
+    width: 5px;
+}
+
+.cdv_right::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}
+
+.cdv_right::-webkit-scrollbar-thumb {
+    background-color: rgb(234, 234, 234);
+    border-radius: 0px;
+    cursor: default;
+}
+
+.cdv_right::-webkit-scrollbar-thumb:hover {
+    background-color: #d9d7d7;
+}
+
+.cdv_right {
+    border: 1px solid whitesmoke;
+    padding: 3px;
+    overflow: auto;
+}
+
 .btn_table {
     table-layout: fixed;
     border-collapse: separate;
