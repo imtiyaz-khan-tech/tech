@@ -17,7 +17,11 @@ $(document).ready(function() {
      }, function(err) {
         console.error('error copying');
      }); */
-   
+     if(localStorage.getItem('excelJson_top')){
+        excelJson_top = JSON.parse(localStorage.getItem('excelJson_top'));
+        console.log('$excelJson_top: ',excelJson_top);
+        generateJsonToTable_Top();
+     }
 });
 
 $(document).on('click', '.btn', function(e) {
@@ -180,8 +184,17 @@ $(document).on('click', '.btn', function(e) {
         jsonToExcel();
     } else if (btn == 'Excel To Json') {
         excelToJson();
+    } else if (btn == 'Save Local') {
+        saveLocal();
     }
 });
+
+function saveLocal(){
+    console.log('$excelJson_top: ',excelJson_top);
+    if(excelJson_top){
+        localStorage.setItem('excelJson_top',JSON.stringify(excelJson_top));
+    }
+}
 
 function excelToJson(){
     let json = JSON.stringify(excelJson_top);
@@ -3571,6 +3584,7 @@ function clearBottom(){
 function blankAll(){
     $('.txt_area').val('');
     $('.inp_formatted_date').val('');
+    localStorage.removeItem('excelJson_top');
     $('.cleftdvs_top').html(`<button class="btn pst_btn" data-btn="Paste Excel - 1">Paste Excel</button>`);
     $('.cleftdvs_bottom').html(`<button class="btn pst_btn" data-btn="Paste Excel - 2">Paste Excel</button>`);
 }
