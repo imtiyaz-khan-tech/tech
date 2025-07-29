@@ -1,0 +1,48 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    table-layout: auto;
+}
+
+table,
+th,
+td {
+    border: 1px solid #ddd;
+    font-size: 10px;
+    font-family: monospace;
+    white-space: nowrap;
+}
+
+th,
+td {
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.fixed-div {
+    position: fixed;
+    bottom: 5px;
+    right: 5px;
+}
+
+.btn-fixed {
+    border: 1px solid lightgray !important;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer !important;
+    background-color: white;
+    color: #aca8a8;
+}
+
+.btn-fixed:active {
+    transform: translateY(2px);
+}
+
+.wrap-colum {
+    white-space: wrap !important;
+}
