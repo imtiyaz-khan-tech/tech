@@ -412,6 +412,18 @@ $(document).on('click', '.btn-fixed', function (e) {
        console.log('$recordsJson ', recordsJson);
        recs = JSON.parse(recordsJson);
        creaetTable();
+       $('.fixed-div').hide();
+    }).catch(err => {
+       console.error('Failed to read clipboard contents: ', err);
+    });
+});
+
+$(document).on('contextmenu', '.btn-fixed', function (e){
+   e.preventDefault();
+   navigator.clipboard.readText().then(tableHtml => {
+       console.log('$tableHtml ', tableHtml);
+       $('.c').html(tableHtml);
+       $('.fixed-div').hide();
     }).catch(err => {
        console.error('Failed to read clipboard contents: ', err);
     });
@@ -429,24 +441,28 @@ function copyTable() {
 }
 
 function creaetTable() {
-
-    let i = 0;
-    while (i < recs.length) {
-        let item = recs[i];
-        if (item?.CreatedBy?.Name)
-            item.CreatedBy = item?.CreatedBy?.Name;
-        if (item?.LastModifiedBy?.Name)
-            item.LastModifiedBy = item?.LastModifiedBy?.Name;
-        if (item?.Owner?.Name)
-            item.Owner = item?.Owner?.Name;
-        if (item?.attributes)
-            delete item.attributes;
-        i++;
-    }
-    console.log(recs);
+    recs = recs.map(obj => {
+        let newObj = {};
+        for (let key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                if (key === 'attributes') continue;
+                if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+                    for (let innerKey in obj[key]) {
+                        if (obj[key].hasOwnProperty(innerKey) && typeof obj[key][innerKey] !== 'object') {
+                            newObj[`${key}.${innerKey}`] = obj[key][innerKey];
+                        }
+                    }
+                } else {
+                    newObj[key] = obj[key];
+                }
+            }
+        }
+        return newObj;
+    });
 
     $('.tableContainer').html(createTableFromObjects(recs));
 }
+
 
 function createTableFromObjects(data) {
     if (!data.length) return "<p>No data available</p>";
@@ -464,14 +480,13 @@ function createTableFromObjects(data) {
         table += "<tr>";
         columns.forEach(col => {
             let val = obj[col];
-            if (col == 'CreatedDate' || col == 'LastModifiedDate') {
-                val = getFormattedDateTime(val);
-            }
+            let dt = new Date(val);
+            val = (dt == 'Invalid Date' || typeof val == 'number' || (typeof val == 'string' && val.includes(':') == false ) ) ? val : getFormattedDateTime(dt);
             let clss = '';
             if (col == 'p66_Error_Message__c') {
-                clss = 'class="wrap-colum"';
+                clss = 'wrap-colum';
             }
-            table += `<td ${clss}>${val ?? ""}</td>`;
+            table += `<td class="td ${clss}">${val ?? ""}</td>`;
         });
         table += "</tr>";
     });
@@ -480,8 +495,28 @@ function createTableFromObjects(data) {
     document.title = 'Table [ ' + data.length + ']';
     return table;
 }
-function getFormattedDateTime(dateString) {
-    let date_time = Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(dateString));
+
+$(document).on('dblclick', 'td', function (e){
+   let _this = $(this);
+   let text = _this.text().trim();
+   navigator.clipboard.writeText(text).then(function() {
+         console.log(text);
+          $('td').css('color','black');
+         _this.css('color','purple');
+      }, function(err) {
+         console.error('error copying');
+      });
+});
+
+function getFormattedDateTime(dt) {
+    let date_time = Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(dt);
     date_time = date_time.replaceAll(',', '').toUpperCase().split(' ').join(' ');
     return date_time;
+}
+
+function isObjectWithProps(variable) {
+    if (variable && typeof variable === 'object' && !Array.isArray(variable)) {
+        return Object.keys(variable);
+    }
+    return null;
 }
