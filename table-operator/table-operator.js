@@ -481,7 +481,7 @@ function createTableFromObjects(data) {
         columns.forEach(col => {
             let val = obj[col];
             let dt = new Date(val);
-            val = (dt == 'Invalid Date' || typeof val == 'number' || (typeof val == 'string' && val.includes(':') == false ) ) ? val : getFormattedDateTime(dt);
+            val = (!val || dt == 'Invalid Date' || typeof val == 'number' || (typeof val == 'string' && val.includes(':') == false ) ) ? val : getFormattedDateTime(dt);
             let clss = '';
             if (col == 'p66_Error_Message__c') {
                 clss = 'wrap-colum';
