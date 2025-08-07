@@ -67,7 +67,7 @@ async function callOnInitialized(){
 
         let dataraptors = [...resp.DataRP.records];
 
-        dataraptors.records.forEach(dr => {
+        dataraptors.forEach(dr => {
             let drRec = {...dr};
             drRec.OmniProcessType = 'Data Mapper';
             drRec.SubType = drRec.Type;
