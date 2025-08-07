@@ -62,10 +62,10 @@ async function callOnInitialized(){
         let resp = JSON.parse(result);
         console.log('$resp: ',resp);
 
-        recordsArray = [...result.OmniIp.records];
+        recordsArray = [...resp.OmniIp.records];
         console.log('$recordsArray: ',recordsArray);
 
-        let dataraptors = [...result.DataRP.records];
+        let dataraptors = [...resp.DataRP.records];
 
         dataraptors.records.forEach(dr => {
             let drRec = {...dr};
