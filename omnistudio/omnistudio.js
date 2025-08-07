@@ -20,8 +20,6 @@ $(document).ready(function () {
 });
 
 async function initialize(){
-    conn = await getConnection(baseUrl, sessionId);
-    console.log('$conn: ',conn);
     callOnInitialized();
 }
 
@@ -94,15 +92,6 @@ async function callOnInitialized(){
     });
 }
 
-async function getConnection(baseUrl, sessionId){
-    let conn = new jsforce.Connection({
-       instanceUrl : baseUrl,
-       serverUrl : baseUrl,
-       sessionId : sessionId,
-       version: '64.0'
-   });
-   return conn;
-}
 
 let queryTableFields = [
     { name: 'Id', label: 'Id' },
