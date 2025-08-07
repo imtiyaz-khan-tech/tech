@@ -6,13 +6,13 @@ let fetchtype;
 let recordsArray;
 $(document).ready(function () {
     let url = new URL(window.location.href);
-    console.log('$url: ', url);
+    //console.log('$url: ', url);
     baseUrl = url.searchParams.get('baseUrl');
-    console.log('$baseUrl: ', baseUrl);
+    //console.log('$baseUrl: ', baseUrl);
     sessionId = url.searchParams.get('sessionId');
-    console.log('$sessionId: ', sessionId);
+    //console.log('$sessionId: ', sessionId);
     fetchtype = url.searchParams.get('fetchtype');
-    console.log('$fetchtype: ', fetchtype);
+    //console.log('$fetchtype: ', fetchtype);
     initialize();
 
 
@@ -37,9 +37,9 @@ async function callOnInitialized(){
         }
     }
     let omniscrips = await fetchRecords(omniQuery);
-    console.log('$omniscrips: ',omniscrips);
+    //console.log('$omniscrips: ',omniscrips);
     recordsArray = [...omniscrips.records];
-    console.log('$recordsArray: ',recordsArray);
+    //console.log('$recordsArray: ',recordsArray);
 
     let drQuery = 'Select Id, Name, Type, LastModifiedBy.Name, VersionNumber,  UniqueName, InputType, OutputType, LastModifiedDate, CreatedDate, CreatedBy.Name From OmniDataTransform Order By LastModifiedDate DESC';
     if(fetchtype == 'mineonly'){
@@ -47,7 +47,7 @@ async function callOnInitialized(){
     }
 
     let dataraptors = await fetchRecords(drQuery);
-    console.log('$dataraptors: ',dataraptors); */
+    //console.log('$dataraptors: ',dataraptors); */
 
     var myHeaders = new Headers();
     
@@ -58,12 +58,12 @@ async function callOnInitialized(){
     };
     
     fetch("https://techsimplifier-dev-ed.my.site.com/services/apexrest/omnistudio", requestOptions).then(response => response.json()).then(result => {
-        console.log('$API-OMNI: ', result);
+        //console.log('$API-OMNI: ', result);
         let resp = JSON.parse(result);
-        console.log('$resp: ',resp);
+        //console.log('$resp: ',resp);
 
         recordsArray = [...resp.OmniIp.records];
-        console.log('$recordsArray: ',recordsArray);
+        //console.log('$recordsArray: ',recordsArray);
 
         let dataraptors = [...resp.DataRP.records];
 
@@ -75,7 +75,7 @@ async function callOnInitialized(){
             recordsArray.push(drRec);
         });
 
-        console.log('$recordsArray: ',recordsArray);
+        //console.log('$recordsArray: ',recordsArray);
 
         recordsArray.sort((a, b) => { 
             const dateA = new Date(a.LastModifiedDate);
@@ -88,7 +88,7 @@ async function callOnInitialized(){
         hideSpinner();
 
     }).catch(error => {
-        console.log('$API: error', error);
+        //console.log('$API: error', error);
     });
 }
 
@@ -107,9 +107,9 @@ let queryTableFields = [
 ];
 
 async function fetchRecords(q) {
-    console.log('$q: ',q);
+    //console.log('$q: ',q);
     let res = await conn.query(q);
-    console.log('$res: ',res);
+    //console.log('$res: ',res);
     return res;
 }
 
@@ -190,9 +190,9 @@ $(document).on('click', '.download_meta', async function (e) {
     let recId = $(this).attr('data-recId');
     let uniquename = $(this).attr('data-uniquename');
     let metadatatype = $(this).attr('data-metadatatype');
-    console.log('$recId: ', recId);
-    console.log('$uniquename: ', uniquename);
-    console.log('$metadatatype: ', metadatatype);
+    //console.log('$recId: ', recId);
+    //console.log('$uniquename: ', uniquename);
+    //console.log('$metadatatype: ', metadatatype);
 
     if(metadatatype == 'Data Mapper'){
         metadatatype = 'OmniDataTransform';
@@ -243,21 +243,21 @@ $(document).on('click', '.download_meta', async function (e) {
     };
     showSpinner();
     fetch( baseUrl + "/services/Soap/m/59.0", requestOptions).then((response) => response.text()).then((xmlResponse) => {
-        console.log('Response: ' + xmlResponse);
-        console.log(xmlResponse);
-        console.log('$xmlResponse: ', xmlResponse);
+        //console.log('Response: ' + xmlResponse);
+        //console.log(xmlResponse);
+        //console.log('$xmlResponse: ', xmlResponse);
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(xmlResponse, "text/xml");
 
         let recordNodes = xmlDoc.querySelectorAll('result');
-        console.log('$recordNodes: ',recordNodes);
+        //console.log('$recordNodes: ',recordNodes);
 
         let processId;
         for (let i = 0; i < recordNodes.length; i++) {
             let id = recordNodes[i].querySelector('id').textContent;
             let state = recordNodes[i].querySelector('state').textContent;
-            console.log('$id: ',id);
-            console.log('$state: ',state);
+            //console.log('$id: ',id);
+            //console.log('$state: ',state);
             processId = id;
         }
         if(processId){
@@ -270,8 +270,8 @@ $(document).on('click', '.download_meta', async function (e) {
 
 function retrieveMetadataZip(metadatatype, name, processId){
 
-    console.log('$name: ',name);
-    console.log('$processId: ',processId);
+    //console.log('$name: ',name);
+    //console.log('$processId: ',processId);
 
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "text/xml");
@@ -301,36 +301,36 @@ function retrieveMetadataZip(metadatatype, name, processId){
         redirect: "follow"
     };
     fetch( baseUrl + "/services/Soap/m/59.0", requestOptions).then((response) => response.text()).then((xmlResponse) => {
-        console.log('Response: ' + xmlResponse);
-        console.log(xmlResponse);
-        console.log('$xmlResponse: ', xmlResponse);
+        //console.log('Response: ' + xmlResponse);
+        //console.log(xmlResponse);
+        //console.log('$xmlResponse: ', xmlResponse);
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(xmlResponse, "text/xml");
 
         let recordNodes = xmlDoc.querySelectorAll('result');
-        console.log('$recordNodes: ',recordNodes);
+        //console.log('$recordNodes: ',recordNodes);
 
         let status;
         let zipFile
         for (let i = 0; i < recordNodes.length; i++) {
             status = recordNodes[i].querySelector('status').textContent;
             zipFile = recordNodes[i].querySelector('zipFile').textContent;
-            console.log('$status: ',status);
-            console.log('$zipFile: ',zipFile);
+            //console.log('$status: ',status);
+            //console.log('$zipFile: ',zipFile);
         }
 
         if(status == 'InProgress' || status == 'Pending'){
             retrieveMetadataZip(metadatatype, name, processId);
         }else{
-            console.log('$SUCCESS-status: ',status);
-            console.log('$SUCCESS-zipFile: ',zipFile);
+            //console.log('$SUCCESS-status: ',status);
+            //console.log('$SUCCESS-zipFile: ',zipFile);
 
             if(zipFile){
                 extractFileData(metadatatype, name, zipFile);
                 /* const byteArray = Uint8Array.from(atob(zipFile), c => c.charCodeAt(0));
                 const blob = new Blob([byteArray], { type: 'application/zip' });
                 let metadataFileName = `${name} - ${metadatatype} - ` + new Date().toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true});
-                console.log(metadataFileName);
+                //console.log(metadataFileName);
                 saveAs(blob, `${metadataFileName}.zip`); */
                 hideSpinner();
             }
@@ -368,7 +368,7 @@ async function extractFileData(metadatatype, name, base64ZipData) {
         }
 
         const content = await file.async("text");
-        // console.log(content);
+        // //console.log(content);
 
         const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
         saveAs(blob, fileName);
@@ -392,11 +392,11 @@ $(document).on('click', '.td_1', function (e) {
 $(document).on('click', '.open_meta', function (e){
     let _this = $(this);
     let recordid = _this.attr('data-recId');
-    console.log('$recordid: ',recordid);
+    //console.log('$recordid: ',recordid);
     let rec = recordsArray.find(element => {
         return element.Id == recordid;
     });
-    console.log('$rec: ',rec);
+    //console.log('$rec: ',rec);
     let _baseUrl = 'https://1source--devzennify.sandbox.my.salesforce.com';
     if(rec.OmniProcessType == 'OmniScript'){
         let omniUrl = _baseUrl.replace('my.salesforce.com', 'lightning.force.com');
@@ -440,7 +440,7 @@ function executeAnonymousHandle(_this, recordid, code){
     };
     const endpoint = `${baseUrl}/services/data/v60.0/tooling/executeAnonymous/?anonymousBody=${encodeURIComponent(code)}`;
     fetch(endpoint, requestOptions).then(response => response.json()).then(data => {
-        console.log('$data-: ', data);
+        //console.log('$data-: ', data);
         if(data.success){
             _this.removeClass('fast-spin');
             // window.location.reload();
@@ -454,7 +454,7 @@ function executeAnonymousHandle(_this, recordid, code){
             _this.removeClass('fast-spin');
         }
     }).catch(error => {
-        console.log('$API: error', error);
+        //console.log('$API: error', error);
     });
 }
 
@@ -496,7 +496,7 @@ function copyToCLipboard(value, showTst) {
     if(value){
         let text = value;
         navigator.clipboard.writeText(text).then(function () {
-            console.log('copied : ' + text);
+            //console.log('copied : ' + text);
             if (showTst) {
                 $('.snackbar').text(text);
                 showToast();
@@ -537,17 +537,17 @@ function openMaximized(url) {
 /* function fetchRecordSingle(recId) {
     let filter = `Where Id = '${recId}'`;
     let q = `SELECT ${fields_array.join(',')} FROM ${objectName} ${filter}`;
-    console.log('$q: ',q);
+    //console.log('$q: ',q);
     conn.query(q).then(res => {
-        console.log('$res: ',res);
+        //console.log('$res: ',res);
         let recs = [...res.records];
-        console.log('$recs: ',recs);
+        //console.log('$recs: ',recs);
         let rec = recs[0];
-        console.log('$rec: ',rec);
+        //console.log('$rec: ',rec);
 
         //Update Existing array
         const index = recordsArray.findIndex(item => item.Id == rec.Id);
-        console.log('$index: ',index);
+        //console.log('$index: ',index);
         if (index != -1) {
             recordsArray.splice(index, 1, rec);
         }
