@@ -132,9 +132,6 @@ function generateTable() {
         <th class="th_1 th_1_1">
             
         </th>
-        <th class="th_1 th_1_1">
-            
-        </th>
     `;
     $('.thead_1_tr').html(cols);
 
@@ -172,7 +169,7 @@ function generateTable() {
             tdTags += `<td class="td_1 ${idclass}${field}-${rec.Id}" title="${title}">${fieldValue}</td>`;
         });
         tdTags += `<td class="td_1"><i class="action_btn_icon open_meta fa fa-angle-double-up fa-lg" aria-hidden="true" data-recId="${rec.Id}"></i></td>`;
-        tdTags += `<td class="td_1"><i class="action_btn_icon download_meta fa fa-angle-double-down fa-lg" aria-hidden="true" data-recId="${rec.Id}" data-uniquename="${rec.UniqueName}" data-metadatatype="${rec.OmniProcessType}"></i></td>`;
+        // tdTags += `<td class="td_1"><i class="action_btn_icon download_meta fa fa-angle-double-down fa-lg" aria-hidden="true" data-recId="${rec.Id}" data-uniquename="${rec.UniqueName}" data-metadatatype="${rec.OmniProcessType}"></i></td>`;
         let trStyle = '';
         if(rec?.OmniProcessType == 'OmniScript'){
             trStyle = `style="background-color: #e5ffe5;"`;
