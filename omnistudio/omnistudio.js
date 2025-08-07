@@ -15,22 +15,8 @@ $(document).ready(function () {
     console.log('$fetchtype: ', fetchtype);
     initialize();
 
-    baseUrl = 'https://1source--devzennify.sandbox.my.salesforce.com';
-    sessionId = '00Ddy000001BkQL!AQEAQKRh6K.OcALhK9mI2hTY3fXsQoybolzyy.camGGMVi.wczL2HOie59tgWr7ICmRTtNM2K0aSBCU.Pz4QQRfKvm8PPVnq';
 
-    var myHeaders = new Headers();
     
-    var requestOptions = {
-        method: 'GET',
-        headers: myHeaders,
-        redirect: 'follow'
-    };
-    
-    fetch("https://techsimplifier-dev-ed.my.site.com/services/apexrest/omnistudio", requestOptions).then(response => response.json()).then(result => {
-        console.log('$API-OMNI: ', result)
-    }).catch(error => {
-        console.log('$API: error', error);
-    });
 });
 
 async function initialize(){
@@ -45,7 +31,7 @@ $(document).on('click', '.btn-fixed', function (e){
 });
 
 async function callOnInitialized(){
-    let omniQuery = `SELECT Id, Name, Type, SubType, OmniProcessType, IsActive,  UniqueName, VersionNumber,  LastModifiedBy.Name, LastModifiedDate, CreatedDate, CreatedBy.Name FROM OmniProcess Order By LastModifiedDate DESC`;
+    /* let omniQuery = `SELECT Id, Name, Type, SubType, OmniProcessType, IsActive,  UniqueName, VersionNumber,  LastModifiedBy.Name, LastModifiedDate, CreatedDate, CreatedBy.Name FROM OmniProcess Order By LastModifiedDate DESC`;
     if(baseUrl == 'https://1source--devzennify.sandbox.my.salesforce.com'){
         omniQuery = `SELECT Id, Name, Type, SubType, OmniProcessType, IsActive,  UniqueName, VersionNumber,  LastModifiedBy.Name, LastModifiedDate, CreatedDate, CreatedBy.Name FROM OmniProcess Where Type = 'CAO' Order By LastModifiedDate DESC`;
         if(fetchtype == 'mineonly'){
@@ -63,27 +49,49 @@ async function callOnInitialized(){
     }
 
     let dataraptors = await fetchRecords(drQuery);
-    console.log('$dataraptors: ',dataraptors);
+    console.log('$dataraptors: ',dataraptors); */
 
-    dataraptors.records.forEach(dr => {
-        let drRec = {...dr};
-        drRec.OmniProcessType = 'Data Mapper';
-        drRec.SubType = drRec.Type;
-        drRec.Type = drRec.InputType;
-        recordsArray.push(drRec);
+    var myHeaders = new Headers();
+    
+    var requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow'
+    };
+    
+    fetch("https://techsimplifier-dev-ed.my.site.com/services/apexrest/omnistudio", requestOptions).then(response => response.json()).then(result => {
+        console.log('$API-OMNI: ', result);
+        let resp = JSON.parse(result);
+        console.log('$resp: ',resp);
+
+        recordsArray = [...OmniIp.records];
+        console.log('$recordsArray: ',recordsArray);
+
+        let dataraptors = [...DataRP.records];
+
+        dataraptors.records.forEach(dr => {
+            let drRec = {...dr};
+            drRec.OmniProcessType = 'Data Mapper';
+            drRec.SubType = drRec.Type;
+            drRec.Type = drRec.InputType;
+            recordsArray.push(drRec);
+        });
+
+        console.log('$recordsArray: ',recordsArray);
+
+        recordsArray.sort((a, b) => { 
+            const dateA = new Date(a.LastModifiedDate);
+            const dateB = new Date(b.LastModifiedDate);
+            return dateB - dateA;
+        });
+
+
+        generateTable();
+        hideSpinner();
+
+    }).catch(error => {
+        console.log('$API: error', error);
     });
-
-    console.log('$recordsArray: ',recordsArray);
-
-    recordsArray.sort((a, b) => { 
-        const dateA = new Date(a.LastModifiedDate);
-        const dateB = new Date(b.LastModifiedDate);
-        return dateB - dateA;
-    });
-
-
-    generateTable();
-    hideSpinner();
 }
 
 async function getConnection(baseUrl, sessionId){
