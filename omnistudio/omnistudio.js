@@ -397,15 +397,15 @@ $(document).on('click', '.open_meta', function (e){
         return element.Id == recordid;
     });
     console.log('$rec: ',rec);
-
+    let _baseUrl = 'https://1source--devzennify.sandbox.my.salesforce.com';
     if(rec.OmniProcessType == 'OmniScript'){
-        let omniUrl = baseUrl.replace('my.salesforce.com', 'lightning.force.com');
+        let omniUrl = _baseUrl.replace('my.salesforce.com', 'lightning.force.com');
         window.open(`${omniUrl}/builder_omnistudio/omnistudioBuilder.app?type=omniscript&id=${rec.Id}`, '_blank');
     }else if(rec.OmniProcessType == 'Integration Procedure'){
-        let omniUrl = baseUrl.replace('my.salesforce.com', 'lightning.force.com');
+        let omniUrl = _baseUrl.replace('my.salesforce.com', 'lightning.force.com');
         window.open(`${omniUrl}/builder_industries_interaction_rule/industriesBuilder.app?recordId=${rec.Id}`, '_blank');
     }else if(rec.OmniProcessType == 'Data Mapper'){
-        let omniUrl = baseUrl.replace('my.salesforce.com', 'lightning.force.com');
+        let omniUrl = _baseUrl.replace('my.salesforce.com', 'lightning.force.com');
         window.open(`${omniUrl}/builder_omnistudio/omnistudioBuilder.app?type=dataraptor&id=${rec.Id}`, '_blank');
     }
 
