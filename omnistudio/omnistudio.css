@@ -8,6 +8,7 @@ body {
     /* grid-template-rows: 5vh 93vh; */
     grid-template-rows: 0vh 95vh;
     /* grid-template-rows: auto; */
+    font-family: system-ui !important;
 }
 
 .d_top_down {
