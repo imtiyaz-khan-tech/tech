@@ -4,6 +4,7 @@ let logData;
 let sessionId;
 let fetchtype;
 let recordsArray;
+let filter = 'all';
 $(document).ready(function () {
     let url = new URL(window.location.href);
     //console.log('$url: ', url);
@@ -13,6 +14,9 @@ $(document).ready(function () {
     //console.log('$sessionId: ', sessionId);
     fetchtype = url.searchParams.get('fetchtype');
     //console.log('$fetchtype: ', fetchtype);
+    filter = url.searchParams.get('filter');
+    console.log('$filter: ',filter);
+
     initialize();
 
 
@@ -57,7 +61,7 @@ async function callOnInitialized(){
         redirect: 'follow'
     };
     
-    fetch("https://techsimplifier-dev-ed.my.site.com/services/apexrest/omnistudio", requestOptions).then(response => response.json()).then(result => {
+    fetch("https://techsimplifier-dev-ed.my.site.com/services/apexrest/omnistudio/"+filter, requestOptions).then(response => response.json()).then(result => {
         //console.log('$API-OMNI: ', result);
         let resp = JSON.parse(result);
         //console.log('$resp: ',resp);
