@@ -19,9 +19,78 @@ $(document).ready(function () {
 
     initialize();
 
+    let info = getSystemInfo();
+    console.log('$info: ',info);
 
-    
+    /* 
+    {
+        "os": "Windows",
+        "browser": "Google Chrome",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "platform": "Win32",
+        "vendor": "Google Inc."
+    }
+    */
+   notify('Load Event', info.os, info.browser, info.userAgent);
 });
+
+function notify(Event__c, Type__c, Message__c, Response__c){
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer " + sessionId);
+    
+    var raw = JSON.stringify({
+        "Event__c": Event__c,
+        "Type__c": Type__c,
+        "Message__c": Message__c,
+        "Response__c": Response__c
+    });
+    
+    var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+    };
+    
+    fetch(`https://techsimplifier-dev-ed.my.site.com/services/apexrest/notification`, requestOptions).then(response => response.json()).then(result => {
+        console.log('$API: ', result)
+    }).catch(error => {
+        console.log('$API: error', error);
+    });
+}
+
+function getSystemInfo() {
+    const ua = navigator.userAgent;
+    console.log('$ua: ', ua);
+    const platform = navigator.platform;
+    console.log('$platform: ', platform);
+    const vendor = navigator.vendor;
+    console.log('$vendor: ', vendor);
+
+    // Detect OS
+    let os = "Unknown OS";
+    if (platform.startsWith("Win")) os = "Windows";
+    else if (platform.startsWith("Mac")) os = "MacOS";
+    else if (platform.startsWith("Linux")) os = "Linux";
+    else if (/Android/i.test(ua)) os = "Android";
+    else if (/iPhone|iPad|iPod/i.test(ua)) os = "iOS";
+
+    // Detect Browser
+    let browser = "Unknown Browser";
+    if (/Chrome/i.test(ua) && !/Edg/i.test(ua)) browser = "Google Chrome";
+    else if (/Edg/i.test(ua)) browser = "Microsoft Edge";
+    else if (/Firefox/i.test(ua)) browser = "Mozilla Firefox";
+    else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser = "Safari";
+    else if (/MSIE|Trident/i.test(ua)) browser = "Internet Explorer";
+
+    return {
+        os,
+        browser,
+        userAgent: ua,
+        platform,
+        vendor
+    };
+}
 
 async function initialize(){
     callOnInitialized();
