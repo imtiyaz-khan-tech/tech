@@ -15,9 +15,9 @@ $(document).ready(function () {
     fetchtype = url.searchParams.get('fetchtype');
     //console.log('$fetchtype: ', fetchtype);
     filter = url.searchParams.get('filter');
-    console.log('$filter: ',filter);
+    console.log('$filter--: ',filter);
 
-    initialize();
+   
 
     let info = getSystemInfo();
     console.log('$info: ',info);
@@ -32,6 +32,7 @@ $(document).ready(function () {
     }
     */
    notify('Load Event', info.os, info.browser, info.userAgent);
+    initialize();
 });
 
 function notify(Event__c, Type__c, Message__c, Response__c){
