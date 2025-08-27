@@ -15,7 +15,7 @@ $(document).ready(function () {
     fetchtype = url.searchParams.get('fetchtype');
     //console.log('$fetchtype: ', fetchtype);
     filter = url.searchParams.get('filter');
-    console.log('$filter$: ',filter);
+    // console.log('$filter$: ',filter);
 
     initialize();
 });
@@ -24,11 +24,11 @@ $(document).ready(function () {
 
 function getSystemInfo() {
     const ua = navigator.userAgent;
-    console.log('$ua: ', ua);
+    // console.log('$ua: ', ua);
     const platform = navigator.platform;
-    console.log('$platform: ', platform);
+    // console.log('$platform: ', platform);
     const vendor = navigator.vendor;
-    console.log('$vendor: ', vendor);
+    // console.log('$vendor: ', vendor);
 
     // Detect OS
     let os = "Unknown OS";
@@ -86,7 +86,7 @@ async function callOnInitialized(){
     //console.log('$dataraptors: ',dataraptors); */
 
     let info = getSystemInfo();
-    console.log('$info-: ',info);
+    // console.log('$info-: ',info);
 
     var myHeaders = new Headers();
     
