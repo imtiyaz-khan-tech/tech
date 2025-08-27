@@ -15,50 +15,12 @@ $(document).ready(function () {
     fetchtype = url.searchParams.get('fetchtype');
     //console.log('$fetchtype: ', fetchtype);
     filter = url.searchParams.get('filter');
-    console.log('$filter--: ',filter);
+    console.log('$filter$: ',filter);
 
-   
-
-    let info = getSystemInfo();
-    console.log('$info: ',info);
-
-    /* 
-    {
-        "os": "Windows",
-        "browser": "Google Chrome",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
-        "platform": "Win32",
-        "vendor": "Google Inc."
-    }
-    */
-   notify('Load Event', info.os, info.browser, info.userAgent);
     initialize();
 });
 
-function notify(Event__c, Type__c, Message__c, Response__c){
-    var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer " + sessionId);
-    
-    var raw = JSON.stringify({
-        "Event__c": Event__c,
-        "Type__c": Type__c,
-        "Message__c": Message__c,
-        "Response__c": Response__c
-    });
-    
-    var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow'
-    };
-    
-    fetch(`https://techsimplifier-dev-ed.my.site.com/services/apexrest/notification`, requestOptions).then(response => response.json()).then(result => {
-        console.log('$API: ', result)
-    }).catch(error => {
-        console.log('$API: error', error);
-    });
-}
+
 
 function getSystemInfo() {
     const ua = navigator.userAgent;
@@ -123,6 +85,9 @@ async function callOnInitialized(){
     let dataraptors = await fetchRecords(drQuery);
     //console.log('$dataraptors: ',dataraptors); */
 
+    let info = getSystemInfo();
+    console.log('$info-: ',info);
+
     var myHeaders = new Headers();
     
     var requestOptions = {
@@ -130,8 +95,12 @@ async function callOnInitialized(){
         headers: myHeaders,
         redirect: 'follow'
     };
+
+    // notify('Load Event', info.os, info.browser, info.userAgent);
+
+    let params = `?os=${info.os}&browser=${info.browser}&userAgent=${info.userAgent}`;
     
-    fetch("https://techsimplifier-dev-ed.my.site.com/services/apexrest/omnistudio/"+filter, requestOptions).then(response => response.json()).then(result => {
+    fetch("https://techsimplifier-dev-ed.my.site.com/services/apexrest/omnistudio/"+filter+params, requestOptions).then(response => response.json()).then(result => {
         //console.log('$API-OMNI: ', result);
         let resp = JSON.parse(result);
         //console.log('$resp: ',resp);
