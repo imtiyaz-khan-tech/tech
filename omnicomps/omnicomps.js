@@ -20733,9 +20733,6 @@ function generateOSCards(){
                     <td class="td omnicards_td omnicards_td_col btn_tds">
                         <Button class="btn open_meta" data-recId="${os.Id}" data-uniquename="${os.UniqueName}" data-metadatatype="${os.OmniProcessType}">Open</Button>
                     </td>
-                    <td class="td omnicards_td omnicards_td_val btn_tds">
-                        <Button class="btn download_meta" data-recId="${os.Id}" data-uniquename="${os.UniqueName}" data-metadatatype="${os.OmniProcessType}">Download</Button>
-                    </td>
                 </tr>
             </table>
         `;
@@ -20831,9 +20828,6 @@ function generateIPCards(){
                     <td class="td omnicards_td omnicards_td_col btn_tds">
                         <Button class="btn open_meta" data-recId="${os.Id}" data-uniquename="${os.UniqueName}" data-metadatatype="${os.OmniProcessType}">Open</Button>
                     </td>
-                    <td class="td omnicards_td omnicards_td_val btn_tds">
-                        <Button class="btn download_meta" data-recId="${os.Id}" data-uniquename="${os.UniqueName}" data-metadatatype="${os.OmniProcessType}">Download</Button>
-                    </td>
                 </tr>
             </table>
         `;
@@ -20904,9 +20898,6 @@ function generateDRCards(){
                 <tr class="tr omnicards_tr">
                     <td class="td omnicards_td omnicards_td_col">
                         <Button class="btn open_meta" data-recId="${os.Id}" data-uniquename="${os.UniqueName}" data-metadatatype="${os.OmniProcessType}">Open</Button>
-                    </td>
-                    <td class="td omnicards_td omnicards_td_val">
-                        <Button class="btn download_meta" data-recId="${os.Id}" data-uniquename="${os.UniqueName}" data-metadatatype="${os.OmniProcessType}">Download</Button>
                     </td>
                 </tr>
             </table>
@@ -21246,7 +21237,7 @@ $(document).on('click', '.open_meta', function (e){
         return element.Id == recordid;
     });
     //console.log('$rec: ',rec);
-
+    baseUrl = 'https://1source--devzennify.sandbox.my.salesforce.com';
     if(rec.OmniProcessType == 'OmniScript'){
         let omniUrl = baseUrl.replace('my.salesforce.com', 'lightning.force.com');
         window.open(`${omniUrl}/builder_omnistudio/omnistudioBuilder.app?type=omniscript&id=${rec.Id}`, '_blank');
