@@ -20733,6 +20733,9 @@ function generateOSCards(){
                     <td class="td omnicards_td omnicards_td_col btn_tds">
                         <Button class="btn open_meta" data-recId="${os.Id}" data-uniquename="${os.UniqueName}" data-metadatatype="${os.OmniProcessType}">Open</Button>
                     </td>
+                    <td class="td omnicards_td omnicards_td_val btn_tds">
+                        
+                    </td>
                 </tr>
             </table>
         `;
@@ -20828,6 +20831,9 @@ function generateIPCards(){
                     <td class="td omnicards_td omnicards_td_col btn_tds">
                         <Button class="btn open_meta" data-recId="${os.Id}" data-uniquename="${os.UniqueName}" data-metadatatype="${os.OmniProcessType}">Open</Button>
                     </td>
+                    <td class="td omnicards_td omnicards_td_val btn_tds">
+                        
+                    </td>
                 </tr>
             </table>
         `;
@@ -20898,6 +20904,9 @@ function generateDRCards(){
                 <tr class="tr omnicards_tr">
                     <td class="td omnicards_td omnicards_td_col">
                         <Button class="btn open_meta" data-recId="${os.Id}" data-uniquename="${os.UniqueName}" data-metadatatype="${os.OmniProcessType}">Open</Button>
+                    </td>
+                    <td class="td omnicards_td omnicards_td_val">
+                        
                     </td>
                 </tr>
             </table>
