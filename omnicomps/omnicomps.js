@@ -1,3 +1,4 @@
+let env;
 let conn;
 let baseUrl;
 let logData;
@@ -13,6 +14,21 @@ $(document).ready(function () {
     //console.log('$sessionId: ', sessionId);
     fetchtype = url.searchParams.get('fetchtype');
     //console.log('$fetchtype: ', fetchtype);
+
+    env = url.searchParams.get('env');
+    console.log('$env: ', env);
+    if(env == 'qa'){
+        env = 'affinityQA';
+        baseUrl = 'https://1source--qazennify.sandbox.my.salesforce.com';
+    }else if(env == 'rt'){
+        env = 'affinityRT';
+        baseUrl = 'https://1source--zennrt.sandbox.my.salesforce.com';
+    }else{
+        env = 'affinityDEV';
+        baseUrl = 'https://1source--devzennify.sandbox.my.salesforce.com';
+    }
+    console.log('$env: ', env);
+
     callOnInitialized();
     /* recordsArray = [
     {
@@ -20279,9 +20295,7 @@ async function callOnInitialized(){
         redirect: 'follow'
     };
 
-    let filter = 'AllTypes';
-    
-    fetch("https://techsimplifier-dev-ed.my.site.com/services/apexrest/omnistudio/"+filter, requestOptions).then(response => response.json()).then(result => {
+    fetch("https://techsimplifier-dev-ed.my.site.com/services/apexrest/omnistudio/"+env, requestOptions).then(response => response.json()).then(result => {
         //console.log('$API-OMNI: ', result);
         let resp = JSON.parse(result);
         //console.log('$resp: ',resp);
@@ -21246,7 +21260,7 @@ $(document).on('click', '.open_meta', function (e){
         return element.Id == recordid;
     });
     //console.log('$rec: ',rec);
-    baseUrl = 'https://1source--devzennify.sandbox.my.salesforce.com';
+    
     if(rec.OmniProcessType == 'OmniScript'){
         let omniUrl = baseUrl.replace('my.salesforce.com', 'lightning.force.com');
         window.open(`${omniUrl}/builder_omnistudio/omnistudioBuilder.app?type=omniscript&id=${rec.Id}`, '_blank');
