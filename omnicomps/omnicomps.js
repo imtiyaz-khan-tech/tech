@@ -20388,6 +20388,10 @@ $(document).on('input', '.inp_omni', function (e) {
                     recs = osList_All.filter(rec => {
                         return rec.Type.toLowerCase() == requestValue.toLowerCase() && rec.IsActive == true;
                     });
+                }else if(extraParam == 'm'){
+                    recs = osList_All.filter(rec => {
+                        return rec.Type.toLowerCase() == requestValue.toLowerCase() && rec.IsActive == true && rec.SubType == 'AccountApplication';
+                    });
                 }else{
                     recs = osList_All.filter(rec => {
                         return rec.Type.toLowerCase() == requestValue.toLowerCase();
