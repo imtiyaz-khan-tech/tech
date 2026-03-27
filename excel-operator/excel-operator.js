@@ -43,6 +43,8 @@ $(document).on('click', '.btn', function(e) {
     } else if (btn == 'Include Columns') {
         let columsArray = $('.txt_area').val().split('\n');
         includeColumns(columsArray);
+    } else if (btn == 'extract-exeptions') {
+        extractExeptions();
     } else if (btn == 'Exclude Columns') {
         let columsArray = $('.txt_area').val().split('\n');
         excludeColumns(columsArray);
@@ -3825,6 +3827,59 @@ function includeColumns(columsArray){
     $('.cleftdvs_bottom').html(table);
 }
 
+function extractExeptions(){
+    let columsArray = ['Id','p66_Status__c'];
+    let columns = Object.keys(excelJson_top[0]);
+    // console.log('$columns: ',columns);
+    let i = 0;
+    let ths = '';
+    while (i < columns.length) {
+        let col = columns[i];
+        if(columsArray.includes(col))
+            ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
+        i++;
+    }
+    //console.log('$ths: ',ths);
+
+    i = 0;
+    let trs = '';
+    let itemscount = 0;
+    while(i < excelJson_top.length){
+        let item = excelJson_top[i];
+        if(item?.p66_Error_Message__c != null || item?.p66_Exception__c != null){
+            let j = 0;
+            let tds = '';
+            while(j < columns.length){
+                let col = columns[j];
+                if(col == 'p66_Status__c'){
+                    item[col] = 'Error';
+                }
+                if(columsArray.includes(col))
+                    tds += `<td class="b_x_td">${getIdelValue(item[col])}</td>`;
+                j++;
+            }
+            trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+            itemscount ++;
+        }
+        i++;
+    }
+    let table = `
+        <table class="b_x_table" id="table_bottom_id">
+            <thead class="b_x_thead">
+                <tr  class="b_x_tr b_x_th_tr">
+                    ${ths}
+                </tr>
+            </thead>
+            <tbody class="b_x_body">
+                ${trs}
+            </tbody>
+        </table>
+    `;
+    $('.cleftdvs_bottom').html(table);
+    document.title = 'Error Records : ' + itemscount;
+    $('.inp_col').val('p66_Async_Job_Details__c');
+}
+
 
 function excludeColumns(columsArray){
     let columns = Object.keys(excelJson_top[0]);
@@ -3939,6 +3994,10 @@ function copyColumns(columsArray, _this){
         const result = [headers.join('\t'), ...rows].join('\n');
         console.log(result);
         copyToCLipboard_TimeOut(result, _this, _this.text().trim(), 1000, 'Copied.'); */
+
+        // console.log('$excelJson_bottom: ',excelJson_bottom);
+
+        excelJson_bottom = [];
 
         let thId = excelJson_bottom ? 'b_x_th' : 't_x_th';
         let tableId = excelJson_bottom ? 'table_bottom_id' : 'table_top_id';
