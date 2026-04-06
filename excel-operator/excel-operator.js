@@ -289,8 +289,8 @@ function notContains(columsArray){
         let trs = '';
         let ths = '';
         
-        while (i < columns.length) {
-            let col = columns[i];
+        while (i < columsArray.length) {
+            let col = columsArray[i];
             ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
             i++;
         }
@@ -326,8 +326,8 @@ function notContains(columsArray){
             if(addRow){
                 let j = 0;
                 let tds = '';
-                while(j < columns.length){
-                    let col = columns[j];
+                while(j < columsArray.length){
+                    let col = columsArray[j];
                     tds += `<td class="b_x_td">${getIdelValue(item[col])}</td>`;
                     j++;
                 }
@@ -336,7 +336,7 @@ function notContains(columsArray){
 
             i++;
         }
-        $('.inp_col').val(`${filteredRowsCount} / ${excelJson_top.length}`);
+        // $('.inp_col').val(`${filteredRowsCount} / ${excelJson_top.length}`);
         let table = `
             <table class="b_x_table" id="table_bottom_id">
                 <thead class="b_x_thead">
@@ -376,8 +376,8 @@ function getContains(columsArray){
         let trs = '';
         let ths = '';
         
-        while (i < columns.length) {
-            let col = columns[i];
+        while (i < columsArray.length) {
+            let col = columsArray[i];
             ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
             i++;
         }
@@ -413,8 +413,8 @@ function getContains(columsArray){
             if(addRow){
                 let j = 0;
                 let tds = '';
-                while(j < columns.length){
-                    let col = columns[j];
+                while(j < columsArray.length){
+                    let col = columsArray[j];
                     tds += `<td class="b_x_td">${getIdelValue(item[col])}</td>`;
                     j++;
                 }
@@ -423,7 +423,7 @@ function getContains(columsArray){
 
             i++;
         }
-        $('.inp_col').val(`${filteredRowsCount} / ${excelJson_top.length}`);
+        // $('.inp_col').val(`${filteredRowsCount} / ${excelJson_top.length}`);
         let table = `
             <table class="b_x_table" id="table_bottom_id">
                 <thead class="b_x_thead">
@@ -494,7 +494,7 @@ function removeDuplicates(columnsArray){
         let uniqueRows = Array.from(rowsMap.values());
         console.log('$uniqueRows: ',uniqueRows);
 
-        $('.inp_col').val(`${uniqueRows.length} / ${excelJson_top.length}`);
+        // $('.inp_col').val(`${uniqueRows.length} / ${excelJson_top.length}`);
 
         while(i < uniqueRows.length){
             let item = uniqueRows[i];
