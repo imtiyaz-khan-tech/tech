@@ -687,6 +687,16 @@ $(document).on('click', '.btn', function(e) {
         getFile();
     }else if (btn == 'Get Package XML') {
         getPackageXML();
+    }else if (btn == 'Remove Chars') {
+        let txt1 = txt_1();
+        txt1 = txt1.trim().split('\n').map(l => l.trim()).filter(Boolean);
+        let remove_char_count = inp('remove_char_count');
+        console.log('$remove_char_count: ',remove_char_count);
+        let lines = [];
+        for(v of txt1){
+            lines.push(v.slice(0, -(parseInt(remove_char_count))));
+        }
+        txt_2(lines.join('\n'));
     }
 });
 
