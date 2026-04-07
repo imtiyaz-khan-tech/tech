@@ -80,6 +80,39 @@ function changeFavicon(title) {
     link.href = 'text-tools/icon.svg';
     document.getElementsByTagName('head')[0].appendChild(link);
 }
+
+$(document).on('contextmenu', '.btn', function (e){
+   e.preventDefault();
+   let btn = $(this).data('btn');
+   console.log('$btn: ',btn);
+   if(btn == 'Trim'){
+        txt_1(`
+The quick brown fox jumps over the lazy dog
+The quick brown fox jumps over the lazy dog   
+The quick brown fox jumps over the lazy dog
+
+The quick brown fox jumps over the lazy dog   
+
+   The quick brown fox jumps over the lazy dog
+
+  The quick brown fox jumps over the lazy dog
+
+
+The quick brown fox jumps over the lazy dog
+
+`);
+   }else if (btn == 'Remove Duplicates') {
+        txt_1(`The quick brown fox jumps over the lazy dog
+The quick brown fox jumps over the lazy cat
+The quick brown fox jumps over the lazy hen
+The quick brown fox jumps over the lazy rat
+The quick brown fox jumps over the lazy dog
+The quick brown fox jumps over the lazy hen
+The quick brown fox jumps over the lazy dog`);
+
+   }
+});
+
 $(document).on('click', '.btn', function(e) {
     let btn = $(this).data('btn');
     if (btn == 'Replace') {
@@ -140,7 +173,7 @@ $(document).on('click', '.btn', function(e) {
     }else if (btn == 'Trim') {
         let txt1 = txt_1();
         txt1 = txt1.trim().split('\n').map(l => l.trim());
-        txt_2(txt1.filter(Boolean).join('\n'));
+        // txt_2(txt1.filter(Boolean).join('\n'));
         txt_1(txt1.filter(Boolean).join('\n'));
     }else if (btn == 'Update') {
         if(e.ctrlKey){
