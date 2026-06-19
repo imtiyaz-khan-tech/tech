@@ -730,6 +730,34 @@ $(document).on('click', '.btn', function(e) {
             lines.push(v.slice(0, -(parseInt(remove_char_count))));
         }
         txt_2(lines.join('\n'));
+    }else if (btn == 'Get Session URL') {
+        let session_url = inp('session_url');
+        let session_id = inp('session_id');
+        console.log('$session_url: ',session_url);
+        console.log('$session_id: ',session_id);
+
+        // console.log(session_url.split('.com'));
+
+        session_url = session_url.split('.com')[0].replace('.lightning.force', '.my.salesforce.com');
+        console.log('$session_url: ',session_url);
+
+        console.log('$session_url---------: ',session_url);
+
+
+        session_url = session_url + '/secur/frontdoor.jsp?sid=' + session_id;
+
+
+        console.log('$SESSION: ',session_url);
+
+        txt_1(session_url);
+        txt_2(session_url);
+
+        /* let txt1 = txt_1();
+        txt1 = txt1.trim().split('\n').map(l=>{
+            return l + left_right_value;
+        });
+        txt_2(txt1.join('\n')); */
+        afterActions();
     }
 });
 
