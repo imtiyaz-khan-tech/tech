@@ -732,9 +732,16 @@ $(document).on('click', '.btn', function(e) {
         txt_2(lines.join('\n'));
     }else if (btn == 'Get Session URL') {
         let session_url = inp('session_url');
-        let session_id = inp('session_id');
+
+        if(!session_url.trim()){
+            session_url = 'https://phillips66enterprise.lightning.force.com/lightning/page/home';
+        }
+
+        let session_1 = inp('session_1');
+        let session_2 = inp('session_2');
         console.log('$session_url: ',session_url);
-        console.log('$session_id: ',session_id);
+        console.log('$session_1: ',session_1);
+        console.log('$session_2: ',session_2);
 
         // console.log(session_url.split('.com'));
 
@@ -744,22 +751,28 @@ $(document).on('click', '.btn', function(e) {
         console.log('$session_url---------: ',session_url);
 
 
-        session_url = session_url + '/secur/frontdoor.jsp?sid=' + session_id;
+        let session_url_1 = session_url + '/secur/frontdoor.jsp?sid=' + session_1;
+        let session_url_2 = session_url + '/secur/frontdoor.jsp?sid=' + session_2;
 
 
-        console.log('$SESSION: ',session_url);
+        console.log('$session_url_1: ',session_url_1);
+        console.log('$session_url_2: ',session_url_2);
 
-        txt_1(session_url);
-        txt_2(session_url);
+        txt_1(session_url_1 + '\n'+ session_url_2);
+        txt_2(session_url_1 + '\n'+ session_url_2);
+        
+        countNum();
 
-        /* let txt1 = txt_1();
-        txt1 = txt1.trim().split('\n').map(l=>{
-            return l + left_right_value;
-        });
-        txt_2(txt1.join('\n')); */
+        $('.b_lines_top').click();
         afterActions();
     }
 });
+
+function countNum(){
+    let num = (txt_1().match(/\n/g) || []).length;
+    num = num == 0 ? 1 : (num + 1);
+    $('.b_lines_top').text(num);
+}
 
 function getPackageXML(){
     let deployRequestResponse = txt_1();
