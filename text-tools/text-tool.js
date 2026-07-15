@@ -791,7 +791,7 @@ $(document).on('click', '.btn', function(e) {
                 k++;
             }
             console.log('$queriesArray: ',queriesArray);
-            // txt_2(queriesArray.join('\n'));
+            txt_2(queriesArray.join('\n'));
             generateQueriesTable(queriesArray);
         }
         afterActions();
@@ -1213,6 +1213,7 @@ function doOnInput(_this){
 
 function updateToTop(){
     txt_1(txt_2());
+    countNum();
 }
 
 let isCtrlPressed = false;
