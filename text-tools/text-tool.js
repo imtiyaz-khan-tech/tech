@@ -9,6 +9,7 @@ $(document).ready(function() {
 
     if(localStorage.getItem('txt_1')){
         txt_1(localStorage.getItem('txt_1'));
+        countNum();
     }
 
     /* $('.txt_1').val(`10-AZ-2020
@@ -765,13 +766,62 @@ $(document).on('click', '.btn', function(e) {
 
         $('.b_lines_top').click();
         afterActions();
+    }else if (btn == 'In Queries') {
+        let txt1 = txt_1();
+        txt1 = txt1.trim().split('\n').map(l => l.trim()).filter(Boolean);
+        let chunks_count = inp('chunks_count');
+        if(chunks_count){
+            chunks_count = parseInt(chunks_count);
+            console.log('$chunks_count: ',chunks_count);
+            console.log('$txt1: ',txt1);
+
+            let result = [];
+            for (let i = 0; i < txt1.length; i += chunks_count) {
+                result.push(txt1.slice(i, i + chunks_count));
+            }
+            console.log(result);
+
+            let k = 0;
+            let queriesArray = [];
+            while(k < result.length){
+                let item = result[k];
+                item = `'` + item.filter(Boolean).join(`','`) + `'`;
+                console.log('$item: ',item);
+                queriesArray.push(item);
+                k++;
+            }
+            console.log('$queriesArray: ',queriesArray);
+            // txt_2(queriesArray.join('\n'));
+            generateQueriesTable(queriesArray);
+        }
+        afterActions();
     }
 });
 
-function countNum(){
-    let num = (txt_1().match(/\n/g) || []).length;
-    num = num == 0 ? 1 : (num + 1);
-    $('.b_lines_top').text(num);
+function generateQueriesTable(queriesArray){
+    let tBody = '';
+    queriesArray.forEach((val, indx) => {
+        tBody += `<tr class="tbody_1_tr tbody_1_tr_1">
+            <td class="td_1 td_1_1">
+                ${indx + 1}
+            </td>
+            <td class="td_1 td_1_2">
+                ${val}
+            </td>
+        </tr>`
+    });
+    $('.small_popup_1').removeClass('hide');
+    $('.tbody_1').html(tBody);
+}
+
+function countNum() {
+    if(txt_1().trim()){
+        const lines = txt_1().split('\n');
+        const count = lines.length - (lines.at(-1).trim() === '' ? 1 : 0);
+        $('.b_lines_top').text(Math.max(count, 1));
+    }else{
+        $('.b_lines_top').text(0);
+    }
 }
 
 function getPackageXML(){
@@ -1071,6 +1121,7 @@ $(document).on('input', '.txt_1', function (e){
         num = num == 0 ? 1 : (num + 1);
         $('.b_lines_top').text(num);
     }
+    countNum();
 });
 $(document).on('input', '.txt_2', function (e){
     let txt2 = txt_2();
@@ -1141,6 +1192,10 @@ function populateFromLocalStorage(){
     if(local('left_right_value')){
         $('.left_right_value').val(local('left_right_value'));
     }
+    if(local('chunks_count')){
+        $('.chunks_count').val(local('chunks_count'));
+    }
+    
 }
 
 function local(key){
