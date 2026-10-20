@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Text Tools</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="text-tools-enhanced/text-tool-enhanced.css">
+    <link type="image/x-icon" rel="shortcut icon" href="text-tools-enhanced/icon.svg">
+</head>
+
+<body>
+    <!-- Scripts -->
+    <script type="text/javascript" src="js/jquery_min.js"></script>
+    <script type="text/javascript" src="js/FileSavermin.js"></script>
+    <script type="text/javascript" src="js/papaparse.min.js"></script>
+    <script type="text/javascript" src="js/font_awesome_js.js"></script>
+    <script type="text/javascript" src="js/Draggable.js"></script>
+    <script type="text/javascript" src="js/TweenMax.js"></script>
+    <script type="text/javascript" src="text-tools-enhanced/text-tool-enhanced.js"></script>
+
+    <!-- Top Application Navigation Header -->
+    <header class="app_header">
+        <div class="brand_section">
+            <div class="brand_logo">
+                <i class="fa fa-font"></i>
+            </div>
+            <div class="brand_title">
+                Text Tools
+                <span class="brand_badge">Studio</span>
+            </div>
+        </div>
+
+        <div class="search_section">
+            <div class="search_input_wrapper">
+                <i class="fa fa-search search_icon"></i>
+                <input type="text" class="tools_search_input"
+                    placeholder="Search 40+ tools & actions... (Ctrl+K or /)" />
+                <button class="search_clear_btn" title="Clear search"><i class="fa fa-times"></i></button>
+            </div>
+        </div>
+
+        <div class="header_actions">
+            <!-- Sample Data Selector -->
+            <select id="sample_data_select" class="header_btn" style="outline: none; cursor: pointer;">
+                <option value="" disabled selected>Sample Data...</option>
+                <option value="salesforce">Salesforce 15-char IDs</option>
+                <option value="whitespace">Messy Whitespace List</option>
+                <option value="json">Sample JSON Records</option>
+                <option value="csv">Sample CSV Records</option>
+            </select>
+
+            <!-- Layout Switcher Button -->
+            <button id="layout_toggle_btn" class="header_btn" title="Toggle Side-by-side or Vertical layout">
+                <i class="fa fa-bars"></i>
+                <span>Split H</span>
+            </button>
+
+            <!-- Theme Switcher Button -->
+            <button id="theme_toggle_btn" class="header_btn" title="Toggle Dark/Light Mode">
+                <i class="fa fa-moon-o"></i>
+                <span>Dark Mode</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <div class="c">
+        <!-- Left Pane: Dual Editors & Quick Controls -->
+        <div class="left">
+            <!-- Top Input Box -->
+            <div class="left_top editor_box">
+                <div class="editor_header">
+                    <div class="editor_title_group">
+                        <span class="editor_badge input_badge">Input</span>
+                        <div class="editor_stats">
+                            <span class="stat_item" title="Line count">
+                                <i class="fa fa-align-justify"></i> <span class="stat_num stat-lines-top">0</span> lines
+                            </span>
+                            <span class="stat_item" title="Word count">
+                                <i class="fa fa-file-text-o"></i> <span class="stat_num stat-words-top">0</span> words
+                            </span>
+                            <span class="stat_item" title="Character count">
+                                <i class="fa fa-text-width"></i> <span class="stat_num stat-chars-top">0</span> chars
+                            </span>
+                        </div>
+                    </div>
+                    <div class="editor_tools">
+                        <button id="btn_paste_input" class="icon_btn" title="Paste clipboard into input">
+                            <i class="fa fa-clipboard"></i> Paste
+                        </button>
+                        <button id="btn_copy_input" class="icon_btn" title="Copy input text">
+                            <i class="fa fa-copy"></i> Copy
+                        </button>
+                        <button id="btn_undo" class="icon_btn" title="Undo (Ctrl+Z)">
+                            <i class="fa fa-undo"></i>
+                        </button>
+                        <button id="btn_redo" class="icon_btn" title="Redo (Ctrl+Y)">
+                            <i class="fa fa-repeat"></i>
+                        </button>
+                        <button id="btn_clear_input" class="icon_btn" title="Clear input textarea">
+                            <i class="fa fa-trash-o"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="editor_body">
+                    <textarea class="txt txt_1" placeholder="Type, paste, or load text to process..."></textarea>
+                    <div class="b_lines b_lines_top noselect" title="Click to inspect numbered lines table">
+                        0
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle Quick Action Bridge Bar -->
+            <div class="editor_bridge_bar">
+                <button id="btn_swap_editors" class="bridge_btn" title="Exchange Input and Output text">
+                    <i class="fa fa-exchange"></i> Swap Input ⇅ Output
+                </button>
+                <button id="btn_push_top" class="bridge_btn" title="Copy Output back into Input">
+                    <i class="fa fa-arrow-up"></i> Push to Top ⇪
+                </button>
+                <button class="bridge_btn btn" data-btn="Diff Compare"
+                    title="Compare differences between Input and Output">
+                    <i class="fa fa-columns"></i> Diff Compare ⚖️
+                </button>
+            </div>
+
+            <!-- Bottom Output Box -->
+            <div class="left_bottom editor_box">
+                <div class="editor_header">
+                    <div class="editor_title_group">
+                        <span class="editor_badge output_badge">Output</span>
+                        <div class="editor_stats">
+                            <span class="stat_item" title="Line count">
+                                <i class="fa fa-align-justify"></i> <span class="stat_num stat-lines-bottom">0</span>
+                                lines
+                            </span>
+                            <span class="stat_item" title="Word count">
+                                <i class="fa fa-file-text-o"></i> <span class="stat_num stat-words-bottom">0</span>
+                                words
+                            </span>
+                            <span class="stat_item" title="Character count">
+                                <i class="fa fa-text-width"></i> <span class="stat_num stat-chars-bottom">0</span> chars
+                            </span>
+                        </div>
+                    </div>
+                    <div class="editor_tools">
+                        <button id="btn_copy_output" class="icon_btn btn-accent" title="Copy output text to clipboard">
+                            <i class="fa fa-copy"></i> Copy Output
+                        </button>
+                        <button id="btn_clear_output" class="icon_btn" title="Clear output textarea">
+                            <i class="fa fa-trash-o"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="editor_body">
+                    <textarea class="txt txt_2" placeholder="Processed output will appear here..."></textarea>
+                    <div class="b_lines b_lines_bottom noselect" title="Click to inspect numbered lines table">
+                        0
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Pane: Categorized Tool Cards -->
+        <div class="right">
+
+            <!-- Category Quick Navigation Pills -->
+            <div class="tool_category_nav">
+                <button class="cat_pill active" data-target="quick">⚡ Quick</button>
+                <button class="cat_pill" data-target="replace">🔍 Replace</button>
+                <button class="cat_pill" data-target="lines">✂️ Lines</button>
+                <button class="cat_pill" data-target="transforms">🔤 Case</button>
+                <button class="cat_pill" data-target="data">📊 JSON/Data</button>
+                <button class="cat_pill" data-target="salesforce">☁️ Salesforce</button>
+                <button class="cat_pill" data-target="analysis">⚖️ Analysis</button>
+            </div>
+
+            <!-- 1. Quick Essentials -->
+            <div class="tool_group" data-category="quick">
+                <div class="tool_group_header">
+                    <div class="tool_group_title">
+                        <i class="fa fa-bolt tool_group_icon"></i>
+                        <span>Quick Essentials</span>
+                        <span class="tool_group_badge">Core</span>
+                    </div>
+                    <i class="fa fa-chevron-down tool_group_toggle"></i>
+                </div>
+                <div class="tool_group_body">
+                    <div class="action_row grid_4">
+                        <button class="btn btn-primary" data-btn="Trim"
+                            title="Trim all spaces and empty lines (Right-click for sample data)">
+                            <i class="fa fa-magic" style="margin-right: 4px;"></i> Trim
+                        </button>
+                        <button class="btn btn-accent" data-btn="Update"
+                            title="Push Output to Input (Ctrl+Click saves to local storage)">
+                            <i class="fa fa-arrow-up" style="margin-right: 4px;"></i> Update
+                        </button>
+                        <button class="btn" data-btn="Clear" title="Clear both text boxes (Esc key)">
+                            <i class="fa fa-eraser" style="margin-right: 4px;"></i> Clear
+                        </button>
+                        <button class="btn btn-danger" data-btn="Blank" title="Reset everything and clear localStorage">
+                            <i class="fa fa-trash" style="margin-right: 4px;"></i> Blank
+                        </button>
+                    </div>
+                    <div class="action_row grid_2" style="margin-top: 4px;">
+                        <button class="btn" data-btn="Copy" title="Copy output to clipboard">
+                            <i class="fa fa-copy" style="margin-right: 4px;"></i> Copy Output
+                        </button>
+                        <button class="btn" data-btn="Swap" title="Swap Input and Output">
+                            <i class="fa fa-exchange" style="margin-right: 4px;"></i> Swap
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Find & Replace -->
+            <div class="tool_group" data-category="replace">
+                <div class="tool_group_header">
+                    <div class="tool_group_title">
+                        <i class="fa fa-search tool_group_icon"></i>
+                        <span>Find & Replace</span>
+                        <span class="tool_group_badge">Replace</span>
+                    </div>
+                    <i class="fa fa-chevron-down tool_group_toggle"></i>
+                </div>
+                <div class="tool_group_body">
+                    <!-- Standard Replace -->
+                    <div class="action_row grid_1_1_2">
+                        <input class="inp replace_value" placeholder="Find / Target" data-cls="replace_value"
+                            title="Text to find (supports \n for newline)" />
+                        <input class="inp replace_with" placeholder="Replace With" data-cls="replace_with"
+                            title="Replacement text (supports \n or \n\n)" />
+                        <button class="btn btn-primary" data-btn="Replace" title="Replace matches across all text">
+                            <i class="fa fa-repeat" style="margin-right: 4px;"></i> Replace
+                        </button>
+                    </div>
+
+                    <!-- Replace Between -->
+                    <div class="action_row grid_1_1_1_1" style="margin-top: 4px;">
+                        <input class="inp replace_left_value" placeholder="Start Marker"
+                            data-cls="replace_left_value" />
+                        <input class="inp replace_right_value" placeholder="End Marker"
+                            data-cls="replace_right_value" />
+                        <input class="inp replace_value_btwn" placeholder="New Content" data-cls="replace_value_btwn" />
+                        <button class="btn" data-btn="Replace Text Between - Include"
+                            title="Replace text between markers">
+                            Replace Between
+                        </button>
+                    </div>
+
+                    <!-- Replace Before -->
+                    <div class="action_row grid_1_1_1_1" style="margin-top: 4px;">
+                        <input class="inp replace_before_value" placeholder="Delimiter"
+                            data-cls="replace_before_value" />
+                        <input class="inp replace_before_with_value" placeholder="Replace With"
+                            data-cls="replace_before_with_value" />
+                        <input class="inp replace_before_position_value" placeholder="Pos"
+                            data-cls="replace_before_position_value" value="1" type="number" />
+                        <button class="btn" data-btn="Replace Before" title="Replace text before delimiter">
+                            Replace Before
+                        </button>
+                    </div>
+
+                    <!-- Replace After -->
+                    <div class="action_row grid_1_1_1_1" style="margin-top: 4px;">
+                        <input class="inp replace_after_value" placeholder="Delimiter" data-cls="replace_after_value" />
+                        <input class="inp replace_after_with_value" placeholder="Replace With"
+                            data-cls="replace_after_with_value" />
+                        <input class="inp replace_after_position_value" placeholder="Pos"
+                            data-cls="replace_after_position_value" value="1" type="number" />
+                        <button class="btn" data-btn="Replace After" title="Replace text after delimiter">
+                            Replace After
+                        </button>
+                    </div>
+
+                    <!-- Shift Column -->
+                    <div class="action_row grid_1_1_1_1" style="margin-top: 4px;">
+                        <input class="inp m_position" placeholder="From Pos" data-cls="m_position" value="1"
+                            type="number" />
+                        <input class="inp m_seperator" placeholder="Separator (,)" data-cls="m_seperator" />
+                        <input class="inp m_move_position" placeholder="To Pos" data-cls="m_move_position" value="1"
+                            type="number" />
+                        <button class="btn" data-btn="Shift" title="Shift column to another position">
+                            Shift Column
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Lines & Filtering -->
+            <div class="tool_group" data-category="lines">
+                <div class="tool_group_header">
+                    <div class="tool_group_title">
+                        <i class="fa fa-filter tool_group_icon"></i>
+                        <span>Lines & Filtering</span>
+                        <span class="tool_group_badge">Filter</span>
+                    </div>
+                    <i class="fa fa-chevron-down tool_group_toggle"></i>
+                </div>
+                <div class="tool_group_body">
+                    <!-- Add Left / Right -->
+                    <div class="action_row grid_1_1_1_1">
+                        <input class="inp left_right_value" placeholder="Affix Value" data-cls="left_right_value" />
+                        <button class="btn" data-btn="Add Left" title="Add prefix to each line">Add Left</button>
+                        <button class="btn" data-btn="Add Right" title="Add suffix to each line">Add Right</button>
+                        <button class="btn" data-btn="Add Left-Right" title="Wrap both sides">Add Both</button>
+                    </div>
+
+                    <!-- Deduplication & Uniques -->
+                    <div class="action_row grid_3" style="margin-top: 4px;">
+                        <button class="btn btn-accent" data-btn="Remove Duplicates"
+                            title="Keep unique lines only (Right-click for sample data)">
+                            <i class="fa fa-check" style="margin-right: 4px;"></i> Deduplicate
+                        </button>
+                        <button class="btn" data-btn="Keep Only Duplicates"
+                            title="Extract lines that appear more than once">
+                            Keep Duplicates
+                        </button>
+                        <button class="btn" data-btn="Keep Only Unique Lines"
+                            title="Extract lines that appear exactly once">
+                            Keep Uniques
+                        </button>
+                    </div>
+
+                    <!-- Remove Matching Lines -->
+                    <div class="action_row grid_1_1_1_1" style="margin-top: 4px;">
+                        <input class="inp remove_starts" placeholder="Starts with" data-cls="remove_starts" />
+                        <input class="inp remove_ends" placeholder="Ends with" data-cls="remove_ends" />
+                        <input class="inp remove_contains" placeholder="Contains" data-cls="remove_contains" />
+                        <button class="btn btn-danger" data-btn="Remove Lines" title="Filter out matching lines">
+                            Remove Lines
+                        </button>
+                    </div>
+
+                    <!-- Contains / Extract Lines -->
+                    <div class="action_row grid_1_1" style="margin-top: 4px;">
+                        <input class="inp contains_value width_97" placeholder="Filter Contains Keyword"
+                            data-cls="contains_value" />
+                        <button class="btn" data-btn="Get Contains" title="Extract only lines containing text">
+                            <i class="fa fa-filter" style="margin-right: 4px;"></i> Extract Matches
+                        </button>
+                    </div>
+
+                    <!-- Remove Before / After Delimiter -->
+                    <div class="action_row grid_1_1_1" style="margin-top: 4px; grid-template-columns: 1fr 1fr 1fr;">
+                        <input class="inp seperator_contains_value" placeholder="Delimiter / Separator"
+                            data-cls="seperator_contains_value" />
+                        <button class="btn" data-btn="Remove Before" title="Keep content after delimiter">Remove
+                            Before</button>
+                        <button class="btn" data-btn="Remove After" title="Keep content before delimiter">Remove
+                            After</button>
+                    </div>
+
+                    <!-- Slicing & Ordering -->
+                    <div class="action_row grid_1_1" style="margin-top: 4px;">
+                        <input class="inp remove_char_count width_97" placeholder="Trailing chars count"
+                            data-cls="remove_char_count" type="number" />
+                        <button class="btn" data-btn="Remove Chars" title="Slice trailing characters from lines">
+                            Remove Chars
+                        </button>
+                    </div>
+
+                    <div class="action_row grid_3" style="margin-top: 4px;">
+                        <button class="btn" data-btn="Number Lines" title="Prefix 1. 2. 3. to each line">
+                            <i class="fa fa-list-ol" style="margin-right: 4px;"></i> Number Lines
+                        </button>
+                        <button class="btn" data-btn="Reverse Lines" title="Reverse line order">
+                            <i class="fa fa-sort-amount-desc" style="margin-right: 4px;"></i> Reverse Lines
+                        </button>
+                        <button class="btn" data-btn="Shuffle Lines" title="Shuffle line order randomly">
+                            <i class="fa fa-random" style="margin-right: 4px;"></i> Shuffle Lines
+                        </button>
+                    </div>
+
+                    <!-- Sorting -->
+                    <div class="action_row grid_4" style="margin-top: 4px;">
+                        <button class="btn" data-btn="Sort Alpha. Asc" title="Sort alphabetical A to Z">Sort
+                            A-Z</button>
+                        <button class="btn" data-btn="Sort Alpha. Desc" title="Sort alphabetical Z to A">Sort
+                            Z-A</button>
+                        <button class="btn" data-btn="Sort List Asc" title="Sort by line length ascending">Length
+                            Asc</button>
+                        <button class="btn" data-btn="Sort List Desc" title="Sort by line length descending">Length
+                            Desc</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Case & Text Transforms -->
+            <div class="tool_group" data-category="transforms">
+                <div class="tool_group_header">
+                    <div class="tool_group_title">
+                        <i class="fa fa-font tool_group_icon"></i>
+                        <span>Case & Text Transforms</span>
+                        <span class="tool_group_badge">Case</span>
+                    </div>
+                    <i class="fa fa-chevron-down tool_group_toggle"></i>
+                </div>
+                <div class="tool_group_body">
+                    <div class="action_row grid_4">
+                        <button class="btn" data-btn="UPPERCASE" title="Convert to UPPERCASE">UPPERCASE</button>
+                        <button class="btn" data-btn="lowercase" title="Convert to lowercase">lowercase</button>
+                        <button class="btn" data-btn="Title Case" title="Convert to Title Case">Title Case</button>
+                        <button class="btn" data-btn="camelCase" title="Convert to camelCase">camelCase</button>
+                    </div>
+                    <div class="action_row grid_3" style="margin-top: 4px;">
+                        <button class="btn" data-btn="snake_case" title="Convert to snake_case">snake_case</button>
+                        <button class="btn" data-btn="kebab-case" title="Convert to kebab-case">kebab-case</button>
+                        <button class="btn" data-btn="PascalCase" title="Convert to PascalCase">PascalCase</button>
+                    </div>
+                    <div class="action_row grid_4" style="margin-top: 4px;">
+                        <button class="btn" data-btn="URL Encode" title="Encode URI component">URL Encode</button>
+                        <button class="btn" data-btn="URL Decode" title="Decode URI component">URL Decode</button>
+                        <button class="btn" data-btn="Base64 Encode" title="Base64 encode text">Base64 Enc</button>
+                        <button class="btn" data-btn="Base64 Decode" title="Base64 decode text">Base64 Dec</button>
+                    </div>
+                    <div class="action_row grid_3" style="margin-top: 4px;">
+                        <button class="btn" data-btn="Extract Text From Html" title="Decode HTML entities">HTML
+                            Decode</button>
+                        <button class="btn" data-btn="HTML Entity Encode" title="Encode HTML entities">HTML
+                            Entities</button>
+                        <button class="btn" data-btn="Configure User Snippet"
+                            title="Format as VS Code snippet body">User Snippet</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Data, Array & JSON -->
+            <div class="tool_group" data-category="data">
+                <div class="tool_group_header">
+                    <div class="tool_group_title">
+                        <i class="fa fa-code tool_group_icon"></i>
+                        <span>Data, Array & JSON</span>
+                        <span class="tool_group_badge">JSON</span>
+                    </div>
+                    <i class="fa fa-chevron-down tool_group_toggle"></i>
+                </div>
+                <div class="tool_group_body">
+                    <!-- Array & Dropdown -->
+                    <div class="action_row grid_2">
+                        <button class="btn" data-btn="Generate Array" title="Generate JS string array ['a', 'b']">
+                            <i class="fa fa-code" style="margin-right: 4px;"></i> Generate Array
+                        </button>
+                        <button class="btn" data-btn="Generate Dropdown"
+                            title="Generate dropdown options [{ label, value }]">
+                            <i class="fa fa-th-list" style="margin-right: 4px;"></i> Generate Dropdown
+                        </button>
+                    </div>
+
+                    <!-- JSON Formatting -->
+                    <div class="action_row grid_3" style="margin-top: 4px;">
+                        <button class="btn" data-btn="Format JSON 2" title="Format JSON with 2-space indentation">
+                            JSON Prettify (2)
+                        </button>
+                        <button class="btn" data-btn="Format JSON 4" title="Format JSON with 4-space indentation">
+                            JSON Prettify (4)
+                        </button>
+                        <button class="btn" data-btn="Minify JSON" title="Compact/Minify JSON string">
+                            Minify JSON
+                        </button>
+                    </div>
+
+                    <!-- CSV <-> JSON -->
+                    <div class="action_row grid_2" style="margin-top: 4px;">
+                        <button class="btn" data-btn="JSON to CSV" title="Convert JSON array of objects to CSV">
+                            <i class="fa fa-table" style="margin-right: 4px;"></i> JSON to CSV
+                        </button>
+                        <button class="btn" data-btn="CSV to JSON" title="Convert CSV table to JSON array">
+                            <i class="fa fa-file-code-o" style="margin-right: 4px;"></i> CSV to JSON
+                        </button>
+                    </div>
+
+                    <!-- Excel Split -->
+                    <div class="action_row grid_1_1" style="margin-top: 4px;">
+                        <input class="inp split_excel_value width_97" placeholder="Split Excel With (default \n)"
+                            data-cls="split_excel_value" />
+                        <button class="btn" data-btn="Split Excel" title="Split tab-delimited Excel paste">
+                            Split Excel Tabs
+                        </button>
+                    </div>
+
+                    <!-- Extract Text Between -->
+                    <div class="action_row grid_1_1_1" style="margin-top: 4px; grid-template-columns: 1fr 1fr 1.5fr;">
+                        <input class="inp extract_left_value" placeholder="Start Marker"
+                            data-cls="extract_left_value" />
+                        <input class="inp extract_right_value" placeholder="End Marker"
+                            data-cls="extract_right_value" />
+                        <button class="btn" data-btn="Extract Text Between" title="Extract text between tags/markers">
+                            Extract Between
+                        </button>
+                    </div>
+
+                    <!-- JSON Map -->
+                    <div class="action_row grid_1_1_1_1" style="margin-top: 4px;">
+                        <input class="inp map_name" placeholder="Map Name" data-cls="map_name" />
+                        <input class="inp key_field" placeholder="Key Field" data-cls="key_field" />
+                        <input class="inp remove_attr" placeholder="Attr to Remove" data-cls="remove_attr" />
+                        <button class="btn" data-btn="Create Json Map" title="Generate ES6 Map declaration">
+                            Create Map
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. Salesforce & Query Tools -->
+            <div class="tool_group" data-category="salesforce">
+                <div class="tool_group_header">
+                    <div class="tool_group_title">
+                        <i class="fa fa-cloud tool_group_icon"></i>
+                        <span>Salesforce & Query Tools</span>
+                        <span class="tool_group_badge">SFDC</span>
+                    </div>
+                    <i class="fa fa-chevron-down tool_group_toggle"></i>
+                </div>
+                <div class="tool_group_body">
+                    <!-- Salesforce Case-Safe ID Converter -->
+                    <div class="action_row grid_2">
+                        <button class="btn btn-accent" data-btn="15 to 18 Char ID"
+                            title="Convert Salesforce 15-char IDs to 18-char case-safe IDs">
+                            <i class="fa fa-shield" style="margin-right: 4px;"></i> 15 to 18 Char ID
+                        </button>
+                        <button class="btn" data-btn="18 to 15 Char ID"
+                            title="Truncate 18-char IDs back to 15 characters">
+                            18 to 15 Char ID
+                        </button>
+                    </div>
+
+                    <!-- SOQL In Queries -->
+                    <div class="action_row grid_3" style="margin-top: 4px;">
+                        <button class="btn btn-primary" data-btn="In Query"
+                            title="Convert lines to 'a','b','c' for SOQL IN clause">
+                            <i class="fa fa-database" style="margin-right: 4px;"></i> In Query
+                        </button>
+                        <button class="btn" data-btn="Comma Separated" title="Join items with comma and space">
+                            Comma Separated
+                        </button>
+                        <button class="btn" data-btn="Apex Set<Id>" title="Generate Apex Set<Id> declaration">
+                            Apex Set&lt;Id&gt;
+                        </button>
+                    </div>
+
+                    <!-- Batch SOQL Chunking -->
+                    <div class="action_row grid_1_1_1" style="margin-top: 4px; grid-template-columns: 1fr 1fr 1fr;">
+                        <input class="inp chunks_count width_97" placeholder="Batch Size (e.g. 200)"
+                            data-cls="chunks_count" type="number" />
+                        <button class="btn" data-btn="In Queries" title="Split into multiple IN-Query batches">
+                            Batch Queries
+                        </button>
+                        <button class="btn" data-btn="In Query Distinct"
+                            title="Paste clipboard & generate Account query">
+                            In Query Distinct
+                        </button>
+                    </div>
+
+                    <!-- Flow Cleaner & Metadata -->
+                    <div class="action_row grid_2" style="margin-top: 4px;">
+                        <button class="btn" data-btn="Replace Locations"
+                            title="Reset Flow XML location coordinates to 0000/1111">
+                            <i class="fa fa-map-marker" style="margin-right: 4px;"></i> Clean Flow Locations
+                        </button>
+                        <button class="btn" data-btn="Field Permissions"
+                            title="Generate Salesforce fieldPermissions XML elements">
+                            Field Permissions
+                        </button>
+                    </div>
+
+                    <div class="action_row grid_1_1" style="margin-top: 4px;">
+                        <button class="btn" data-btn="Get Package XML"
+                            title="Generate package.xml from deploy request JSON">
+                            <i class="fa fa-cube" style="margin-right: 4px;"></i> Get Package XML
+                        </button>
+                        <div style="display: flex; gap: 4px;">
+                            <input class="inp file_name" placeholder="File Name" data-cls="file_name" />
+                            <button class="btn" data-btn="Get File" title="Download Base64 in Input as a binary file"
+                                style="width: auto; min-width: 75px;">
+                                <i class="fa fa-download"></i> Save
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Session URL Generator -->
+                    <div class="action_row grid_1_1_1_1" style="margin-top: 4px;">
+                        <input class="inp session_url" placeholder="SFDC Domain URL" data-cls="session_url" />
+                        <input class="inp session_1" placeholder="Session SID 1" data-cls="session_1" />
+                        <input class="inp session_2" placeholder="Session SID 2" data-cls="session_2" />
+                        <button class="btn" data-btn="Get Session URL" title="Generate frontdoor.jsp login URLs">
+                            Login URLs
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. Analysis & Comparison -->
+            <div class="tool_group" data-category="analysis">
+                <div class="tool_group_header">
+                    <div class="tool_group_title">
+                        <i class="fa fa-bar-chart tool_group_icon"></i>
+                        <span>Analysis & Comparison</span>
+                        <span class="tool_group_badge">Inspector</span>
+                    </div>
+                    <i class="fa fa-chevron-down tool_group_toggle"></i>
+                </div>
+                <div class="tool_group_body">
+                    <div class="action_row grid_2">
+                        <button class="btn btn-accent" data-btn="Diff Compare"
+                            title="Compare lines side-by-side between Input and Output">
+                            <i class="fa fa-columns" style="margin-right: 4px;"></i> Diff Compare
+                        </button>
+                        <button class="btn" data-btn="Frequency Count" title="Count how many times each line occurs">
+                            <i class="fa fa-list-ol" style="margin-right: 4px;"></i> Frequency Count
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Interactive Table Modal (.small_popup_1) -->
+    <div class="small_popup_1 hide">
+        <div class="small_popup_1_box">
+            <div class="small_popup_1_box_heading_div">
+                <div class="popup_heading_title">
+                    <i class="fa fa-list-ol"></i>
+                    <span>Lines Inspection</span>
+                </div>
+                <div class="small_popup_1_close_div">
+                    <i class="close-icon_1 fa fa-times" aria-hidden="true"></i>
+                </div>
+            </div>
+
+            <div class="popup_toolbar">
+                <input type="text" class="popup_search_inp" placeholder="Filter rows live..." />
+                <button id="copy_popup_all_btn" class="header_btn" title="Copy all matching rows">
+                    <i class="fa fa-copy"></i> Copy All
+                </button>
+            </div>
+
+            <div class="small_popup_1_box_middle_div">
+                <table class="table_1">
+                    <thead class="thead_1">
+                        <tr class="thead_1_tr">
+                            <th class="th_1 th_1_1">#</th>
+                            <th class="th_1 th_1_2">Content (Click to copy)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbody_1"></tbody>
+                </table>
+            </div>
+
+            <div class="small_popup_1_box_bottom_div">
+                <span id="popup_items_count">0 rows</span>
+                <span style="font-size: 11px; color: var(--text-muted);">Tip: Click on any row to copy to
+                    clipboard</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Diff Comparison Modal -->
+    <div class="diff_modal hide">
+        <div class="diff_box">
+            <div class="diff_header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fa fa-columns" style="color: var(--primary);"></i>
+                    <strong style="font-size: 14px;">Input vs Output Diff Comparison</strong>
+                    <div id="diff_summary" style="font-size: 12px; margin-left: 10px;"></div>
+                </div>
+                <i class="close-diff-modal close-icon_1 fa fa-times" style="cursor: pointer; font-size: 16px;"></i>
+            </div>
+            <div class="diff_content" id="diff_container"></div>
+            <div class="small_popup_1_box_bottom_div">
+                <span>Green (+) = Added in Output &nbsp;|&nbsp; Red (-) = Removed from Input</span>
+                <button class="header_btn close-diff-modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Toast Notification Container -->
+    <div id="toast_container"></div>
+</body>
+
+</html>
