@@ -691,7 +691,7 @@ async function updateAllRecordsFromServer(requestBody) {
     };
 
     try {
-        const response = await fetch(baseUrl + '/services/data/v59.0/composite/sobjects', requestOptions);
+        const response = await fetch(baseUrl + '/services/data/v65.0/composite/sobjects', requestOptions);
         console.log('$response: ', response);
         if (!response.ok) {
             return {
@@ -747,7 +747,7 @@ async function getRecordsFromServer(query) {
     };
 
     try {
-        const response = await fetch(baseUrl + "/services/Soap/c/59.0", requestOptions);
+        const response = await fetch(baseUrl + "/services/Soap/c/65.0", requestOptions);
         console.log('$response: ', response);
         if (!response.ok) {
             return {
@@ -783,7 +783,7 @@ async function getFieldsFromServer(objectAPIName) {
     };
 
     try {
-        const response = await fetch(baseUrl + '/services/data/v59.0/sobjects/' + objectAPIName + '/describe', requestOptions);
+        const response = await fetch(baseUrl + '/services/data/v65.0/sobjects/' + objectAPIName + '/describe', requestOptions);
         if (!response.ok) {
             return {
                 isError: true,
@@ -818,7 +818,7 @@ async function getObjectsFromServer() {
     };
 
     try {
-        const response = await fetch(baseUrl + '/services/data/v59.0/sobjects/', requestOptions);
+        const response = await fetch(baseUrl + '/services/data/v65.0/sobjects/', requestOptions);
         if (!response.ok) {
             return {
                 isError: true,
