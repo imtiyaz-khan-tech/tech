@@ -45,6 +45,8 @@ $(document).on('click', '.btn', function(e) {
         includeColumns(columsArray);
     } else if (btn == 'extract-exeptions') {
         extractExeptions();
+    } else if (btn == 'temporary-task') {
+        temporaryTask();
     } else if (btn == 'Exclude Columns') {
         let columsArray = $('.txt_area').val().split('\n');
         excludeColumns(columsArray);
@@ -3810,6 +3812,58 @@ function includeColumns(columsArray){
             j++;
         }
         trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+        i++;
+    }
+    let table = `
+        <table class="b_x_table" id="table_bottom_id">
+            <thead class="b_x_thead">
+                <tr  class="b_x_tr b_x_th_tr">
+                    ${ths}
+                </tr>
+            </thead>
+            <tbody class="b_x_body">
+                ${trs}
+            </tbody>
+        </table>
+    `;
+    $('.cleftdvs_bottom').html(table);
+}
+
+function temporaryTask(){
+    let columns = Object.keys(excelJson_top[0]);
+    columns.push('EndDate < StartDate'); //ADD New Colum
+    let i = 0;
+    let ths = '';
+    while (i < columns.length) {
+        let col = columns[i];
+        ths += `<td class="b_x_th">${getIdelValue(col)}</td>`;
+        i++;
+    }
+
+    i = 0;
+    let trs = '';
+    let itemscount = 0;
+    while(i < excelJson_top.length){
+        let item = excelJson_top[i];
+        let j = 0;
+        let tds = '';
+        while(j < columns.length){
+            let col = columns[j];
+            if(col == 'EndDate < StartDate'){
+
+                let StartDate = new Date(item['StartDate']);
+                let EndDate = new Date(item['EndDate']);
+
+                item[col] = EndDate < StartDate; // Add Data To New Column
+
+            }
+            
+            tds += `<td class="b_x_td">${getIdelValue(item[col])}</td>`;
+                
+            j++;
+        }
+        trs += `<tr  class="b_x_tr b_x_tb_tr">${tds}</tr>`;
+        itemscount ++;
         i++;
     }
     let table = `

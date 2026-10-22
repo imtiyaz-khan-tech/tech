@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Salesforce Async Job Details | Dynamic Colorful Data Table</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="colorfuldatatable.css">
+    <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366f1'><path d='M3 3h18v18H3V3zm16 16V5H5v14h14zM7 7h10v2H7V7zm0 4h10v2H7v-2zm0 4h7v2H7v-2z'/></svg>">
+</head>
+
+<body>
+    <div class="app-container">
+
+        <!-- ==========================================
+             COLLAPSIBLE TOP DASHBOARD PANEL
+             (Header, KPI Cards, Filter Toolbar)
+             ========================================== -->
+        <div id="top_collapsible_panel" class="collapsible-top-panel">
+
+            <!-- ==========================================
+                 TOP HEADER SECTION
+                 ========================================== -->
+            <header class="header-card">
+                <div class="brand-section">
+                    <div class="brand-icon-wrapper">
+                        <i class="fa-solid fa-server"></i>
+                    </div>
+                    <div class="brand-title-group">
+                        <h1>
+                            Async Job Monitor
+                            <span class="brand-badge">Salesforce Pro</span>
+                        </h1>
+                        <div class="brand-subtitle">
+                            Interactive analytics & colorful data table for asynchronous batch executions
+                        </div>
+                    </div>
+                </div>
+
+                <div class="header-actions">
+                    <!-- Density Toggle -->
+                    <button id="btn_density" class="btn-action" title="Toggle row spacing (Compact / Normal / Relaxed)">
+                        <i class="fa-solid fa-arrows-up-down"></i>
+                        <span id="density_label">Density: Normal</span>
+                    </button>
+
+                    <!-- Column Visibility Dropdown -->
+                    <div class="dropdown-menu-wrapper">
+                        <button id="btn_columns_dropdown" class="btn-action" title="Show or hide columns">
+                            <i class="fa-solid fa-table-columns"></i>
+                            <span>Columns</span>
+                            <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem;"></i>
+                        </button>
+                        <div id="columns_popup" class="dropdown-popup">
+                            <div style="padding: 6px 10px; font-weight: 700; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Toggle Columns</div>
+                            <label class="column-toggle-item"><input type="checkbox" checked data-col="index"> # Row</label>
+                            <label class="column-toggle-item"><input type="checkbox" checked data-col="name"> Job Name</label>
+                            <label class="column-toggle-item"><input type="checkbox" checked data-col="batch"> Batch Job</label>
+                            <label class="column-toggle-item"><input type="checkbox" checked data-col="object"> Target Object</label>
+                            <label class="column-toggle-item"><input type="checkbox" checked data-col="recordId"> Record ID</label>
+                            <label class="column-toggle-item"><input type="checkbox" checked data-col="status"> Status</label>
+                            <label class="column-toggle-item"><input type="checkbox" checked data-col="error"> Error Details</label>
+                            <label class="column-toggle-item"><input type="checkbox" checked data-col="rebate"> Rebate Program</label>
+                            <label class="column-toggle-item"><input type="checkbox" checked data-col="recordJson"> Record JSON</label>
+                            <label class="column-toggle-item"><input type="checkbox" checked data-col="created"> Created Date</label>
+                            <label class="column-toggle-item"><input type="checkbox" checked data-col="user"> Created By</label>
+                            <label class="column-toggle-item"><input type="checkbox" checked data-col="actions"> Actions</label>
+                        </div>
+                    </div>
+
+                    <!-- Export Dropdown -->
+                    <div class="dropdown-menu-wrapper">
+                        <button id="btn_export_dropdown" class="btn-action btn-primary" title="Export data in multiple formats">
+                            <i class="fa-solid fa-file-export"></i>
+                            <span>Export</span>
+                            <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem;"></i>
+                        </button>
+                        <div id="export_popup" class="dropdown-popup">
+                            <button class="dropdown-item" id="export_excel">
+                                <i class="fa-solid fa-file-excel" style="color: #10b981;"></i>
+                                <span>Export to Excel (.xlsx)</span>
+                            </button>
+                            <button class="dropdown-item" id="export_csv">
+                                <i class="fa-solid fa-file-csv" style="color: #38bdf8;"></i>
+                                <span>Export to CSV</span>
+                            </button>
+                            <button class="dropdown-item" id="export_json">
+                                <i class="fa-solid fa-file-code" style="color: #c084fc;"></i>
+                                <span>Export to JSON</span>
+                            </button>
+                            <button class="dropdown-item" id="copy_table_clipboard">
+                                <i class="fa-solid fa-copy" style="color: #fbbf24;"></i>
+                                <span>Copy Table to Clipboard</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Fullscreen Toggle -->
+                    <button id="btn_fullscreen" class="btn-action" title="Toggle Fullscreen">
+                        <i class="fa-solid fa-expand"></i>
+                    </button>
+
+                    <!-- Theme Toggle Button -->
+                    <button id="btn_theme_toggle" class="btn-action" title="Toggle Dark/Light Mode">
+                        <i class="fa-solid fa-sun" id="theme_icon"></i>
+                    </button>
+
+                    <!-- Hide/Collapse Header & Controls Button -->
+                    <button id="btn_header_collapse" class="btn-action" title="Hide Dashboard & Filters (Alt+T)">
+                        <i class="fa-solid fa-chevron-up"></i>
+                        <span>Hide Top</span>
+                    </button>
+                </div>
+            </header>
+
+        <!-- ==========================================
+             KPI METRIC CARDS
+             ========================================== -->
+        <section class="kpi-grid">
+            <!-- Total Jobs -->
+            <div class="kpi-card card-all active" id="kpi_card_all" title="Click to view all jobs">
+                <div class="kpi-top">
+                    <span class="kpi-label">Total Jobs</span>
+                    <div class="kpi-icon"><i class="fa-solid fa-list-check"></i></div>
+                </div>
+                <div class="kpi-value" id="kpi_val_total">0</div>
+                <div class="kpi-sub"><i class="fa-solid fa-circle-info"></i> All asynchronous job logs</div>
+            </div>
+
+            <!-- Jobs with Errors -->
+            <div class="kpi-card card-errors" id="kpi_card_errors" title="Click to filter jobs with errors">
+                <div class="kpi-top">
+                    <span class="kpi-label">Has Errors</span>
+                    <div class="kpi-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                </div>
+                <div class="kpi-value" id="kpi_val_errors" style="color: #fb7185;">0</div>
+                <div class="kpi-sub"><i class="fa-solid fa-bug"></i> Failed or validation exceptions</div>
+            </div>
+
+            <!-- Clean / No Errors -->
+            <div class="kpi-card card-clean" id="kpi_card_clean" title="Click to filter clean jobs without errors">
+                <div class="kpi-top">
+                    <span class="kpi-label">Clean / Success</span>
+                    <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
+                </div>
+                <div class="kpi-value" id="kpi_val_clean" style="color: #34d399;">0</div>
+                <div class="kpi-sub"><i class="fa-solid fa-shield-check"></i> Zero reported errors</div>
+            </div>
+
+            <!-- Unique Batches -->
+            <div class="kpi-card card-batches" id="kpi_card_batches" title="Distinct batch classes executed">
+                <div class="kpi-top">
+                    <span class="kpi-label">Batch Types</span>
+                    <div class="kpi-icon"><i class="fa-solid fa-cubes"></i></div>
+                </div>
+                <div class="kpi-value" id="kpi_val_batches" style="color: #38bdf8;">0</div>
+                <div class="kpi-sub"><i class="fa-solid fa-layer-group"></i> Active batch job classes</div>
+            </div>
+
+            <!-- Target Objects -->
+            <div class="kpi-card card-objects" id="kpi_card_objects" title="Salesforce sObjects processed">
+                <div class="kpi-top">
+                    <span class="kpi-label">Target Objects</span>
+                    <div class="kpi-icon"><i class="fa-solid fa-database"></i></div>
+                </div>
+                <div class="kpi-value" id="kpi_val_objects" style="color: #fbbf24;">0</div>
+                <div class="kpi-sub"><i class="fa-solid fa-diagram-project"></i> Distinct sObjects touched</div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             TOOLBAR & FILTER CONTROLS
+             ========================================== -->
+        <section class="toolbar-card">
+            <div class="toolbar-primary">
+                <!-- Search Box -->
+                <div class="search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="table_search_input" class="search-input" placeholder="Search by Job Name, ID, Object, Error message, User...">
+                    <button id="search_clear_btn" class="search-clear-btn" title="Clear search">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                    <span class="search-shortcut-badge" id="search_badge">/</span>
+                </div>
+
+                <!-- Filters Row -->
+                <div class="filters-row">
+                    <!-- Batch Job Filter -->
+                    <div class="filter-group">
+                        <label for="filter_batch"><i class="fa-solid fa-gear"></i> Batch:</label>
+                        <select id="filter_batch" class="filter-select">
+                            <option value="">All Batch Jobs</option>
+                        </select>
+                    </div>
+
+                    <!-- Object Filter -->
+                    <div class="filter-group">
+                        <label for="filter_object"><i class="fa-solid fa-cube"></i> Object:</label>
+                        <select id="filter_object" class="filter-select">
+                            <option value="">All Objects</option>
+                        </select>
+                    </div>
+
+                    <!-- Error Filter -->
+                    <div class="filter-group">
+                        <label for="filter_error"><i class="fa-solid fa-shield-virus"></i> Error:</label>
+                        <select id="filter_error" class="filter-select">
+                            <option value="">All Error Types</option>
+                            <option value="__WITH_ERROR__">Has Error (Any)</option>
+                            <option value="__NO_ERROR__">No Error (Clean)</option>
+                        </select>
+                    </div>
+
+                    <!-- Created By Filter -->
+                    <div class="filter-group">
+                        <label for="filter_user"><i class="fa-solid fa-user"></i> User:</label>
+                        <select id="filter_user" class="filter-select">
+                            <option value="">All Users</option>
+                        </select>
+                    </div>
+
+                    <!-- Record JSON Filter -->
+                    <div class="filter-group">
+                        <label for="filter_json"><i class="fa-solid fa-brackets-curly"></i> JSON:</label>
+                        <select id="filter_json" class="filter-select">
+                            <option value="">All Records</option>
+                            <option value="with_json">Has Record JSON</option>
+                            <option value="no_json">No Record JSON</option>
+                        </select>
+                    </div>
+
+                    <!-- Reset Filters Button -->
+                    <button id="btn_reset_filters" class="btn-reset-filters" title="Reset all filters and search">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>Reset</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Active Row Selection Banner -->
+            <div id="selection_banner" class="selection-banner">
+                <div>
+                    <i class="fa-solid fa-circle-check"></i>
+                    <strong id="selected_count_text">0 rows selected</strong>
+                </div>
+                <div class="selection-actions">
+                    <button class="btn-action" id="btn_copy_selected_ids">
+                        <i class="fa-solid fa-copy"></i>
+                        <span>Copy IDs</span>
+                    </button>
+                    <button class="btn-action" id="btn_export_selected">
+                        <i class="fa-solid fa-file-export"></i>
+                        <span>Export Selected</span>
+                    </button>
+                    <button class="btn-action" id="btn_clear_selection" style="background: transparent;">
+                        <span>Deselect All</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        </div> <!-- /#top_collapsible_panel -->
+
+        <!-- ==========================================
+             TOP PANEL RETRACTABLE TOGGLE BAR
+             ========================================== -->
+        <div class="panel-toggle-container" id="panel_toggle_container">
+            <div class="panel-toggle-divider" id="panel_toggle_divider">
+                <button id="btn_toggle_top_panel" class="btn-toggle-top-panel" title="Toggle Dashboard & Filters (Shortcut: Alt + T)">
+                    <span class="toggle-icon-wrap">
+                        <i class="fa-solid fa-chevron-up" id="toggle_panel_icon"></i>
+                    </span>
+                    <span id="toggle_panel_label">Hide Header & Filters</span>
+                    <span class="toggle-kbd-badge"><kbd>Alt</kbd> + <kbd>T</kbd></span>
+                </button>
+            </div>
+
+            <!-- Compact controls & stats visible when top panel is collapsed -->
+            <div class="panel-compact-controls" id="panel_compact_controls" style="display: none;">
+                <div class="compact-left-group">
+                    <button id="btn_compact_expand" class="btn-toggle-top-panel is-collapsed" title="Show Header, KPIs & Filters (Alt+T)">
+                        <span class="toggle-icon-wrap">
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </span>
+                        <span>Show Header & Filters</span>
+                        <span class="toggle-kbd-badge"><kbd>Alt</kbd> + <kbd>T</kbd></span>
+                    </button>
+
+                    <div class="compact-stats-pill" id="compact_stats_pill" title="Filtered Jobs Count">
+                        <i class="fa-solid fa-chart-simple"></i>
+                        <span id="compact_stats_text">345 / 345 Jobs</span>
+                    </div>
+                </div>
+
+                <!-- Quick Search Input in Collapsed Mode -->
+                <div class="compact-search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="compact_search_input" placeholder="Quick search (/)..." title="Search table">
+                    <button id="compact_search_clear" class="compact-clear-btn" title="Clear search" style="display: none;">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Quick Tool Actions in Collapsed Mode -->
+                <div class="compact-actions-group">
+                    <button id="btn_compact_export" class="btn-compact-tool" title="Export to Excel (.xlsx)">
+                        <i class="fa-solid fa-file-excel" style="color: #10b981;"></i>
+                    </button>
+                    <button id="btn_compact_density" class="btn-compact-tool" title="Cycle Row Density">
+                        <i class="fa-solid fa-arrows-up-down"></i>
+                    </button>
+                    <button id="btn_compact_theme" class="btn-compact-tool" title="Toggle Dark/Light Mode">
+                        <i class="fa-solid fa-sun" id="compact_theme_icon"></i>
+                    </button>
+                    <button id="btn_compact_fullscreen" class="btn-compact-tool" title="Toggle Fullscreen">
+                        <i class="fa-solid fa-expand"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             MAIN DATA TABLE
+             ========================================== -->
+        <main class="table-card" id="table_card_container">
+            <div class="table-responsive-wrapper">
+                <table class="data-table" id="main_data_table">
+                    <thead>
+                        <tr>
+                            <th class="th-checkbox col-index" data-col="index">
+                                <input type="checkbox" id="select_all_checkbox" class="custom-checkbox" title="Select all visible rows">
+                            </th>
+                            <th class="col-index sortable" data-col="index" data-sort="index">
+                                <div class="th-content">
+                                    <span>#</span>
+                                    <i class="fa-solid fa-sort sort-icon"></i>
+                                </div>
+                            </th>
+                            <th class="col-name sortable" data-col="name" data-sort="Name">
+                                <div class="th-content">
+                                    <span>Job Name</span>
+                                    <i class="fa-solid fa-sort sort-icon"></i>
+                                </div>
+                            </th>
+                            <th class="col-batch sortable" data-col="batch" data-sort="p66_Async_Job_Name__c">
+                                <div class="th-content">
+                                    <span>Batch Job Class</span>
+                                    <i class="fa-solid fa-sort sort-icon"></i>
+                                </div>
+                            </th>
+                            <th class="col-object sortable" data-col="object" data-sort="p66_Object_Name__c">
+                                <div class="th-content">
+                                    <span>Target Object</span>
+                                    <i class="fa-solid fa-sort sort-icon"></i>
+                                </div>
+                            </th>
+                            <th class="col-recordId sortable" data-col="recordId" data-sort="p66_Record_ID__c">
+                                <div class="th-content">
+                                    <span>Record ID</span>
+                                    <i class="fa-solid fa-sort sort-icon"></i>
+                                </div>
+                            </th>
+                            <th class="col-status sortable" data-col="status" data-sort="p66_Status__c">
+                                <div class="th-content">
+                                    <span>Status</span>
+                                    <i class="fa-solid fa-sort sort-icon"></i>
+                                </div>
+                            </th>
+                            <th class="col-error sortable" data-col="error" data-sort="error_category">
+                                <div class="th-content">
+                                    <span>Error Message / Details</span>
+                                    <i class="fa-solid fa-sort sort-icon"></i>
+                                </div>
+                            </th>
+                            <th class="col-rebate sortable" data-col="rebate" data-sort="p66_Rebate_Program_Name__c">
+                                <div class="th-content">
+                                    <span>Rebate Program</span>
+                                    <i class="fa-solid fa-sort sort-icon"></i>
+                                </div>
+                            </th>
+                            <th class="col-recordJson sortable" data-col="recordJson" data-sort="p66_Record_JSON__c">
+                                <div class="th-content">
+                                    <span>Record JSON</span>
+                                    <i class="fa-solid fa-sort sort-icon"></i>
+                                </div>
+                            </th>
+                            <th class="col-created sortable" data-col="created" data-sort="CreatedDate">
+                                <div class="th-content">
+                                    <span>Created Date</span>
+                                    <i class="fa-solid fa-sort sort-icon"></i>
+                                </div>
+                            </th>
+                            <th class="col-user sortable" data-col="user" data-sort="CreatedBy.Name">
+                                <div class="th-content">
+                                    <span>Created By</span>
+                                    <i class="fa-solid fa-sort sort-icon"></i>
+                                </div>
+                            </th>
+                            <th class="col-actions" data-col="actions" style="text-align: center;">
+                                <span>Actions</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="table_body">
+                        <!-- Dynamically Generated Rows -->
+                    </tbody>
+                </table>
+
+                <!-- Empty State -->
+                <div id="table_empty_state" class="empty-state" style="display: none;">
+                    <div class="empty-state-icon"><i class="fa-solid fa-filter-circle-xmark"></i></div>
+                    <div class="empty-state-title">No Matching Records Found</div>
+                    <p>Try refining your search terms or clearing some active filters to view job records.</p>
+                    <button class="btn-action btn-primary" style="margin-top: 14px;" id="empty_reset_btn">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>Reset All Filters</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Table Footer & Pagination -->
+            <div class="table-footer">
+                <div class="footer-info">
+                    <span id="pagination_info">Showing 0 to 0 of 0 entries</span>
+                    <div class="page-size-selector">
+                        <label for="page_size_select">Rows per page:</label>
+                        <select id="page_size_select" class="page-size-select">
+                            <option value="10">10</option>
+                            <option value="25" selected>25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pagination-controls" id="pagination_controls">
+                    <!-- Dynamic Pagination Buttons -->
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <!-- ==========================================
+         DETAIL MODAL & STACK TRACE VIEWER
+         ========================================== -->
+    <div id="detail_modal" class="modal-overlay">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <div class="modal-header-left">
+                    <div class="brand-icon-wrapper" style="width: 42px; height: 42px; font-size: 1.1rem;" id="modal_icon">
+                        <i class="fa-solid fa-file-waveform"></i>
+                    </div>
+                    <div class="modal-title-group">
+                        <h2 id="modal_job_name">AJN-0000000</h2>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                            <span id="modal_status_badge" class="status-pill status-pending"><span class="status-dot"></span> Pending</span>
+                            <span id="modal_object_badge" class="obj-pill obj-reprog">RebateProgram</span>
+                        </div>
+                    </div>
+                </div>
+                <button id="modal_close_btn" class="modal-close-btn" title="Close (Esc)">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Navigation Tabs -->
+            <div class="modal-tabs">
+                <button class="modal-tab-btn active" data-tab="details">
+                    <i class="fa-solid fa-list-ul"></i>
+                    <span>Job Details</span>
+                </button>
+                <button class="modal-tab-btn" data-tab="error" id="modal_tab_error_btn">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Error & Stack Trace</span>
+                </button>
+                <button class="modal-tab-btn" data-tab="record_json" id="modal_tab_record_json_btn">
+                    <i class="fa-solid fa-file-code"></i>
+                    <span>Record JSON</span>
+                </button>
+                <button class="modal-tab-btn" data-tab="json">
+                    <i class="fa-solid fa-code"></i>
+                    <span>Raw Job Detail JSON</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Tab 1: Details Grid -->
+                <div id="tab_details_content" class="tab-content">
+                    <div class="detail-grid" id="modal_detail_grid">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Tab 2: Error Analysis & Stack Trace -->
+                <div id="tab_error_content" class="tab-content" style="display: none;">
+                    <div class="stacktrace-box">
+                        <div class="stacktrace-title">
+                            <span><i class="fa-solid fa-bug"></i> Error Diagnostics</span>
+                            <button class="btn-action" id="modal_copy_error_btn" style="padding: 4px 10px; font-size: 0.76rem;">
+                                <i class="fa-solid fa-copy"></i>
+                                <span>Copy Error</span>
+                            </button>
+                        </div>
+                        <div class="stacktrace-code" id="modal_error_code">
+                            No error reported for this record.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Beautified Record Payload JSON -->
+                <div id="tab_record_json_content" class="tab-content" style="display: none;">
+                    <div class="modal-json-meta-card">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span class="json-type-pill" id="modal_record_json_type">sObject Payload</span>
+                            <span class="json-keys-badge" id="modal_record_json_keys"><i class="fa-solid fa-brackets-curly"></i> 0 keys</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <button class="btn-action" id="modal_copy_record_json_btn" style="padding: 4px 10px; font-size: 0.76rem;">
+                                <i class="fa-solid fa-copy"></i>
+                                <span>Copy Beautified JSON</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="json-viewer-container">
+                        <pre class="json-code" id="modal_record_json_code"></pre>
+                    </div>
+                </div>
+
+                <!-- Tab 4: Raw Job Detail JSON -->
+                <div id="tab_json_content" class="tab-content" style="display: none;">
+                    <div class="json-viewer-container">
+                        <div style="display: flex; justify-content: flex-end; margin-bottom: 8px;">
+                            <button class="btn-action" id="modal_copy_json_btn" style="padding: 4px 10px; font-size: 0.76rem;">
+                                <i class="fa-solid fa-copy"></i>
+                                <span>Copy JSON</span>
+                            </button>
+                        </div>
+                        <pre class="json-code" id="modal_json_code"></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="modal-nav-group">
+                    <button class="btn-action" id="modal_prev_btn" title="Previous Record (Left Arrow)">
+                        <i class="fa-solid fa-chevron-left"></i>
+                        <span>Prev</span>
+                    </button>
+                    <span id="modal_record_pos" style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">1 of 345</span>
+                    <button class="btn-action" id="modal_next_btn" title="Next Record (Right Arrow)">
+                        <span>Next</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div>
+                    <button class="btn-action btn-primary" id="modal_done_btn">Done</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Toast Notifications -->
+    <div id="toast_container" class="toast-container"></div>
+
+    <!-- External & Helper Scripts -->
+    <script type="text/javascript" src="js/jquery_min.js"></script>
+    <script type="text/javascript" src="js/xlsx.full.min.js"></script>
+    <!-- Fallback Font Awesome Script if CDN is offline -->
+    <script type="text/javascript" src="js/font_awesome_js.js"></script>
+
+    <!-- Main Data & Logic Script -->
+    <script type="text/javascript" src="colorfuldatatable.js"></script>
+</body>
+
+</html>
