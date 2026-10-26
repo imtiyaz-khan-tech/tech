@@ -41,6 +41,25 @@ $(document).ready(function () {
     checkEmptyState();
     updateStorageMeter();
 
+    // Ensure all existing canvas images adopt their original natural dimensions
+    $('.image-container').each(function () {
+        const c = $(this);
+        const img = c.find('.img')[0];
+        if (img) {
+            function setInitialSize() {
+                if (img.naturalWidth && img.naturalHeight && currentViewMode === 'freeform') {
+                    c.css({ width: `${img.naturalWidth}px`, height: `${img.naturalHeight}px` });
+                    updateInspectorValues(c);
+                }
+            }
+            if (img.complete && img.naturalWidth) {
+                setInitialSize();
+            } else {
+                img.onload = setInitialSize;
+            }
+        }
+    });
+
     // Select the first image by default if present
     const firstImg = $('.image-container').first();
     if (firstImg.length) {
@@ -571,23 +590,23 @@ function addImageToCanvas(src, title) {
 
     const el = $(containerHtml).appendTo('.c');
 
-    // On image load, adjust container size to natural dimensions (max 480px)
+    // On image load, adjust container size to exact natural dimensions
     const imgObj = el.find('.img')[0];
-    imgObj.onload = function () {
-        let nw = imgObj.naturalWidth || 320;
-        let nh = imgObj.naturalHeight || 320;
-
-        if (nw > 480 || nh > 480) {
-            const scale = Math.min(480 / nw, 480 / nh);
-            nw = Math.round(nw * scale);
-            nh = Math.round(nh * scale);
-        }
-
-        if (currentViewMode === 'freeform') {
+    function setNaturalSize() {
+        const nw = imgObj.naturalWidth;
+        const nh = imgObj.naturalHeight;
+        if (nw && nh && currentViewMode === 'freeform') {
             el.css({ width: `${nw}px`, height: `${nh}px` });
+            updateInspectorValues(el);
         }
         selectImage(el);
-    };
+    }
+
+    if (imgObj.complete && imgObj.naturalWidth) {
+        setNaturalSize();
+    } else {
+        imgObj.onload = setNaturalSize;
+    }
 
     makeDraggableAndResizable();
     selectImage(el);
@@ -677,8 +696,21 @@ async function pasteImageIntoContainer(container) {
 function applyImageSource(container, base64) {
     saveUndoState();
     const img = container.find('.img');
+    const imgEl = img[0];
+
+    imgEl.onload = function () {
+        const nw = imgEl.naturalWidth;
+        const nh = imgEl.naturalHeight;
+        if (nw && nh && currentViewMode === 'freeform') {
+            container.css({ width: `${nw}px`, height: `${nh}px` });
+        }
+        updateInspectorValues(container);
+    };
+
     img.prop('src', base64);
-    updateInspectorValues(container);
+    if (imgEl.complete && imgEl.naturalWidth) {
+        imgEl.onload();
+    }
 }
 
 function setViewMode(mode) {
@@ -1326,6 +1358,21 @@ function initShelf() {
         const key = $(this).data('key');
         deleteFromStorage(key);
     });
+
+    // Legacy li click -> Load into selection or add to canvas with natural dimensions
+    $(document).on('click', '.li', function (e) {
+        const key = $(this).data('key');
+        const dataUrl = localStorage.getItem(key);
+        if (dataUrl) {
+            if (selectedContainer && selectedContainer.length) {
+                applyImageSource(selectedContainer, dataUrl);
+            } else if ($('.image-container').length) {
+                applyImageSource($('.image-container').first(), dataUrl);
+            } else {
+                addImageToCanvas(dataUrl, key);
+            }
+        }
+    });
 }
 
 function toggleShelf(forceOpen) {
@@ -1452,8 +1499,9 @@ function handleImageList(setImage) {
     container.html(cardsHtml);
     $('.ul_dv').html(legacyLiHtml);
 
-    if (setImage && imglist.length && $('.img').length) {
-        $('.img').first().prop('src', localStorage.getItem(imglist[0]));
+    if (setImage && imglist.length && $('.image-container').length) {
+        const firstContainer = $('.image-container').first();
+        applyImageSource(firstContainer, localStorage.getItem(imglist[0]));
     }
 }
 
