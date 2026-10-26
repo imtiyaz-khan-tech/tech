@@ -30,6 +30,7 @@ let cropState = {
 // Initialize on Document Ready
 $(document).ready(function () {
     initTheme();
+    initFullscreen();
     makeDraggableAndResizable();
     initCanvasEvents();
     initInspector();
@@ -74,6 +75,99 @@ function updateThemeIcon(theme) {
         icon.removeClass('fa-moon-o').addClass('fa-sun-o');
     }
 }
+
+/* ============================================================
+   Fullscreen Management
+   ============================================================ */
+
+function initFullscreen() {
+    $(document).off('click', '#btn_toggle_fullscreen').on('click', '#btn_toggle_fullscreen', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleBrowserFullscreen();
+    });
+
+    const fullscreenChangeEvents = [
+        'fullscreenchange',
+        'webkitfullscreenchange',
+        'mozfullscreenchange',
+        'MSFullscreenChange'
+    ];
+
+    fullscreenChangeEvents.forEach(evt => {
+        document.addEventListener(evt, updateFullscreenButtonState, false);
+    });
+}
+
+function toggleBrowserFullscreen() {
+    const doc = document;
+    const docEl = doc.documentElement;
+
+    const isFull = !!(
+        doc.fullscreenElement ||
+        doc.webkitFullscreenElement ||
+        doc.mozFullScreenElement ||
+        doc.msFullscreenElement
+    );
+
+    if (!isFull) {
+        const req = docEl.requestFullscreen ||
+                    docEl.webkitRequestFullscreen ||
+                    docEl.mozRequestFullScreen ||
+                    docEl.msRequestFullscreen ||
+                    doc.body.requestFullscreen ||
+                    doc.body.webkitRequestFullscreen;
+        if (req) {
+            const p = req.call(docEl);
+            if (p && p.catch) {
+                p.catch(err => {
+                    console.warn('requestFullscreen error:', err);
+                    showToast('Fullscreen request was blocked or not allowed by browser', 'warning');
+                });
+            }
+        } else {
+            showToast('Fullscreen not supported in this browser', 'warning');
+        }
+    } else {
+        const exit = doc.exitFullscreen ||
+                     doc.webkitExitFullscreen ||
+                     doc.mozCancelFullScreen ||
+                     doc.msExitFullscreen;
+        if (exit) {
+            const p = exit.call(doc);
+            if (p && p.catch) {
+                p.catch(err => console.warn('exitFullscreen error:', err));
+            }
+        }
+    }
+}
+
+function updateFullscreenButtonState() {
+    const isFull = !!(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement
+    );
+    const btn = $('#btn_toggle_fullscreen');
+    const icon = btn.find('i');
+
+    if (isFull) {
+        icon.removeClass('fa-arrows-alt fa-expand').addClass('fa-compress');
+        btn.attr('title', 'Exit Fullscreen Mode (F or Esc)');
+        btn.addClass('active');
+        showToast('Entered Fullscreen Mode', 'info');
+    } else {
+        icon.removeClass('fa-compress').addClass('fa-arrows-alt');
+        btn.attr('title', 'Toggle Fullscreen Mode (F)');
+        btn.removeClass('active');
+        showToast('Exited Fullscreen Mode', 'info');
+    }
+}
+
+// Expose globally so inline onclick handler or window can call it directly
+window.toggleBrowserFullscreen = toggleBrowserFullscreen;
+window.initFullscreen = initFullscreen;
 
 /* ============================================================
    Draggable & Resizable Setup (Backward Compatible)
@@ -1793,6 +1887,12 @@ function initShortcuts() {
         if (e.key === 'Escape') {
             $('.modal_backdrop').removeClass('open');
             deselectAll();
+        }
+
+        // F key -> Toggle Fullscreen (when not holding modifier keys)
+        if (e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.altKey && !e.metaKey) {
+            e.preventDefault();
+            toggleBrowserFullscreen();
         }
 
         // ? or H -> Open Shortcuts
