@@ -241,13 +241,15 @@ function makeDraggableAndResizable() {
    ============================================================ */
 
 function initCanvasEvents() {
-    // Canvas Background Click -> Deselect
-    $('.canvas_viewport').on('click', function (e) {
+    // Canvas Background Click -> Deselect and Close Inspector & Bottom Shelf
+    $(document).on('click', function (e) {
         if ($(e.target).closest('.image-container').length === 0 &&
+            $(e.target).closest('.card_quick_toolbar').length === 0 &&
             $(e.target).closest('.inspector_panel').length === 0 &&
             $(e.target).closest('.bottom_shelf_drawer').length === 0 &&
             $(e.target).closest('.app_header').length === 0 &&
-            $(e.target).closest('.modal_backdrop').length === 0) {
+            $(e.target).closest('.modal_backdrop').length === 0 &&
+            $(e.target).closest('.toast_container').length === 0) {
             deselectAll();
         }
     });
@@ -627,6 +629,7 @@ function selectImage(container) {
     updateInspectorValues(container);
     $('#inspector_empty_state').hide();
     $('#inspector_controls_state').show();
+    $('.inspector_panel').removeClass('collapsed');
 }
 
 function deselectAll() {
@@ -634,6 +637,12 @@ function deselectAll() {
     selectedContainer = null;
     $('#inspector_empty_state').show();
     $('#inspector_controls_state').hide();
+
+    // Close / Collapse Right Inspector Panel
+    $('.inspector_panel').addClass('collapsed');
+
+    // Close / Collapse Bottom Saved Image Shelf
+    toggleShelf(false);
 }
 
 function deleteSelected() {
