@@ -1,39 +1,662 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="image-operator/image-operator.css">
+    <title>Image Operator Studio</title>
+    <link rel="shortcut icon" type="image/x-icon" href="image-operator/icon.png">
+
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- jQuery UI & Application Styles -->
     <link rel="stylesheet" type="text/css" href="js/DraggableResizable.css">
-    <!-- <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"> -->
-    <link type="image/x-icon" rel="shortcut icon" href="image-operator/icon.png">
-    <title>Image Operator</title>
+    <link rel="stylesheet" type="text/css" href="image-operator/image-operator.css">
 </head>
 
 <body>
+    <!-- Hidden File Input for Image Uploads -->
+    <input type="file" id="file_upload_input" multiple accept="image/*" style="display: none;">
+
+    <!-- Top Application Header Bar -->
+    <header class="app_header">
+        <!-- Brand & Title -->
+        <div class="brand_section">
+            <div class="brand_logo">
+                <i class="fa fa-picture-o"></i>
+            </div>
+            <div class="brand_title_group">
+                <span class="brand_title">Image Operator</span>
+                <span class="brand_badge">Studio Pro</span>
+            </div>
+            <span id="image_count_badge" class="image_count_badge">1 image</span>
+        </div>
+
+        <!-- Center Controls: View Modes & Quick Tools -->
+        <div class="header_center">
+            <!-- View Mode Selector -->
+            <div class="header_btn_group">
+                <button id="btn_view_freeform" class="hdr_btn active" title="Freeform Canvas: Drag, resize, rotate freely">
+                    <i class="fa fa-arrows"></i> Freeform
+                </button>
+                <button id="btn_view_grid" class="hdr_btn" title="Grid Collage Mode: Auto-arrange images in responsive grid">
+                    <i class="fa fa-th-large"></i> Grid
+                </button>
+            </div>
+
+            <!-- Canvas Background Selector -->
+            <select id="select_canvas_bg" class="hdr_select" title="Change Canvas Background Style">
+                <option value="dots" selected>Dark Dots</option>
+                <option value="grid">Dark Grid</option>
+                <option value="checker">Checkerboard (Alpha)</option>
+                <option value="slate">Deep Slate</option>
+                <option value="white">Clean White</option>
+            </select>
+
+            <!-- Zoom Controls -->
+            <div class="header_btn_group">
+                <button id="btn_zoom_out" class="hdr_btn" title="Zoom Out (Ctrl -)"><i class="fa fa-search-minus"></i></button>
+                <span id="zoom_val_text" style="font-size: 11px; font-family: var(--font-mono); padding: 0 4px; color: var(--text-secondary);">100%</span>
+                <button id="btn_zoom_in" class="hdr_btn" title="Zoom In (Ctrl +)"><i class="fa fa-search-plus"></i></button>
+                <button id="btn_zoom_reset" class="hdr_btn" title="Reset Zoom to 100%"><i class="fa fa-crosshairs"></i></button>
+            </div>
+        </div>
+
+        <!-- Right Header Actions -->
+        <div class="header_actions">
+            <!-- Add / Ingest Images Dropdown -->
+            <div class="dropdown_wrapper">
+                <button class="hdr_btn primary dropdown_trigger" id="btn_add_dropdown">
+                    <i class="fa fa-plus"></i> Add Image <i class="fa fa-angle-down"></i>
+                </button>
+                <div class="dropdown_menu">
+                    <button class="dropdown_item" id="btn_trigger_upload">
+                        <i class="fa fa-folder-open-o"></i> Upload from Device
+                    </button>
+                    <button class="dropdown_item" id="btn_paste_hdr">
+                        <i class="fa fa-clipboard"></i> Paste from Clipboard <span style="font-size:10px; opacity:0.6; margin-left:auto;">(Ctrl+V)</span>
+                    </button>
+                    <button class="dropdown_item" id="btn_add_url">
+                        <i class="fa fa-globe"></i> Load from Web URL
+                    </button>
+                    <button class="dropdown_item" id="btn_capture_screen">
+                        <i class="fa fa-desktop"></i> Screen / Window Snap
+                    </button>
+                    <div class="dropdown_divider"></div>
+                    <button class="dropdown_item" id="btn_add_sample">
+                        <i class="fa fa-image"></i> Add Sample Icon
+                    </button>
+                </div>
+            </div>
+
+            <!-- Export Full Canvas Dropdown -->
+            <div class="dropdown_wrapper">
+                <button class="hdr_btn dropdown_trigger" id="btn_export_dropdown">
+                    <i class="fa fa-download"></i> Export <i class="fa fa-angle-down"></i>
+                </button>
+                <div class="dropdown_menu">
+                    <button class="dropdown_item" id="btn_export_canvas">
+                        <i class="fa fa-file-image-o"></i> Save Canvas as PNG
+                    </button>
+                    <button class="dropdown_item" id="btn_export_canvas_jpeg">
+                        <i class="fa fa-file-image-o"></i> Save Canvas as JPG
+                    </button>
+                    <button class="dropdown_item" id="btn_copy_canvas">
+                        <i class="fa fa-clone"></i> Copy Canvas to Clipboard
+                    </button>
+                    <div class="dropdown_divider"></div>
+                    <button class="dropdown_item" id="btn_download_zip">
+                        <i class="fa fa-file-archive-o"></i> Download All as ZIP
+                    </button>
+                </div>
+            </div>
+
+            <!-- Clear Canvas Button -->
+            <button id="btn_clear_canvas" class="icon_btn" title="Clear all images from canvas">
+                <i class="fa fa-trash-o"></i>
+            </button>
+
+            <!-- Toggle Inspector Drawer -->
+            <button id="btn_toggle_inspector" class="icon_btn" title="Toggle Properties Inspector">
+                <i class="fa fa-sliders"></i>
+            </button>
+
+            <!-- Keyboard Shortcuts Button -->
+            <button id="btn_shortcuts_modal" class="icon_btn" title="Keyboard Shortcuts Cheat-sheet (?)">
+                <i class="fa fa-keyboard-o"></i>
+            </button>
+
+            <!-- Dark / Light Theme Toggle -->
+            <button id="btn_toggle_theme" class="icon_btn" title="Toggle Dark / Light Mode">
+                <i class="fa fa-moon-o"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <div class="workspace">
+        <!-- Interactive Canvas Viewport -->
+        <main class="canvas_viewport bg-dots" tabindex="0">
+            <div class="canvas_stage">
+                <!-- Image Cards Container (.c) -->
+                <div class="c">
+                    <!-- Initial Image Card (Fully interactive & backward compatible) -->
+                    <div class="image-container resizable-draggable selected" 
+                         style="left: 60px; top: 60px; width: 340px; height: 340px; z-index: 10;"
+                         data-rotation="0" data-flip-h="1" data-flip-v="1"
+                         data-brightness="100" data-contrast="100" data-saturate="100"
+                         data-grayscale="0" data-sepia="0" data-invert="0" data-blur="0" data-hue="0"
+                         data-lock-ratio="false" data-name="Sample Icon">
+                        
+                        <div class="container_index_tag">#1</div>
+                        
+                        <!-- Floating Quick Action Toolbar -->
+                        <div class="card_quick_toolbar">
+                            <button class="quick_tool_btn quick-rotate-ccw" title="Rotate 90° CCW"><i class="fa fa-undo"></i></button>
+                            <button class="quick_tool_btn quick-rotate-cw" title="Rotate 90° CW"><i class="fa fa-repeat"></i></button>
+                            <button class="quick_tool_btn quick-flip-h" title="Flip Horizontal"><i class="fa fa-arrows-h"></i></button>
+                            <button class="quick_tool_btn quick-flip-v" title="Flip Vertical"><i class="fa fa-arrows-v"></i></button>
+                            <button class="quick_tool_btn quick-crop" title="Crop Image"><i class="fa fa-crop"></i></button>
+                            <div class="quick_tool_divider"></div>
+                            <button class="quick_tool_btn quick-duplicate" title="Duplicate (Ctrl+D)"><i class="fa fa-clone"></i></button>
+                            <button class="quick_tool_btn quick-copy" title="Copy to Clipboard"><i class="fa fa-clipboard"></i></button>
+                            <button class="quick_tool_btn quick-download" title="Download Image"><i class="fa fa-download"></i></button>
+                            <button class="quick_tool_btn quick-save-shelf" title="Save to Shelf (Right-click)"><i class="fa fa-bookmark"></i></button>
+                            <div class="quick_tool_divider"></div>
+                            <button class="quick_tool_btn danger quick-delete" title="Delete (Del)"><i class="fa fa-trash"></i></button>
+                        </div>
+
+                        <div class="image-inner">
+                            <img src="image-operator/icon.png" alt="Image" class="img">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State Hero (Visible when no images on canvas) -->
+                <div id="empty_canvas_hero" class="empty_dropzone" style="display: none;">
+                    <div class="empty_icon_circle">
+                        <i class="fa fa-cloud-upload"></i>
+                    </div>
+                    <h3 class="empty_title">Drag & Drop Images Here</h3>
+                    <p class="empty_desc">
+                        Paste screenshots with <strong>Ctrl+V</strong>, drag files from your desktop, or load samples to start editing.
+                    </p>
+                    <div class="empty_shortcuts">
+                        <button class="btn_add_image hdr_btn primary" style="font-size:12px;">
+                            <i class="fa fa-plus"></i> Add Sample
+                        </button>
+                        <span class="shortcut_chip"><kbd>Ctrl</kbd> + <kbd>V</kbd> to Paste</span>
+                        <span class="shortcut_chip"><kbd>?</kbd> for Shortcuts</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Properties & Filter Inspector Panel -->
+        <aside id="inspector_panel" class="inspector_panel">
+            <div class="inspector_header">
+                <span class="inspector_title"><i class="fa fa-sliders"></i> Image Inspector</span>
+                <button id="btn_close_inspector" class="icon_btn" style="width:26px; height:26px;" title="Close Inspector">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Inspector Tab Navigation -->
+            <div class="inspector_tabs">
+                <button class="inspector_tab_btn active" data-tab="transform">Transform</button>
+                <button class="inspector_tab_btn" data-tab="filters">Filters</button>
+                <button class="inspector_tab_btn" data-tab="style">Style</button>
+                <button class="inspector_tab_btn" data-tab="export">Export</button>
+            </div>
+
+            <div class="inspector_body">
+                <!-- Empty State Message when no image is selected -->
+                <div id="inspector_empty_state" class="inspector_empty_msg" style="display: none;">
+                    <i class="fa fa-mouse-pointer"></i>
+                    <span>Select an image on the canvas to view its properties and adjustments.</span>
+                </div>
+
+                <!-- Active Selection Controls Container -->
+                <div id="inspector_controls_state">
+                    <!-- Tab 1: Transform & Layout -->
+                    <div class="inspector_tab_content active" data-tab-content="transform">
+                        <div class="control_group">
+                            <div class="control_label_row">
+                                <span class="control_label"><i class="fa fa-arrows-alt"></i> Dimensions (px)</span>
+                                <label style="font-size: 11px; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                                    <input type="checkbox" id="insp_lock_ratio"> Lock Ratio
+                                </label>
+                            </div>
+                            <div class="control_grid_2">
+                                <div class="insp_input_wrap">
+                                    <span class="insp_input_label">W</span>
+                                    <input type="number" id="insp_width" class="insp_input" min="20" step="5">
+                                </div>
+                                <div class="insp_input_wrap">
+                                    <span class="insp_input_label">H</span>
+                                    <input type="number" id="insp_height" class="insp_input" min="20" step="5">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control_group">
+                            <div class="control_label_row">
+                                <span class="control_label"><i class="fa fa-crosshairs"></i> Canvas Position (px)</span>
+                            </div>
+                            <div class="control_grid_2">
+                                <div class="insp_input_wrap">
+                                    <span class="insp_input_label">X</span>
+                                    <input type="number" id="insp_pos_x" class="insp_input">
+                                </div>
+                                <div class="insp_input_wrap">
+                                    <span class="insp_input_label">Y</span>
+                                    <input type="number" id="insp_pos_y" class="insp_input">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control_group">
+                            <div class="control_label_row">
+                                <span class="control_label"><i class="fa fa-repeat"></i> Free Rotation</span>
+                                <span id="val_rotation" class="control_val_badge">0°</span>
+                            </div>
+                            <input type="range" id="insp_rotation" class="insp_range" min="-180" max="180" value="0">
+                        </div>
+
+                        <div class="control_group">
+                            <div class="control_label_row">
+                                <span class="control_label"><i class="fa fa-adjust"></i> Opacity</span>
+                                <span id="val_opacity" class="control_val_badge">100%</span>
+                            </div>
+                            <input type="range" id="insp_opacity" class="insp_range" min="0" max="100" value="100">
+                        </div>
+
+                        <div class="control_group">
+                            <span class="control_label"><i class="fa fa-clone"></i> Layer Ordering</span>
+                            <div class="control_grid_2">
+                                <button id="btn_layer_front" class="insp_action_btn"><i class="fa fa-level-up"></i> Bring Front</button>
+                                <button id="btn_layer_back" class="insp_action_btn"><i class="fa fa-level-down"></i> Send Back</button>
+                            </div>
+                        </div>
+
+                        <div class="control_group">
+                            <span class="control_label"><i class="fa fa-crop"></i> Quick Crop</span>
+                            <button class="insp_action_btn quick-crop"><i class="fa fa-crop"></i> Open Crop Tool</button>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Color & Filters -->
+                    <div class="inspector_tab_content" data-tab-content="filters">
+                        <div class="control_group">
+                            <span class="control_label"><i class="fa fa-magic"></i> Preset Looks</span>
+                            <div class="preset_chips_grid">
+                                <button class="preset_chip active" data-preset="normal">
+                                    <span class="preset_dot" style="background:#cbd5e1;"></span> Normal
+                                </button>
+                                <button class="preset_chip" data-preset="vivid">
+                                    <span class="preset_dot" style="background:#06b6d4;"></span> Vivid
+                                </button>
+                                <button class="preset_chip" data-preset="noir">
+                                    <span class="preset_dot" style="background:#475569;"></span> Noir B&W
+                                </button>
+                                <button class="preset_chip" data-preset="cyberpunk">
+                                    <span class="preset_dot" style="background:#ec4899;"></span> Cyberpunk
+                                </button>
+                                <button class="preset_chip" data-preset="vintage">
+                                    <span class="preset_dot" style="background:#d97706;"></span> Vintage
+                                </button>
+                                <button class="preset_chip" data-preset="sunset">
+                                    <span class="preset_dot" style="background:#f97316;"></span> Sunset
+                                </button>
+                                <button class="preset_chip" data-preset="cool">
+                                    <span class="preset_dot" style="background:#3b82f6;"></span> Cool
+                                </button>
+                                <button class="preset_chip" data-preset="highcontrast">
+                                    <span class="preset_dot" style="background:#ffffff;"></span> Contrast
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Filter Sliders -->
+                        <div class="control_group">
+                            <div class="control_label_row">
+                                <span class="control_label">Brightness</span>
+                                <span id="val_brightness" class="control_val_badge">100%</span>
+                            </div>
+                            <input type="range" id="insp_brightness" class="insp_range" min="0" max="200" value="100">
+                        </div>
+
+                        <div class="control_group">
+                            <div class="control_label_row">
+                                <span class="control_label">Contrast</span>
+                                <span id="val_contrast" class="control_val_badge">100%</span>
+                            </div>
+                            <input type="range" id="insp_contrast" class="insp_range" min="0" max="250" value="100">
+                        </div>
+
+                        <div class="control_group">
+                            <div class="control_label_row">
+                                <span class="control_label">Saturation</span>
+                                <span id="val_saturate" class="control_val_badge">100%</span>
+                            </div>
+                            <input type="range" id="insp_saturate" class="insp_range" min="0" max="300" value="100">
+                        </div>
+
+                        <div class="control_group">
+                            <div class="control_label_row">
+                                <span class="control_label">Grayscale</span>
+                                <span id="val_grayscale" class="control_val_badge">0%</span>
+                            </div>
+                            <input type="range" id="insp_grayscale" class="insp_range" min="0" max="100" value="0">
+                        </div>
+
+                        <div class="control_group">
+                            <div class="control_label_row">
+                                <span class="control_label">Sepia</span>
+                                <span id="val_sepia" class="control_val_badge">0%</span>
+                            </div>
+                            <input type="range" id="insp_sepia" class="insp_range" min="0" max="100" value="0">
+                        </div>
+
+                        <div class="control_group">
+                            <div class="control_label_row">
+                                <span class="control_label">Invert</span>
+                                <span id="val_invert" class="control_val_badge">0%</span>
+                            </div>
+                            <input type="range" id="insp_invert" class="insp_range" min="0" max="100" value="0">
+                        </div>
+
+                        <div class="control_group">
+                            <div class="control_label_row">
+                                <span class="control_label">Blur (px)</span>
+                                <span id="val_blur" class="control_val_badge">0px</span>
+                            </div>
+                            <input type="range" id="insp_blur" class="insp_range" min="0" max="20" value="0">
+                        </div>
+
+                        <div class="control_group">
+                            <div class="control_label_row">
+                                <span class="control_label">Hue Rotate</span>
+                                <span id="val_hue" class="control_val_badge">0°</span>
+                            </div>
+                            <input type="range" id="insp_hue" class="insp_range" min="0" max="360" value="0">
+                        </div>
+
+                        <div class="control_group">
+                            <div class="control_grid_2">
+                                <button id="btn_bake_filters" class="insp_action_btn primary" title="Renders CSS filter directly into image pixel data for export">
+                                    <i class="fa fa-paint-brush"></i> Bake Filter
+                                </button>
+                                <button id="btn_reset_filters" class="insp_action_btn" title="Reset all filters back to original">
+                                    <i class="fa fa-history"></i> Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 3: Style & Frame -->
+                    <div class="inspector_tab_content" data-tab-content="style">
+                        <div class="control_group">
+                            <div class="control_label_row">
+                                <span class="control_label">Border Width</span>
+                                <span id="val_border_width" class="control_val_badge">0px</span>
+                            </div>
+                            <input type="range" id="insp_border_width" class="insp_range" min="0" max="20" value="0">
+                        </div>
+
+                        <div class="control_group">
+                            <div class="control_label_row">
+                                <span class="control_label">Border Style & Color</span>
+                            </div>
+                            <div class="control_grid_2">
+                                <select id="insp_border_style" class="insp_select">
+                                    <option value="solid">Solid</option>
+                                    <option value="dashed">Dashed</option>
+                                    <option value="dotted">Dotted</option>
+                                    <option value="double">Double</option>
+                                    <option value="none">None</option>
+                                </select>
+                                <input type="color" id="insp_border_color" class="insp_color_input" value="#6366f1">
+                            </div>
+                        </div>
+
+                        <div class="control_group">
+                            <div class="control_label_row">
+                                <span class="control_label">Corner Radius</span>
+                                <span id="val_border_radius" class="control_val_badge">10px</span>
+                            </div>
+                            <input type="range" id="insp_border_radius" class="insp_range" min="0" max="100" value="10">
+                        </div>
+
+                        <div class="control_group">
+                            <span class="control_label">Drop Shadow</span>
+                            <select id="insp_box_shadow" class="insp_select">
+                                <option value="soft">Soft Natural Shadow</option>
+                                <option value="deep">Deep Elevation Shadow</option>
+                                <option value="glow">Indigo Ambient Glow</option>
+                                <option value="neon">Cyber Neon Double Glow</option>
+                                <option value="none">Flat / No Shadow</option>
+                            </select>
+                        </div>
+
+                        <div class="control_group">
+                            <span class="control_label">Object Fit (Scaling)</span>
+                            <select id="insp_object_fit" class="insp_select">
+                                <option value="fill">Fill (Stretch to fit)</option>
+                                <option value="cover">Cover (Crop to fill)</option>
+                                <option value="contain">Contain (Preserve aspect ratio)</option>
+                                <option value="scale-down">Scale Down</option>
+                            </select>
+                        </div>
+
+                        <div class="control_group">
+                            <span class="control_label">Blend Mode</span>
+                            <select id="insp_blend_mode" class="insp_select">
+                                <option value="normal">Normal</option>
+                                <option value="multiply">Multiply</option>
+                                <option value="screen">Screen</option>
+                                <option value="overlay">Overlay</option>
+                                <option value="darken">Darken</option>
+                                <option value="lighten">Lighten</option>
+                                <option value="color-dodge">Color Dodge</option>
+                            </select>
+                        </div>
+
+                        <div class="control_group">
+                            <div class="control_label_row">
+                                <span class="control_label">Background Color</span>
+                            </div>
+                            <input type="color" id="insp_bg_color" class="insp_color_input" value="#ffffff">
+                        </div>
+                    </div>
+
+                    <!-- Tab 4: Export Single Image -->
+                    <div class="inspector_tab_content" data-tab-content="export">
+                        <div class="control_group">
+                            <span class="control_label">Original Image Resolution</span>
+                            <span id="insp_natural_dim" style="font-size: 13px; font-family: var(--font-mono); color: var(--primary);">-- × -- px</span>
+                        </div>
+
+                        <div class="control_group">
+                            <span class="control_label">Export Format</span>
+                            <select id="insp_export_format" class="insp_select">
+                                <option value="png">PNG (Lossless, Transparent)</option>
+                                <option value="jpeg">JPEG (Compressed Photo)</option>
+                                <option value="webp">WEBP (Modern Web Format)</option>
+                            </select>
+                        </div>
+
+                        <div class="control_group">
+                            <span class="control_label">Quality Setting</span>
+                            <select id="insp_export_quality" class="insp_select">
+                                <option value="1.0">Maximum Quality (100%)</option>
+                                <option value="0.92" selected>High Quality (92%)</option>
+                                <option value="0.8">Balanced (80%)</option>
+                                <option value="0.6">Compressed (60%)</option>
+                            </select>
+                        </div>
+
+                        <div class="control_group">
+                            <button id="btn_download_single" class="insp_action_btn primary">
+                                <i class="fa fa-download"></i> Download This Image
+                            </button>
+                            <button class="insp_action_btn quick-copy">
+                                <i class="fa fa-clipboard"></i> Copy Image to Clipboard
+                            </button>
+                            <button class="insp_action_btn quick-save-shelf">
+                                <i class="fa fa-bookmark"></i> Save into Shelf Gallery
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Interactive Crop Modal Overlay -->
+    <div id="crop_modal" class="modal_backdrop">
+        <div class="crop_modal_box">
+            <div class="modal_header">
+                <span class="modal_title"><i class="fa fa-crop"></i> Crop Image</span>
+                <button id="btn_close_crop_modal" class="icon_btn" style="width:28px; height:28px;"><i class="fa fa-times"></i></button>
+            </div>
+            <div class="crop_canvas_area">
+                <div id="crop_stage" class="crop_stage">
+                    <img id="crop_target_image" class="crop_target_img" src="image-operator/icon.png" alt="Crop Target">
+                    <!-- Draggable and resizable selection box -->
+                    <div id="crop_selection" class="crop_selection_box">
+                        <div class="crop_handle tl"></div>
+                        <div class="crop_handle tr"></div>
+                        <div class="crop_handle br"></div>
+                        <div class="crop_handle bl"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal_footer">
+                <div class="crop_ratio_buttons">
+                    <button class="ratio_btn active" data-ratio="free">Free</button>
+                    <button class="ratio_btn" data-ratio="1:1">1:1 Square</button>
+                    <button class="ratio_btn" data-ratio="16:9">16:9 Screen</button>
+                    <button class="ratio_btn" data-ratio="4:3">4:3 Photo</button>
+                    <button class="ratio_btn" data-ratio="9:16">9:16 Story</button>
+                    <button class="ratio_btn" data-ratio="3:2">3:2 Classic</button>
+                </div>
+                <div style="display:flex; gap: 8px;">
+                    <button id="btn_cancel_crop" class="hdr_btn">Cancel</button>
+                    <button id="btn_apply_crop" class="hdr_btn primary"><i class="fa fa-check"></i> Apply Crop</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Keyboard Shortcuts Modal -->
+    <div id="shortcuts_modal" class="modal_backdrop">
+        <div class="shortcuts_modal">
+            <div class="modal_header">
+                <span class="modal_title"><i class="fa fa-keyboard-o"></i> Keyboard Shortcuts</span>
+                <button id="btn_close_shortcuts_modal" class="icon_btn" style="width:28px; height:28px;"><i class="fa fa-times"></i></button>
+            </div>
+            <div class="shortcuts_grid">
+                <div class="shortcut_item">
+                    <span class="shortcut_name">Paste Image onto Canvas</span>
+                    <div class="shortcut_keys"><kbd>Ctrl</kbd> + <kbd>V</kbd></div>
+                </div>
+                <div class="shortcut_item">
+                    <span class="shortcut_name">Duplicate Selected Image</span>
+                    <div class="shortcut_keys"><kbd>Ctrl</kbd> + <kbd>D</kbd></div>
+                </div>
+                <div class="shortcut_item">
+                    <span class="shortcut_name">Delete Selected Image</span>
+                    <div class="shortcut_keys"><kbd>Del</kbd> or <kbd>Backspace</kbd></div>
+                </div>
+                <div class="shortcut_item">
+                    <span class="shortcut_name">Undo Last Action</span>
+                    <div class="shortcut_keys"><kbd>Ctrl</kbd> + <kbd>Z</kbd></div>
+                </div>
+                <div class="shortcut_item">
+                    <span class="shortcut_name">Redo Action</span>
+                    <div class="shortcut_keys"><kbd>Ctrl</kbd> + <kbd>Y</kbd></div>
+                </div>
+                <div class="shortcut_item">
+                    <span class="shortcut_name">Save Selected to Shelf</span>
+                    <div class="shortcut_keys"><kbd>Ctrl</kbd> + <kbd>S</kbd></div>
+                </div>
+                <div class="shortcut_item">
+                    <span class="shortcut_name">Bring to Front</span>
+                    <div class="shortcut_keys"><kbd>]</kbd></div>
+                </div>
+                <div class="shortcut_item">
+                    <span class="shortcut_name">Send to Back</span>
+                    <div class="shortcut_keys"><kbd>[</kbd></div>
+                </div>
+                <div class="shortcut_item">
+                    <span class="shortcut_name">Nudge Position (1px / 10px)</span>
+                    <div class="shortcut_keys"><kbd>Arrow Keys</kbd> (<kbd>Shift</kbd>)</div>
+                </div>
+                <div class="shortcut_item">
+                    <span class="shortcut_name">Deselect / Close Dialog</span>
+                    <div class="shortcut_keys"><kbd>Esc</kbd></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Saved Images Shelf / Gallery Drawer -->
+    <!-- (Fully preserves and enhances legacy .bottom_menu_div, .plus-icon, .ul_dv, .li) -->
+    <div id="bottom_shelf" class="bottom_shelf_drawer">
+        <!-- Top Drawer Handle & Actions -->
+        <div class="shelf_handle_bar">
+            <div class="shelf_title_group">
+                <i class="fa fa-folder-open-o" style="color:var(--primary);"></i>
+                <span class="shelf_title">Saved Image Shelf</span>
+                <span id="shelf_count_badge" class="shelf_badge">0</span>
+                <span id="storage_used_text" class="storage_indicator">0.0 / 5.0 MB</span>
+            </div>
+            <div class="shelf_actions">
+                <button id="btn_shelf_save_selected" class="shelf_btn" title="Save currently selected image to shelf">
+                    <i class="fa fa-bookmark"></i> Save Selected
+                </button>
+                <button id="btn_shelf_save_all" class="shelf_btn" title="Save all images currently on canvas">
+                    <i class="fa fa-save"></i> Save All
+                </button>
+                <button id="btn_shelf_clear_all" class="shelf_btn" title="Clear all items from shelf">
+                    <i class="fa fa-trash-o"></i> Clear Shelf
+                </button>
+                <i class="fa fa-chevron-up shelf_toggle_icon"></i>
+            </div>
+        </div>
+
+        <!-- Shelf Content: Thumbnail Gallery Cards Container -->
+        <div id="shelf_cards_container" class="shelf_content">
+            <!-- Populated dynamically via handleImageList() -->
+        </div>
+
+        <!-- Backward Compatibility: Hidden Legacy DOM elements -->
+        <div class="bottom_menu_div" style="display:none;">
+            <div class="ul_dv noselect_items hide_menu"></div>
+            <i class="plus-icon fa fa-plus"></i>
+        </div>
+    </div>
+
+    <!-- Legacy Compatibility Floating Add Image Button & Snackbar -->
+    <div class="fixed-button" style="display: none;">
+        <button class="btn_add_image">Add Image</button>
+    </div>
+    <div class="snackbar">Clipboard Data Is Not Image.</div>
+
+    <!-- Core Scripts -->
     <script type="text/javascript" src="js/jquery_min.js"></script>
     <script type="text/javascript" src="js/font_awesome_js.js"></script>
     <script type="text/javascript" src="js/DraggableResizable.js"></script>
-	<!-- <script type="text/javascript" src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script> -->
+    <script type="text/javascript" src="js/FileSavermin.js"></script>
+    <script type="text/javascript" src="js/jszip.min.js"></script>
     <script type="text/javascript" src="image-operator/image-operator.js"></script>
-        <div class="c">
-            <div class="image-container resizable-draggable">
-                <img src="image-operator/icon.png" alt="Image" class="img">
-            </div>
-        </div>
-        <div class="fixed-button">
-            <button class="btn_add_image">Add Image</button>
-        </div>
-        <div class="snackbar">Clipboard Data Is Not Image.</div>
-        <!-- Bottom button Starts -->
-        <div class="bottom_menu_div">
-        <div class="ul_dv noselect_items hide_menu">
-            <!-- <div class="li exceptionrecords">Exceptions</div> -->
-            <!-- <div class="li pendingasyncjobdetails">Pending Async Jobs</div> -->
-        </div>
-        <i class="plus-icon fa fa-plus "></i>
-        </div>
-    <!-- Bottom button Finish -->
 </body>
+
 </html>
