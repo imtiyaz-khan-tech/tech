@@ -273,6 +273,83 @@ function initCanvasEvents() {
         pasteImageIntoContainer(container);
     });
 
+    // Ctrl + Mouse Wheel -> Increase / Decrease Image Size (Zoom in / out)
+    let wheelUndoTimeout = null;
+    window.addEventListener('wheel', function (e) {
+        if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+
+            // Find target image container: under cursor or currently selected
+            let target = $(e.target).closest('.image-container');
+            if (!target.length && selectedContainer && selectedContainer.length) {
+                target = selectedContainer;
+            }
+
+            if (target && target.length && currentViewMode === 'freeform') {
+                if (!target.hasClass('selected')) {
+                    selectImage(target);
+                }
+
+                // Debounce undo state saving across continuous wheel ticks
+                if (!wheelUndoTimeout) {
+                    saveUndoState();
+                }
+                clearTimeout(wheelUndoTimeout);
+                wheelUndoTimeout = setTimeout(() => {
+                    wheelUndoTimeout = null;
+                }, 500);
+
+                // e.deltaY < 0 is scroll up (increase), e.deltaY > 0 is scroll down (decrease)
+                const zoomIn = e.deltaY < 0;
+                const factor = zoomIn ? 1.06 : 0.94;
+
+                const currW = target.outerWidth();
+                const currH = target.outerHeight();
+                const pos = target.position();
+                const ratio = (currW > 0 && currH > 0) ? (currW / currH) : 1;
+
+                let newW = Math.round(currW * factor);
+                let newH = Math.round(newW / ratio);
+
+                // Sensible bounds check (min 30px, max 8000px)
+                if (newW < 30 || newH < 30 || newW > 8000 || newH > 8000) return;
+
+                // Anchor zoom around mouse pointer if over image, else around center
+                const rect = target[0].getBoundingClientRect();
+                let originX = 0.5;
+                let originY = 0.5;
+                if (e.clientX >= rect.left && e.clientX <= rect.right &&
+                    e.clientY >= rect.top && e.clientY <= rect.bottom &&
+                    rect.width > 0 && rect.height > 0) {
+                    originX = (e.clientX - rect.left) / rect.width;
+                    originY = (e.clientY - rect.top) / rect.height;
+                }
+
+                const deltaW = newW - currW;
+                const deltaH = newH - currH;
+
+                const newLeft = Math.round(pos.left - deltaW * originX);
+                const newTop = Math.round(pos.top - deltaH * originY);
+
+                target.css({
+                    width: `${newW}px`,
+                    height: `${newH}px`,
+                    left: `${newLeft}px`,
+                    top: `${newTop}px`
+                });
+                target.attr('data-user-resized', 'true');
+
+                // Update Inspector inputs in real time
+                syncInspectorDimensions(newW, newH);
+                syncInspectorPosition(newLeft, newTop);
+            } else if (!target.length) {
+                // If scrolling over empty canvas with no selection, smoothly adjust canvas zoom
+                const zoomDelta = e.deltaY < 0 ? 0.08 : -0.08;
+                setZoom(canvasZoom + zoomDelta);
+            }
+        }
+    }, { passive: false });
+
     // Global Paste Listener (Ctrl+V anywhere!)
     window.addEventListener('paste', async function (e) {
         // If an input or textarea is active, allow standard paste
