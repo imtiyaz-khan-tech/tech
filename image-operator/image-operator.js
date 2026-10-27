@@ -29,7 +29,8 @@ let cropState = {
 
 // Initialize on Document Ready
 $(document).ready(function () {
-    initTheme();
+    localStorage.removeItem('imgop_theme');
+    document.documentElement.removeAttribute('data-theme');
     initFullscreen();
     makeDraggableAndResizable();
     initCanvasEvents();
@@ -66,34 +67,6 @@ $(document).ready(function () {
         selectImage(firstImg);
     }
 });
-
-/* ============================================================
-   Theme Management
-   ============================================================ */
-
-function initTheme() {
-    const savedTheme = localStorage.getItem('imgop_theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    updateThemeIcon(savedTheme);
-
-    $('#btn_toggle_theme').on('click', function () {
-        const current = document.documentElement.getAttribute('data-theme') || 'dark';
-        const next = current === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', next);
-        localStorage.setItem('imgop_theme', next);
-        updateThemeIcon(next);
-        showToast(`Switched to ${next} mode`, 'info');
-    });
-}
-
-function updateThemeIcon(theme) {
-    const icon = $('#btn_toggle_theme i');
-    if (theme === 'dark') {
-        icon.removeClass('fa-sun-o').addClass('fa-moon-o');
-    } else {
-        icon.removeClass('fa-moon-o').addClass('fa-sun-o');
-    }
-}
 
 /* ============================================================
    Fullscreen Management
