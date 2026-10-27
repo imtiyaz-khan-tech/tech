@@ -41,6 +41,7 @@ $(document).ready(function () {
     updateImageCountBadge();
     checkEmptyState();
     updateStorageMeter();
+    updateContainerIndexTags();
 
     // Ensure all existing canvas images adopt their original natural dimensions
     $('.image-container').each(function () {
@@ -180,7 +181,6 @@ function makeDraggableAndResizable() {
         if (currentViewMode === 'freeform') {
             el.draggable({
                 containment: false,
-                stack: ".image-container",
                 start: function () {
                     selectImage(el);
                     saveUndoState();
@@ -543,6 +543,18 @@ function initCanvasEvents() {
         openCropModal();
     });
 
+    $(document).on('click', '.quick-layer-front', function (e) {
+        e.stopPropagation();
+        const container = $(this).closest('.image-container');
+        bringToFront(container);
+    });
+
+    $(document).on('click', '.quick-layer-back', function (e) {
+        e.stopPropagation();
+        const container = $(this).closest('.image-container');
+        sendToBack(container);
+    });
+
     $(document).on('click', '.quick-duplicate', function (e) {
         e.stopPropagation();
         duplicateSelected();
@@ -627,6 +639,9 @@ function addImageToCanvas(src, title) {
             <button class="quick_tool_btn quick-flip-v" title="Flip Vertical"><i class="fa fa-arrows-v"></i></button>
             <button class="quick_tool_btn quick-crop" title="Crop Image"><i class="fa fa-crop"></i></button>
             <div class="quick_tool_divider"></div>
+            <button class="quick_tool_btn quick-layer-front" title="Bring to Front (])"><i class="fa fa-level-up"></i></button>
+            <button class="quick_tool_btn quick-layer-back" title="Send to Back ([)"><i class="fa fa-level-down"></i></button>
+            <div class="quick_tool_divider"></div>
             <button class="quick_tool_btn quick-duplicate" title="Duplicate (Ctrl+D)"><i class="fa fa-clone"></i></button>
             <button class="quick_tool_btn quick-copy" title="Copy to Clipboard"><i class="fa fa-clipboard"></i></button>
             <button class="quick_tool_btn quick-download" title="Download Image"><i class="fa fa-download"></i></button>
@@ -664,6 +679,7 @@ function addImageToCanvas(src, title) {
     selectImage(el);
     checkEmptyState();
     updateImageCountBadge();
+    updateContainerIndexTags();
 }
 
 function selectImage(container) {
@@ -671,10 +687,6 @@ function selectImage(container) {
     $('.image-container').removeClass('selected');
     container.addClass('selected');
     selectedContainer = container;
-
-    // Bring forward in DOM stack
-    highestZIndex++;
-    container.css('z-index', highestZIndex);
 
     updateInspectorValues(container);
     $('#inspector_empty_state').hide();
@@ -703,6 +715,7 @@ function deleteSelected() {
         deselectAll();
         checkEmptyState();
         updateImageCountBadge();
+        updateContainerIndexTags();
     });
     showToast('Image removed', 'info');
 }
@@ -710,7 +723,6 @@ function deleteSelected() {
 function duplicateSelected() {
     if (!selectedContainer) return;
     saveUndoState();
-    highestZIndex++;
 
     const clone = selectedContainer.clone();
     clone.removeClass('selected');
@@ -719,15 +731,112 @@ function duplicateSelected() {
     const pos = selectedContainer.position();
     clone.css({
         left: (pos.left + 24) + 'px',
-        top: (pos.top + 24) + 'px',
-        zIndex: highestZIndex
+        top: (pos.top + 24) + 'px'
     });
 
     $('.c').append(clone);
     makeDraggableAndResizable();
+    bringToFront(clone);
     selectImage(clone);
     updateImageCountBadge();
     showToast('Duplicated image', 'success');
+}
+
+/* ============================================================
+   Layer Ordering Management (Bring Front / Send Back / Forward / Backward)
+   ============================================================ */
+
+function getLayersSorted() {
+    return $('.image-container').toArray().sort((a, b) => {
+        const za = parseInt($(a).css('z-index'), 10) || 10;
+        const zb = parseInt($(b).css('z-index'), 10) || 10;
+        if (za !== zb) return za - zb;
+        return $(a).index() - $(b).index();
+    });
+}
+
+function applyLayerOrder(sortedContainers) {
+    const baseZ = 10;
+    sortedContainers.forEach((el, index) => {
+        const z = baseZ + index;
+        $(el).css('z-index', z);
+        // Synchronize DOM hierarchy inside .c so stacking is consistent across all browsers & exports
+        $(el).appendTo('.c');
+    });
+    highestZIndex = baseZ + sortedContainers.length;
+    updateContainerIndexTags();
+}
+
+function updateContainerIndexTags() {
+    $('.image-container').each(function (idx) {
+        $(this).find('.container_index_tag').text('#' + (idx + 1));
+    });
+}
+
+function bringToFront(container) {
+    const target = container || selectedContainer;
+    if (!target || !target.length) return;
+    const containers = $('.image-container');
+    if (containers.length <= 1) {
+        showToast('Only one image on canvas', 'info');
+        return;
+    }
+    saveUndoState();
+    const sorted = getLayersSorted().filter(el => el !== target[0]);
+    sorted.push(target[0]);
+    applyLayerOrder(sorted);
+    showToast('Brought to front layer', 'info');
+}
+
+function sendToBack(container) {
+    const target = container || selectedContainer;
+    if (!target || !target.length) return;
+    const containers = $('.image-container');
+    if (containers.length <= 1) {
+        showToast('Only one image on canvas', 'info');
+        return;
+    }
+    saveUndoState();
+    const sorted = getLayersSorted().filter(el => el !== target[0]);
+    sorted.unshift(target[0]);
+    applyLayerOrder(sorted);
+    showToast('Sent to back layer', 'info');
+}
+
+function bringForward(container) {
+    const target = container || selectedContainer;
+    if (!target || !target.length) return;
+    const sorted = getLayersSorted();
+    if (sorted.length <= 1) return;
+    const idx = sorted.indexOf(target[0]);
+    if (idx === -1 || idx === sorted.length - 1) {
+        showToast('Already on top layer', 'info');
+        return;
+    }
+    saveUndoState();
+    const temp = sorted[idx];
+    sorted[idx] = sorted[idx + 1];
+    sorted[idx + 1] = temp;
+    applyLayerOrder(sorted);
+    showToast('Moved forward 1 layer', 'info');
+}
+
+function sendBackward(container) {
+    const target = container || selectedContainer;
+    if (!target || !target.length) return;
+    const sorted = getLayersSorted();
+    if (sorted.length <= 1) return;
+    const idx = sorted.indexOf(target[0]);
+    if (idx <= 0) {
+        showToast('Already on bottom layer', 'info');
+        return;
+    }
+    saveUndoState();
+    const temp = sorted[idx];
+    sorted[idx] = sorted[idx - 1];
+    sorted[idx - 1] = temp;
+    applyLayerOrder(sorted);
+    showToast('Moved backward 1 layer', 'info');
 }
 
 async function pasteImageIntoContainer(container) {
@@ -1088,16 +1197,19 @@ function initInspector() {
 
     // Layer Controls in Inspector
     $('#btn_layer_front').on('click', function () {
-        if (!selectedContainer) return;
-        highestZIndex++;
-        selectedContainer.css('z-index', highestZIndex);
-        showToast('Moved to top layer', 'info');
+        bringToFront();
     });
 
     $('#btn_layer_back').on('click', function () {
-        if (!selectedContainer) return;
-        selectedContainer.css('z-index', 1);
-        showToast('Moved to bottom layer', 'info');
+        sendToBack();
+    });
+
+    $('#btn_layer_forward').on('click', function () {
+        bringForward();
+    });
+
+    $('#btn_layer_backward').on('click', function () {
+        sendBackward();
     });
 
     // Format & Download Single Image
@@ -1679,10 +1791,8 @@ function exportFullCanvas(format) {
         ctx.fillRect(0, 0, canvasW, canvasH);
     }
 
-    // Sort containers by z-index
-    const sorted = containers.toArray().sort((a, b) => {
-        return (parseInt($(a).css('z-index'), 10) || 0) - (parseInt($(b).css('z-index'), 10) || 0);
-    });
+    // Sort containers by visual layer hierarchy
+    const sorted = getLayersSorted();
 
     sorted.forEach(containerEl => {
         const el = $(containerEl);
@@ -1752,9 +1862,7 @@ async function copyCanvasToClipboard() {
     master.height = canvasH;
     const ctx = master.getContext('2d');
 
-    const sorted = containers.toArray().sort((a, b) => {
-        return (parseInt($(a).css('z-index'), 10) || 0) - (parseInt($(b).css('z-index'), 10) || 0);
-    });
+    const sorted = getLayersSorted();
 
     sorted.forEach(containerEl => {
         const el = $(containerEl);
@@ -1970,12 +2078,19 @@ function initShortcuts() {
         // Layer ordering: [ and ]
         if (e.key === ']' && selectedContainer) {
             e.preventDefault();
-            highestZIndex++;
-            selectedContainer.css('z-index', highestZIndex);
+            if (e.ctrlKey || e.metaKey) {
+                bringForward();
+            } else {
+                bringToFront();
+            }
         }
         if (e.key === '[' && selectedContainer) {
             e.preventDefault();
-            selectedContainer.css('z-index', 1);
+            if (e.ctrlKey || e.metaKey) {
+                sendBackward();
+            } else {
+                sendToBack();
+            }
         }
 
         // Arrow keys nudge

@@ -177,6 +177,11 @@
                             <button class="quick_tool_btn quick-crop" title="Crop Image"><i
                                     class="fa fa-crop"></i></button>
                             <div class="quick_tool_divider"></div>
+                            <button class="quick_tool_btn quick-layer-front" title="Bring to Front (])"><i
+                                    class="fa fa-level-up"></i></button>
+                            <button class="quick_tool_btn quick-layer-back" title="Send to Back ([)"><i
+                                    class="fa fa-level-down"></i></button>
+                            <div class="quick_tool_divider"></div>
                             <button class="quick_tool_btn quick-duplicate" title="Duplicate (Ctrl+D)"><i
                                     class="fa fa-clone"></i></button>
                             <button class="quick_tool_btn quick-copy" title="Copy to Clipboard"><i
@@ -301,10 +306,16 @@
                         <div class="control_group">
                             <span class="control_label"><i class="fa fa-clone"></i> Layer Ordering</span>
                             <div class="control_grid_2">
-                                <button id="btn_layer_front" class="insp_action_btn"><i class="fa fa-level-up"></i>
+                                <button id="btn_layer_front" class="insp_action_btn" title="Bring to Top Layer (])"><i class="fa fa-level-up"></i>
                                     Bring Front</button>
-                                <button id="btn_layer_back" class="insp_action_btn"><i class="fa fa-level-down"></i>
+                                <button id="btn_layer_back" class="insp_action_btn" title="Send to Bottom Layer ([)"><i class="fa fa-level-down"></i>
                                     Send Back</button>
+                            </div>
+                            <div class="control_grid_2" style="margin-top: 6px;">
+                                <button id="btn_layer_forward" class="insp_action_btn" title="Step 1 Layer Up (Ctrl+])"><i class="fa fa-arrow-up"></i>
+                                    Forward</button>
+                                <button id="btn_layer_backward" class="insp_action_btn" title="Step 1 Layer Down (Ctrl+[)"><i class="fa fa-arrow-down"></i>
+                                    Backward</button>
                             </div>
                         </div>
 
@@ -618,12 +629,12 @@
                     <div class="shortcut_keys"><kbd>Ctrl</kbd> + <kbd>S</kbd></div>
                 </div>
                 <div class="shortcut_item">
-                    <span class="shortcut_name">Bring to Front</span>
-                    <div class="shortcut_keys"><kbd>]</kbd></div>
+                    <span class="shortcut_name">Bring to Front / Forward</span>
+                    <div class="shortcut_keys"><kbd>]</kbd> / <kbd>Ctrl</kbd> + <kbd>]</kbd></div>
                 </div>
                 <div class="shortcut_item">
-                    <span class="shortcut_name">Send to Back</span>
-                    <div class="shortcut_keys"><kbd>[</kbd></div>
+                    <span class="shortcut_name">Send to Back / Backward</span>
+                    <div class="shortcut_keys"><kbd>[</kbd> / <kbd>Ctrl</kbd> + <kbd>[</kbd></div>
                 </div>
                 <div class="shortcut_item">
                     <span class="shortcut_name">Nudge Position (1px / 10px)</span>

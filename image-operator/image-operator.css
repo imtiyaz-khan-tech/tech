@@ -529,7 +529,6 @@ html, body {
 .image-container.selected {
     border-color: var(--primary) !important;
     box-shadow: 0 0 0 1px var(--primary), var(--shadow-glow) !important;
-    z-index: 50 !important;
 }
 
 /* Quick Corner Tag */
