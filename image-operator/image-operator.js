@@ -1318,30 +1318,129 @@ function openCropModal() {
     if (!img) return;
 
     cropTargetImg = img;
-    $('#crop_target_image').prop('src', img.src);
+    const cropImgEl = $('#crop_target_image')[0];
+
+    // Reset ratio preset to 'free'
+    $('.ratio_btn').removeClass('active');
+    $('.ratio_btn[data-ratio="free"]').addClass('active');
+
     $('#crop_modal').addClass('open');
 
-    // Reset crop box position to 80% centered
-    setTimeout(() => {
+    function setupCropBox() {
         const stage = $('#crop_stage');
-        const sw = stage.width();
-        const sh = stage.height();
+        const imgDisplay = $(cropImgEl);
+        const sw = imgDisplay.width();
+        const sh = imgDisplay.height();
+
+        if (!sw || !sh) {
+            requestAnimationFrame(setupCropBox);
+            return;
+        }
+
         const box = $('#crop_selection');
 
+        // Destroy previous instances to avoid duplicate handles or corrupted state
+        if (box.data('ui-resizable')) {
+            try { box.resizable('destroy'); } catch (e) { }
+        }
+        if (box.data('ui-draggable')) {
+            try { box.draggable('destroy'); } catch (e) { }
+        }
+
+        // Initialize 80% centered within image
+        const initW = Math.max(30, Math.round(sw * 0.8));
+        const initH = Math.max(30, Math.round(sh * 0.8));
+        const initL = Math.max(0, Math.round((sw - initW) / 2));
+        const initT = Math.max(0, Math.round((sh - initH) / 2));
+
         box.css({
-            left: `${sw * 0.1}px`,
-            top: `${sh * 0.1}px`,
-            width: `${sw * 0.8}px`,
-            height: `${sh * 0.8}px`
+            left: `${initL}px`,
+            top: `${initT}px`,
+            width: `${initW}px`,
+            height: `${initH}px`
         });
 
         initCropDrag();
-    }, 100);
+    }
+
+    // Set src and wait for render
+    if (cropImgEl.src === img.src && cropImgEl.complete && cropImgEl.naturalWidth) {
+        requestAnimationFrame(() => requestAnimationFrame(setupCropBox));
+    } else {
+        cropImgEl.onload = function () {
+            requestAnimationFrame(() => requestAnimationFrame(setupCropBox));
+        };
+        cropImgEl.src = img.src;
+    }
 }
 
 function closeCropModal() {
     $('#crop_modal').removeClass('open');
     cropTargetImg = null;
+    const box = $('#crop_selection');
+    if (box.data('ui-resizable')) {
+        try { box.resizable('destroy'); } catch (e) { }
+    }
+    if (box.data('ui-draggable')) {
+        try { box.draggable('destroy'); } catch (e) { }
+    }
+}
+
+function setCropAspectRatio(ratio) {
+    $('.ratio_btn').removeClass('active');
+    $(`.ratio_btn[data-ratio="${ratio}"]`).addClass('active');
+
+    const box = $('#crop_selection');
+    const stage = $('#crop_stage');
+    const sw = stage.width();
+    const sh = stage.height();
+
+    const resizableInst = box.data('ui-resizable');
+
+    if (ratio === 'free') {
+        box.resizable('option', 'aspectRatio', false);
+        if (resizableInst) {
+            resizableInst._aspectRatio = false;
+            resizableInst.aspectRatio = false;
+        }
+    } else {
+        let num = 1;
+        if (ratio === '1:1') num = 1;
+        else if (ratio === '16:9') num = 16 / 9;
+        else if (ratio === '4:3') num = 4 / 3;
+        else if (ratio === '9:16') num = 9 / 16;
+        else if (ratio === '3:2') num = 3 / 2;
+
+        box.resizable('option', 'aspectRatio', num);
+        if (resizableInst) {
+            resizableInst._aspectRatio = true;
+            resizableInst.aspectRatio = num;
+        }
+
+        // Adjust current box to immediately conform to aspect ratio
+        let curW = box.width();
+        let curH = curW / num;
+        if (curH > sh * 0.9) {
+            curH = sh * 0.85;
+            curW = curH * num;
+        }
+        if (curW > sw * 0.9) {
+            curW = sw * 0.85;
+            curH = curW / num;
+        }
+
+        let curL = parseFloat(box.css('left')) || 0;
+        let curT = parseFloat(box.css('top')) || 0;
+        if (curL + curW > sw) curL = Math.max(0, sw - curW);
+        if (curT + curH > sh) curT = Math.max(0, sh - curH);
+
+        box.css({
+            width: `${Math.round(curW)}px`,
+            height: `${Math.round(curH)}px`,
+            left: `${Math.round(curL)}px`,
+            top: `${Math.round(curT)}px`
+        });
+    }
 }
 
 function initCropDrag() {
@@ -1353,45 +1452,35 @@ function initCropDrag() {
         cursor: 'move'
     }).resizable({
         containment: stage,
-        handles: {
-            'nw': '.crop_handle.tl',
-            'ne': '.crop_handle.tr',
-            'se': '.crop_handle.br',
-            'sw': '.crop_handle.bl'
-        }
+        handles: 'n, e, s, w, ne, se, sw, nw',
+        aspectRatio: false,
+        minWidth: 20,
+        minHeight: 20
     });
 
-    // Ratio Presets
+    // Ensure initial free mode flags are explicitly cleared in jQuery UI
+    const resizableInst = box.data('ui-resizable');
+    if (resizableInst) {
+        resizableInst._aspectRatio = false;
+        resizableInst.aspectRatio = false;
+    }
+
+    // Ratio Presets Click Handlers
     $('.ratio_btn').off('click').on('click', function () {
-        $('.ratio_btn').removeClass('active');
-        $(this).addClass('active');
         const ratio = $(this).data('ratio');
-        const sw = stage.width();
-        const sh = stage.height();
-
-        if (ratio === 'free') {
-            box.resizable('option', 'aspectRatio', false);
-        } else {
-            let num = 1;
-            if (ratio === '1:1') num = 1;
-            else if (ratio === '16:9') num = 16 / 9;
-            else if (ratio === '4:3') num = 4 / 3;
-            else if (ratio === '9:16') num = 9 / 16;
-            else if (ratio === '3:2') num = 3 / 2;
-
-            box.resizable('option', 'aspectRatio', num);
-            let newW = sw * 0.7;
-            let newH = newW / num;
-            if (newH > sh * 0.85) {
-                newH = sh * 0.75;
-                newW = newH * num;
-            }
-            box.css({ width: `${newW}px`, height: `${newH}px` });
-        }
+        setCropAspectRatio(ratio);
     });
 
+    // Modal Action Buttons: Apply, Cancel, Close
     $('#btn_apply_crop').off('click').on('click', applyCrop);
-    $('#btn_cancel_crop, #btn_close_crop_modal').off('click', closeCropModal);
+    $('#btn_cancel_crop, #btn_close_crop_modal').off('click').on('click', closeCropModal);
+
+    // Backdrop Click to Close
+    $('#crop_modal').off('click').on('click', function (e) {
+        if ($(e.target).is('#crop_modal')) {
+            closeCropModal();
+        }
+    });
 }
 
 function applyCrop() {
@@ -1400,37 +1489,47 @@ function applyCrop() {
 
     const stage = $('#crop_stage');
     const box = $('#crop_selection');
-
     const displayedImg = $('#crop_target_image')[0];
+
     const naturalW = cropTargetImg.naturalWidth;
     const naturalH = cropTargetImg.naturalHeight;
 
-    const displayW = displayedImg.width;
-    const displayH = displayedImg.height;
+    const displayW = displayedImg.clientWidth || displayedImg.width;
+    const displayH = displayedImg.clientHeight || displayedImg.height;
+
+    if (!displayW || !displayH || !naturalW || !naturalH) {
+        showToast('Error calculating crop dimensions', 'error');
+        return;
+    }
 
     const scaleX = naturalW / displayW;
     const scaleY = naturalH / displayH;
 
-    const cropLeft = parseFloat(box.css('left')) * scaleX;
-    const cropTop = parseFloat(box.css('top')) * scaleY;
-    const cropW = box.outerWidth() * scaleX;
-    const cropH = box.outerHeight() * scaleY;
+    const boxLeft = parseFloat(box.css('left')) || 0;
+    const boxTop = parseFloat(box.css('top')) || 0;
+    const boxW = box.outerWidth();
+    const boxH = box.outerHeight();
+
+    const cropLeft = Math.max(0, Math.min(naturalW - 1, Math.round(boxLeft * scaleX)));
+    const cropTop = Math.max(0, Math.min(naturalH - 1, Math.round(boxTop * scaleY)));
+    const cropW = Math.max(1, Math.min(naturalW - cropLeft, Math.round(boxW * scaleX)));
+    const cropH = Math.max(1, Math.min(naturalH - cropTop, Math.round(boxH * scaleY)));
 
     const offscreen = document.createElement('canvas');
-    offscreen.width = Math.round(cropW);
-    offscreen.height = Math.round(cropH);
+    offscreen.width = cropW;
+    offscreen.height = cropH;
     const ctx = offscreen.getContext('2d');
 
     ctx.drawImage(
         cropTargetImg,
         cropLeft, cropTop, cropW, cropH,
-        0, 0, offscreen.width, offscreen.height
+        0, 0, cropW, cropH
     );
 
     const croppedDataUrl = offscreen.toDataURL('image/png');
     selectedContainer.find('.img').prop('src', croppedDataUrl);
 
-    // Update container aspect ratio to match cropped dimensions
+    // Update container height to match cropped aspect ratio
     const currentW = selectedContainer.width();
     const newHeight = Math.round(currentW * (cropH / cropW));
     selectedContainer.css('height', `${newHeight}px`);
@@ -2107,6 +2206,10 @@ function initShortcuts() {
 
         // Escape -> Deselect / Close Modals
         if (e.key === 'Escape') {
+            if ($('#crop_modal').hasClass('open')) {
+                closeCropModal();
+                return;
+            }
             $('.modal_backdrop').removeClass('open');
             deselectAll();
         }

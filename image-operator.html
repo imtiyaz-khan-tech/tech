@@ -563,18 +563,18 @@
         <div class="crop_modal_box">
             <div class="modal_header">
                 <span class="modal_title"><i class="fa fa-crop"></i> Crop Image</span>
-                <button id="btn_close_crop_modal" class="icon_btn" style="width:28px; height:28px;"><i
+                <button id="btn_close_crop_modal" class="icon_btn" onclick="closeCropModal()" style="width:28px; height:28px;" title="Close Crop Modal (Esc)"><i
                         class="fa fa-times"></i></button>
             </div>
             <div class="crop_canvas_area">
                 <div id="crop_stage" class="crop_stage">
                     <img id="crop_target_image" class="crop_target_img" src="image-operator/icon.png" alt="Crop Target">
-                    <!-- Draggable and resizable selection box -->
+                    <!-- Draggable and resizable selection box with rule of thirds -->
                     <div id="crop_selection" class="crop_selection_box">
-                        <div class="crop_handle tl"></div>
-                        <div class="crop_handle tr"></div>
-                        <div class="crop_handle br"></div>
-                        <div class="crop_handle bl"></div>
+                        <div class="crop_grid_line h1"></div>
+                        <div class="crop_grid_line h2"></div>
+                        <div class="crop_grid_line v1"></div>
+                        <div class="crop_grid_line v2"></div>
                     </div>
                 </div>
             </div>
@@ -588,7 +588,7 @@
                     <button class="ratio_btn" data-ratio="3:2">3:2 Classic</button>
                 </div>
                 <div style="display:flex; gap: 8px;">
-                    <button id="btn_cancel_crop" class="hdr_btn">Cancel</button>
+                    <button id="btn_cancel_crop" class="hdr_btn" onclick="closeCropModal()">Cancel</button>
                     <button id="btn_apply_crop" class="hdr_btn primary"><i class="fa fa-check"></i> Apply Crop</button>
                 </div>
             </div>
