@@ -62,10 +62,10 @@ $(document).ready(function () {
         }
     });
 
-    // Select the first image by default if present
+    // Select the first image by default if present (without opening inspector)
     const firstImg = $('.image-container').first();
     if (firstImg.length) {
-        selectImage(firstImg);
+        selectImage(firstImg, false);
     }
 });
 
@@ -233,10 +233,12 @@ function initCanvasEvents() {
         selectImage($(this));
     });
 
-    // Right-Click Context Menu on Image -> Save to Shelf (Preserves Legacy Behavior!)
+    // Right-Click on Image -> Select and Show Right Inspector / Filter Menu (No longer saves on right click)
     $(document).on('contextmenu', '.image-container', function (e) {
         e.preventDefault();
-        saveImageToStorage($(this));
+        e.stopPropagation();
+        if ($(e.target).closest('.card_quick_toolbar').length) return;
+        selectImage($(this), true);
     });
 
     // Double-Click on Container -> Paste from Clipboard (Preserves Legacy Behavior!)
@@ -572,7 +574,9 @@ function initCanvasEvents() {
 
     $(document).on('click', '.quick-save-shelf', function (e) {
         e.stopPropagation();
-        if (selectedContainer) saveImageToStorage(selectedContainer);
+        const container = $(this).closest('.image-container');
+        const target = container.length ? container : selectedContainer;
+        if (target) saveImageToStorage(target);
     });
 
     $(document).on('click', '.quick-delete', function (e) {
@@ -645,7 +649,7 @@ function addImageToCanvas(src, title) {
             <button class="quick_tool_btn quick-duplicate" title="Duplicate (Ctrl+D)"><i class="fa fa-clone"></i></button>
             <button class="quick_tool_btn quick-copy" title="Copy to Clipboard"><i class="fa fa-clipboard"></i></button>
             <button class="quick_tool_btn quick-download" title="Download Image"><i class="fa fa-download"></i></button>
-            <button class="quick_tool_btn quick-save-shelf" title="Save to Shelf (Right-click)"><i class="fa fa-bookmark"></i></button>
+            <button class="quick_tool_btn quick-save-shelf" title="Save to Shelf"><i class="fa fa-bookmark"></i></button>
             <div class="quick_tool_divider"></div>
             <button class="quick_tool_btn danger quick-delete" title="Delete (Del)"><i class="fa fa-trash"></i></button>
         </div>
@@ -682,7 +686,7 @@ function addImageToCanvas(src, title) {
     updateContainerIndexTags();
 }
 
-function selectImage(container) {
+function selectImage(container, openInspector = false) {
     if (!container || !container.length) return;
     $('.image-container').removeClass('selected');
     container.addClass('selected');
@@ -691,7 +695,9 @@ function selectImage(container) {
     updateInspectorValues(container);
     $('#inspector_empty_state').hide();
     $('#inspector_controls_state').show();
-    $('.inspector_panel').removeClass('collapsed');
+    if (openInspector) {
+        $('.inspector_panel').removeClass('collapsed');
+    }
 }
 
 function deselectAll() {
