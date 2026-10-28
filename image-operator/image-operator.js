@@ -233,12 +233,21 @@ function initCanvasEvents() {
         selectImage($(this));
     });
 
-    // Right-Click on Image -> Select and Show Right Inspector / Filter Menu (No longer saves on right click)
+    // Right-Click on Image -> Toggle Right Inspector / Filter Menu
     $(document).on('contextmenu', '.image-container', function (e) {
         e.preventDefault();
         e.stopPropagation();
         if ($(e.target).closest('.card_quick_toolbar').length) return;
-        selectImage($(this), true);
+
+        const container = $(this);
+        const isInspectorOpen = !$('.inspector_panel').hasClass('collapsed');
+        const isSelected = container.hasClass('selected');
+
+        if (isSelected && isInspectorOpen) {
+            $('.inspector_panel').addClass('collapsed');
+        } else {
+            selectImage(container, true);
+        }
     });
 
     // Double-Click on Container -> Paste from Clipboard (Preserves Legacy Behavior!)
