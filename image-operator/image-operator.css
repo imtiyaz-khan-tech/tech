@@ -369,7 +369,6 @@ html, body {
     min-width: 100%;
     min-height: 100%;
     transform-origin: 0 0;
-    transition: transform 0.1s ease-out;
 }
 
 /* Freeform mode container (.c) */
@@ -384,10 +383,10 @@ html, body {
 /* Grid Mode Layout (Collage mode) */
 .c.grid-mode {
     display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)) !important;
     grid-gap: 24px !important;
     grid-row-gap: 24px !important;
-    align-items: start;
+    align-items: start !important;
 }
 
 .c.grid-mode .image-container {
@@ -395,8 +394,32 @@ html, body {
     top: auto !important;
     left: auto !important;
     width: 100% !important;
-    height: 280px !important;
+    height: auto !important;
+    min-height: auto !important;
     transform: none !important;
+    background: transparent !important;
+    box-shadow: var(--shadow-md) !important;
+    display: block !important;
+    overflow: hidden !important;
+    border-radius: var(--radius-md) !important;
+}
+
+.c.grid-mode .image-inner {
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    background: transparent !important;
+    overflow: hidden !important;
+}
+
+.c.grid-mode .image-container img.img {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 80vh !important;
+    object-fit: contain !important;
+    display: block !important;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: high-quality;
 }
 
 /* Empty Drop Zone Hero */
@@ -523,6 +546,7 @@ html, body {
     pointer-events: none;
     transform-origin: center center;
     transition: filter 0.1s ease;
+    image-rendering: -webkit-optimize-contrast;
 }
 
 /* Selected state */

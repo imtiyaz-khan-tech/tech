@@ -675,9 +675,11 @@ function addImageToCanvas(src, title) {
     function setNaturalSize() {
         const nw = imgObj.naturalWidth;
         const nh = imgObj.naturalHeight;
-        if (nw && nh && currentViewMode === 'freeform') {
+        if (nw && nh) {
             el.css({ width: `${nw}px`, height: `${nh}px` });
-            updateInspectorValues(el);
+            if (currentViewMode === 'freeform') {
+                updateInspectorValues(el);
+            }
         }
         selectImage(el);
     }
@@ -884,7 +886,7 @@ function applyImageSource(container, base64) {
     imgEl.onload = function () {
         const nw = imgEl.naturalWidth;
         const nh = imgEl.naturalHeight;
-        if (nw && nh && currentViewMode === 'freeform') {
+        if (nw && nh) {
             container.css({ width: `${nw}px`, height: `${nh}px` });
         }
         updateInspectorValues(container);
